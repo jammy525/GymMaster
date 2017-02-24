@@ -18,7 +18,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member")
+if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
 { ?>
 <script>
 
@@ -41,11 +41,11 @@ $(document).ready(function(){
 			  </h1>
 			  <ol class="breadcrumb">
 				<?php
-				if($session["role_name"] == "administrator" || $session["role_name"] == "member" || $session["role_name"] == "staff_member")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise" || $session["role_name"] == "member" || $session["role_name"] == "staff_member")
 				{ ?>
 				<a href="<?php echo $this->Gym->createurl("ClassSchedule","viewSchedule");?>" class="btn btn-flat btn-custom"><i class="fa fa-calendar"></i> <?php echo __("Class Schedules");?></a>
 		   <?php }
-				if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise" || $session["role_name"] == "staff_member")
 				{ ?>
 				&nbsp;
 				<a href="<?php echo $this->Gym->createurl("ClassSchedule","addClass");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Class Schedule");?></a>
@@ -75,7 +75,7 @@ $(document).ready(function(){
 						<td>{$row['gym_member']['first_name']} {$row['gym_member']['last_name']}</td>						
 						<td>{$row['start_time']}</td>
 						<td>{$row['end_time']}</td>
-						<td>{$row['location']}</td>
+						<td>{$row['gym_location']['location']}</td>
 						<td>
 							<a href='{$this->request->base}/ClassSchedule/editClass/{$row['id']}' title='Edit' class='btn btn-flat btn-primary'><i class='fa fa-edit'></i></a>
 							<a href='{$this->request->base}/ClassSchedule/deleteClass/{$row['id']}' title='Delete' class='btn btn-flat btn-danger' onClick=\"return confirm('Are you sure,You want to delete this record?');\"><i class='fa fa-trash-o'></i></a>

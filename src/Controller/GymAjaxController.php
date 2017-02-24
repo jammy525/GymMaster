@@ -324,7 +324,7 @@ Class GymAjaxController extends AppController
 	<?php
 	}
         
-        public function saveLocation(){
+        public function saveLocation(){ 
             $return = array();
             $location_table = TableRegistry::get("GymLocation");
             $location = $location_table->newEntity();
@@ -334,7 +334,7 @@ Class GymAjaxController extends AppController
             $location->created_by = $this->request->session()->read("User.id");
             if($location_table->save($location)){
                 $id = $location->id;
-                $return[0] = "<tr id='row-{$id}'><td>{$name}</td><td><button del-id='{$id}' class='del-location btn btn-flat btn-danger' data-url='{$this->request->base}/GymAjax/deleteLocation/{$id}'>".__("Delete")."</button></td></tr>";
+                $return[0] = "<tr id='row-{$id}'><td>{$name}</td><td>".$this->request->session()->read("User.display_name")."</td><td><button del-id='{$id}' class='del-location btn btn-flat btn-danger' data-url='{$this->request->base}/GymAjax/deleteLocation/{$id}'>".__("Delete")."</button></td></tr>";
                 $return[1] = "<option value='{$id}'>{$name}</option>";
                 echo json_encode($return);
             }else{

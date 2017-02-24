@@ -43,7 +43,7 @@ $(document).ready(function() {
 			echo @$this->Form->select("assign_staff_mem",$staff,["default"=>$data['assign_staff_mem'],"empty"=>__("Select Staff Member"),"class"=>"form-control validate[required]"]);
 			echo "</div>";	
 			
-			if($this->request->session()->read("User.role_name") == "Administrator")
+			if($this->request->session()->read("User.role_name") == "administrator")
 			{
 				echo '<div class="col-md-2">';
 				echo "<a href='{$this->request->base}/StaffMembers/addStaff' class='btn btn-flat btn-primary'>".__("Add")."</a>";
@@ -58,20 +58,36 @@ $(document).ready(function() {
 			echo @$this->Form->select("assistant_staff_member",$assistant_staff,["default"=>$data['assistant_staff_member'],"empty"=>__("Select Staff Member"),"class"=>"form-control"]);
 			echo "</div>";	
 			
-			if($this->request->session()->read("User.role_name") == "Administrator")
+			if($this->request->session()->read("User.role_name") == "administrator")
 			{
 				echo '<div class="col-md-2">';
 				echo "<a href='{$this->request->base}/StaffMembers/addStaff' class='btn btn-flat btn-primary'>".__("Add")."</a>";
 				echo "</div>";	
 			}
+			echo "</div>";
+                        
+                        echo "<div class='form-group'>";	
+			echo '<label class="control-label col-md-2" for="location_id">'. __("Select Location").'<span class="text-danger"> *</span></label>';
+			echo '<div class="col-md-6">';			
+			echo @$this->Form->select("location_id",$location,["default"=>$data['location_id'],"empty"=>__("Select Location"),"class"=>"form-control validate[required] location_list"]);
 			echo "</div>";	
 			
-			echo "<div class='form-group'>";	
-			echo '<label class="control-label col-md-2" for="email">'. __("Location").'</label>';
-			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"location","class"=>"form-control","value"=>(($edit)?$data['location']:'')]);
-			echo "</div>";	
+			if($this->request->session()->read("User.role_name") == "administrator" || $this->request->session()->read("User.role_name") == "franchise")
+			{
+                            echo '<div class="col-md-2">';
+                            //echo "<a href='{$this->request->base}/StaffMembers/addStaff' class='btn btn-flat btn-primary'>".__("Add")."</a>";
+                            echo "<a href='javascript:void(0)' class='add-location btn btn-flat btn-success' data-url='{$this->Gym->createurl("GymAjax","addLocation")}'>".__("Add/Remove")."</a>";
+                            echo "</div>";	
+				
+			}
 			echo "</div>";
+			
+			//echo "<div class='form-group'>";	
+			//echo '<label class="control-label col-md-2" for="email">'. __("Location").'</label>';
+			//echo '<div class="col-md-6">';
+			//echo $this->Form->input("",["label"=>false,"name"=>"location","class"=>"form-control","value"=>(($edit)?$data['location']:'')]);
+			//echo "</div>";	
+			//echo "</div>";
 			
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("Select Days").'<span class="text-danger"> *</span></label>';

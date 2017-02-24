@@ -12,6 +12,6 @@ class ClassScheduleTable extends Table
 		$this->hasMany("GymNotice",["foreignKey"=>"class_id","dependent"=>true]); // it will also delete all notice for deleted class_id
 		$this->belongsTo("ClassScheduleList");
 		$this->belongsTo("GymMemberClass");
-                $this->belongsTo("GymLocation",["foreignKey"=>"class_id","dependent"=>true]);
+                $this->belongsTo("GymLocation",["foreignKey"=>"location_id"]);
 	}
 }

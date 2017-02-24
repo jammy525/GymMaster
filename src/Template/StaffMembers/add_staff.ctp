@@ -46,7 +46,8 @@ function validate_multiselect()
 			<?php				
 			echo $this->Form->create("addgroup",["type"=>"file","class"=>"validateForm form-horizontal","role"=>"form","onsubmit"=>"return validate_multiselect()"]);
 			echo "<fieldset><legend>". __('Personal Information')."</legend>";
-			echo "<div class='form-group'>";	
+			
+                        echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("First Name").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
 			echo $this->Form->input("",["label"=>false,"name"=>"first_name","class"=>"form-control validate[required]","value"=>(($edit)?$data['first_name']:'')]);
@@ -97,12 +98,12 @@ function validate_multiselect()
                         
                         if($session['role_id'] == 1){
                             echo "<div class='form-group'>";	
-                            echo '<label class="control-label col-md-2" for="franchise">'. __("Under Franchise").'<span class="text-danger"> *</span></label>';
+                            echo '<label class="control-label col-md-2" for="franchise">'. __("Associate Franchise").'<span class="text-danger"> *</span></label>';
                             echo '<div class="col-md-6">';			
-                            echo @$this->Form->select("associated_franchise",$franchises,["default"=>$data['associated_franchise'],"empty"=>__("Select Franchise"),"class"=>"form-control validate[required] franchises_list"]);
+                            echo @$this->Form->select("associated_franchise",$franchises,["default"=>$data['associated_franchise'],"empty"=>__("Select Franchise"),"class"=>"form-control validate[required]"]);
                             echo "</div>";	
                             echo '<div class="col-md-2">';
-                            echo "<a href='javascript:void(0)' class='add-role btn btn-flat btn-success' data-url='{$this->Gym->createurl("GymAjax","addRole")}'>".__("Add/Remove")."</a>";
+                            echo "<a href='{$this->request->base}/Franchise/addFranchise' class='btn btn-flat btn-primary'>".__("Add")."</a>";
                             echo "</div>";	
                             echo "</div>";
                         }else{
@@ -125,11 +126,25 @@ function validate_multiselect()
 			echo $this->Form->input("",["label"=>false,"name"=>"address","class"=>"form-control validate[required]","value"=>(($edit)?$data['address']:'')]);
 			echo "</div>";	
 			echo "</div>";	
+                        
+                        echo "<div class='form-group'>";	
+			echo '<label class="control-label col-md-2" for="email">'. __("State").'<span class="text-danger"> *</span></label>';
+			echo '<div class="col-md-6">';
+			echo $this->Form->input("",["label"=>false,"name"=>"state","class"=>"form-control validate[required]","value"=>(($edit)?$data['state']:'')]);
+			echo "</div>";	
+			echo "</div>";
 			
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("City").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
 			echo $this->Form->input("",["label"=>false,"name"=>"city","class"=>"form-control validate[required]","value"=>(($edit)?$data['city']:'')]);
+			echo "</div>";	
+			echo "</div>";
+                        
+                        echo "<div class='form-group'>";	
+			echo '<label class="control-label col-md-2" for="email">'. __("Zip code").'<span class="text-danger"> *</span></label>';
+			echo '<div class="col-md-6">';
+			echo $this->Form->input("",["label"=>false,"name"=>"zipcode","class"=>"form-control validate[required]","value"=>(($edit)?$data['zipcode']:'')]);
 			echo "</div>";	
 			echo "</div>";
 			
@@ -177,8 +192,8 @@ function validate_multiselect()
 			echo '<label class="control-label col-md-2" for="email">'. __("Display Image").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-4">';
 			echo $this->Form->file("image",["class"=>"form-control"]);
-			$image = ($edit && !empty($data['image'])) ? $data['image'] : "logo.png";
-			echo "<br><img src='{$this->request->webroot}webroot/upload/{$image}'>";
+			$image = ($edit && !empty($data['image'])) ? $data['image'] : "profile-placeholder.png";
+			echo "<br><img width='100' src='{$this->request->webroot}webroot/upload/{$image}'>";
 			echo "</div>";	
 			echo "</div>";			
 			echo "</fieldset>";

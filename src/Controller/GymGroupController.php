@@ -79,28 +79,19 @@ Class GymGroupController extends AppController
 	
 	public function isAuthorized($user)
 	{
+		$this->loadComponent("GYMFunction");
 		$role_name = $user["role_name"];
+		$controller = $this->request->controller;
 		$curr_action = $this->request->action;
-		$members_actions = ["groupList"];
-		$staff_acc_actions = ["groupList","editGroup","deleteGroup","addGroup"];
+		$actions_list = $this->GYMFunction->getActionsByRoles($user["role_id"], $controller);
 		switch($role_name)
 		{			
-			CASE "member":
-				if(in_array($curr_action,$members_actions))
+			CASE $role_name:
+				if(in_array($curr_action,$actions_list))
 				{return true;}else{return false;}
 			break;
-			
-			CASE "staff_member":
-				if(in_array($curr_action,$staff_acc_actions))
-				{return true;}else{ return false;}
-			break;
-			
-			CASE "accountant":
-				if(in_array($curr_action,$staff_acc_actions))
-				{return true;}else{return false;}
-			break;
+
 		}
-		
 		return parent::isAuthorized($user);
 	}
 

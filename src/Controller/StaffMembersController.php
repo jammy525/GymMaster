@@ -66,6 +66,9 @@ class StaffMembersController extends AppController
             $this->request->data['created_date'] = date("Y-m-d");
             $this->request->data['s_specialization'] = json_encode($this->request->data['s_specialization']);
             $this->request->data["role_name"]="staff_member";
+            $this->request->data["role_id"]=3;
+            $this->request->data["created_by"]=$session['id'];
+            $this->request->data["alert_sent"]=1;
             $staff = $this->StaffMembers->GymMember->patchEntity($staff,$this->request->data);
 
             if($this->StaffMembers->GymMember->save($staff)){
@@ -85,11 +88,16 @@ class StaffMembersController extends AppController
 
     public function editStaff($id){
         $session = $this->request->session()->read("User");
-        //echo '<pre>';print_r($session);die;
-
+        $this->set("session",$session);
+        
         $this->set("edit",true);
         $this->set("title",__("Edit Staff Member"));
-
+        
+        if($session['role_id'] == 1){
+            $franchises = $this->StaffMembers->GymMember->find("list",["keyField"=>"id","valueField"=>"first_name"])->where(["GymMember.role_id"=>2, "GymMember.activated"=>1])->hydrate(false)->toArray();
+            $this->set("franchises",$franchises);
+        }
+        
         $data = $this->StaffMembers->GymMember->get($id)->toArray();
         $roles = $this->StaffMembers->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
         $specialization = $this->StaffMembers->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();

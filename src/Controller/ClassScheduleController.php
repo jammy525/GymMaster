@@ -20,12 +20,12 @@ class ClassScheduleController extends AppController
                         $assign_class[] = $class["assign_class"];
                     }						
                     $data = $this->ClassSchedule->find()->where(["ClassSchedule.id IN "=>$assign_class]);
-                    $data = $data->contain(["GymMember"])->select(["ClassSchedule.id","ClassSchedule.class_name","ClassSchedule.assign_staff_mem","ClassSchedule.start_time","ClassSchedule.end_time","ClassSchedule.location","GymMember.first_name","GymMember.last_name"])->hydrate(false)->toArray();
+                    $data = $data->contain(["GymMember","GymLocation"])->select(["ClassSchedule.id","ClassSchedule.class_name","ClassSchedule.assign_staff_mem","ClassSchedule.start_time","ClassSchedule.end_time","GymMember.first_name","GymMember.last_name","GymLocation.location"])->hydrate(false)->toArray();
                 }
             }
             else{
                 $data = $this->ClassSchedule->find();
-                $data = $data->contain(["GymMember"])->select(["ClassSchedule.id","ClassSchedule.class_name","ClassSchedule.assign_staff_mem","ClassSchedule.start_time","ClassSchedule.location","ClassSchedule.end_time","GymMember.first_name","GymMember.last_name"])->hydrate(false)->toArray();
+                $data = $data->contain(["GymMember","GymLocation"])->select(["ClassSchedule.id","ClassSchedule.class_name","ClassSchedule.assign_staff_mem","ClassSchedule.start_time","ClassSchedule.end_time","GymMember.first_name","GymMember.last_name","GymLocation.location"])->hydrate(false)->toArray();
             }
             $this->set("data",$data);		
 	}
@@ -46,6 +46,7 @@ class ClassScheduleController extends AppController
             $this->set("location",$location);
             
             $this->set("assistant_staff",$staff);
+            
             if($this->request->is("post")){
                 $time_list = $this->request->data["time_list"];			
 
