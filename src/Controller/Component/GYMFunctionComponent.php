@@ -608,9 +608,9 @@ Class GYMfunctionComponent extends Component
 	
 	public function index()
 	{
-		$msg = "First line of text\nSecond line of text";
+		/*$msg = "First line of text\nSecond line of text";
 		$to = "priyal@dasinfomedia.com";
-		mail($to,"My subject",$msg);
+		mail($to,"My subject",$msg);*/
 		$this->autoRender = false ;
 	}
 	
