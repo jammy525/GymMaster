@@ -620,4 +620,16 @@ Class GYMfunctionComponent extends Component
 		__("May"),__("June"),__("July"),__("August"),__("September"),__("October"),__("November"),__("December"),
 		__("You are not authorized to access that location."));
 	}
+
+	public function getActionsByRoles($role_id, $controller)
+	{
+		$access_tbl = TableRegistry::get("GymAccessright");
+		$row = $access_tbl->find("all",array('conditions' => array('controller'=> $controller,'FIND_IN_SET(\''. $role_id .'\',assigned_roles)')))->hydrate(false)->toArray();		
+		$actions = array();
+		foreach($row  as $data)
+		{
+			$actions[]= lcfirst($data["action"]);
+		}
+		return $actions;
+	}
 }
