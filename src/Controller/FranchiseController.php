@@ -116,28 +116,6 @@ class FranchiseController extends AppController
 	}
         
 	public function isAuthorized($user){
-            $role_name = $user["role_name"];
-            $curr_action = $this->request->action;	
-            $members_actions = ["staffList"];
-            $staff_acc_actions = ["staffList"];
-            switch($role_name)
-            {			
-                CASE "member":
-                        if(in_array($curr_action,$members_actions))
-                        {return true;}else{return false;}
-                break;
-
-                CASE "staff_member":
-                        if(in_array($curr_action,$staff_acc_actions))
-                        {return true;}else{ return false;}
-                break;
-
-                CASE "accountant":
-                        if(in_array($curr_action,$staff_acc_actions))
-                        {return true;}else{return false;}
-                break;
-            }
-
-            return parent::isAuthorized($user);
+            return parent::isAuthorizedCustom($user);
 	}
 }

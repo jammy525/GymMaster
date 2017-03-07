@@ -68,21 +68,7 @@ Class GymAccessRolesController extends AppController
 		}
 	}
 	
-	public function isAuthorized($user)
-	{
-		$this->loadComponent("GYMFunction");
-		$role_name = $user["role_name"];
-		$controller = $this->request->controller;
-		$curr_action = $this->request->action;
-		$actions_list = $this->GYMFunction->getActionsByRoles($user["role_id"], $controller);
-		switch($role_name)
-		{			
-			CASE $role_name:
-				if(in_array($curr_action,$actions_list))
-				{return true;}else{return false;}
-			break;
-
-		}
-		return parent::isAuthorized($user);
+	public function isAuthorized($user){
+            return parent::isAuthorizedCustom($user);
 	}
 }

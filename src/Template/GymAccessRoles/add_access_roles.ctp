@@ -18,7 +18,7 @@ $(document).ready(function(){
 				<small><?php echo __("Access Roles");?></small>
 			  </h1>
 			  <ol class="breadcrumb">
-				<a href="<?php echo $this->Gym->createurl("GymGroup","Access Roles List");?>" class="btn btn-flat btn-custom"><i class="fa fa-bars"></i><?php echo __("Access Roles List");?></a>
+				<a href="<?php echo $this->Gym->createurl("GymAccessRoles","AccessRolesList");?>" class="btn btn-flat btn-custom"><i class="fa fa-bars"></i><?php echo __("Access Roles List");?></a>
 			  </ol>
 			</section>
 		</div>

@@ -61,7 +61,7 @@ class StaffMembersController extends AppController
             $staff = $this->StaffMembers->GymMember->newEntity();
 
             $image = $this->GYMFunction->uploadImage($this->request->data['image']);
-            $this->request->data['image'] = (!empty($image)) ? $image : "logo.png";
+            $this->request->data['image'] = (!empty($image)) ? $image : "profile-placeholder.png";
             $this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
             $this->request->data['created_date'] = date("Y-m-d");
             $this->request->data['s_specialization'] = json_encode($this->request->data['s_specialization']);
@@ -69,12 +69,16 @@ class StaffMembersController extends AppController
             $this->request->data["role_id"]=3;
             $this->request->data["created_by"]=$session['id'];
             $this->request->data["alert_sent"]=1;
+            $this->request->data["created_role"]=$session['role_name'];
             $staff = $this->StaffMembers->GymMember->patchEntity($staff,$this->request->data);
-
+         
             if($this->StaffMembers->GymMember->save($staff)){
+              
                 $this->Flash->success(__("Success! Record Successfully Saved."));
                 return $this->redirect(["action"=>"staffList"]);
-            }else{				
+            }else{
+                // echo  $this->log($this->StaffMembers->lastQuery);
+               // die;
                 if($staff->errors()){	
                     foreach($staff->errors() as $error){
                         foreach($staff as $key=>$value){
@@ -98,10 +102,24 @@ class StaffMembersController extends AppController
             $this->set("franchises",$franchises);
         }
         
+       
+        
         $data = $this->StaffMembers->GymMember->get($id)->toArray();
         $roles = $this->StaffMembers->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
         $specialization = $this->StaffMembers->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
-
+          
+        /** Check edit role for franchises **/
+        
+        if($session["role_name"] == "franchise")
+        {
+           if($data['created_by']!=$session['id'])
+           {
+               $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
+                return $this->redirect(["action"=>"staffList"]);
+           }
+        }
+        
+        /** end here **/
         $this->set("specialization",$specialization);
         $this->set("roles",$roles);		
         $this->set("data",$data);
@@ -135,36 +153,28 @@ class StaffMembersController extends AppController
     }
 
     public function deleteStaff($id){
-        $row = $this->StaffMembers->GymMember->get($id);
+        
+        $session = $this->request->session()->read("User");
+         $row = $this->StaffMembers->GymMember->get($id);
+        
+        /** Delete record checked roles permissions**/
+        if($session["role_name"] == "franchise")
+        {
+           if($row['created_by']!=$session['id'])
+           {
+               $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Delete This Record."));
+                return $this->redirect(["action"=>"staffList"]);
+           }
+        }
+       
+        /** End here **/
         if($this->StaffMembers->GymMember->delete($row)){
             $this->Flash->success(__("Success! Staff Member Deleted Successfully."));
             return $this->redirect($this->referer());
         }
     }
 
-    public function isAuthorized($user)
-    {
-        $role_name = $user["role_name"];
-        $curr_action = $this->request->action;	
-        $members_actions = ["staffList"];
-        $staff_acc_actions = ["staffList"];
-        switch($role_name){			
-            CASE "member":
-                    if(in_array($curr_action,$members_actions))
-                    {return true;}else{return false;}
-            break;
-
-            CASE "staff_member":
-                    if(in_array($curr_action,$staff_acc_actions))
-                    {return true;}else{ return false;}
-            break;
-
-            CASE "accountant":
-                    if(in_array($curr_action,$staff_acc_actions))
-                    {return true;}else{return false;}
-            break;
-        }
-
-        return parent::isAuthorized($user);
+    public function isAuthorized($user){
+        return parent::isAuthorizedCustom($user);
     }
 }

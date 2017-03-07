@@ -27,13 +27,11 @@ $(document).ready(function(){
 				<?php echo __("Group List");?>
 				<small><?php echo __("Group");?></small>
 			  </h1>
-			  <?php
-				if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member" || $session["role_name"] == "accountant")
-				{ ?>
+	
 			  <ol class="breadcrumb">
 				<a href="<?php echo $this->Gym->createurl("GymGroup","addGroup");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Group");?></a>
 			  </ol>
-			  <?php } ?>
+
 			</section>
 		</div>
 		<hr>

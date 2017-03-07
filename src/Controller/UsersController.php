@@ -17,7 +17,7 @@ class UsersController extends AppController
         // $this->Auth->allow(['login','index']);
     // }
 	
-	
+
     public function index()
     {		
             return $this->redirect(["action"=>"login"]);		
@@ -87,7 +87,6 @@ class UsersController extends AppController
                 $session->write("User.dtp_lang",$datepicker_lang);
                 $session->write("User.version",$version);
                 // $session->write("User.assign_class",$assign_class);			
-
                 return $this->redirect($this->Auth->redirectUrl());
             }else{
                 $this->Flash->error(__('Invalid username or password, try again'));

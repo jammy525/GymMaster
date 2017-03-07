@@ -632,4 +632,54 @@ Class GYMfunctionComponent extends Component
 		}
 		return $actions;
 	}
+        
+        public function pre($param){
+            echo '<pre>';
+            print_r($param);
+            echo '</pre>';
+            die('<br/>pre');
+        }
+        
+        /**
+        * Sends email to user's email address.
+        * @param $id
+        * @return
+        */
+        function sendEmail($mailArr = null) {
+            if (!empty($mailArr)) {
+                //echo '<pre>';print_r($mailArr);die();
+                $email = new Email();
+                $email->emailFormat($mailArr['emailFormat']);
+                $email->from(['barkha.info@gmail.com' => 'GoTribe']);
+                $email->to($mailArr['to']);
+                $email->template($mailArr['template']);
+                $email->subject($mailArr['subject']);
+                
+                if(isset($mailArr['addTo'])){
+                        $email->addTo($mailArr['addTo']);
+                }    
+                if(isset($mailArr['viewVars'])){
+                    $email->viewVars($mailArr['viewVars']);
+                }
+                if(isset($mailArr['cc'])){
+                    $email->bcc($mailArr['cc']);
+                }
+                if(isset($mailArr['addCc'])){
+                    $email->bcc($mailArr['addCc']);
+                }
+                if(isset($mailArr['bcc'])){
+                    $email->bcc($mailArr['bcc']);
+                }
+                if(isset($mailArr['addBcc'])){
+                    $email->bcc($mailArr['addBcc']);
+                }
+                
+                
+                
+                $email->send();
+                
+                return true;
+            }
+            return false;
+        }
 }

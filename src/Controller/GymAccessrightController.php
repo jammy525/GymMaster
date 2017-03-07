@@ -44,6 +44,7 @@ class GymAccessrightController extends AppController
 		}	
 	}
 	
+        /*
 	public function isAuthorized($user)
 	{
 		$role_name = $user["role_name"];
@@ -67,6 +68,10 @@ class GymAccessrightController extends AppController
 			break;
 		}		
 		return parent::isAuthorized($user);
+	}*/
+        
+        public function isAuthorized($user){
+            return parent::isAuthorizedCustom($user);
 	}
 }
 

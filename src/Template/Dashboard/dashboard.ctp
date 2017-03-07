@@ -43,11 +43,18 @@ echo $this->Html->script('lang-all');
 <?php 
     $session = $this->request->session();
     $pull = ($session->read("User.is_rtl") == "1") ? "pull-left" : "pull-right";	
+
+    //foreach($menus as $menu){
+            //$controller[] = $menu['controller'];
+            //$action[] = $menu['action'];
+    //}
+    //echo '<pre>';print_r($controller);print_r($action);die;
 ?>
 <section class="content">
     <div id="main-wrapper">		
         <div class="row"><!-- Start Row2 -->
             <div class="row left_section col-md-8 col-sm-8">
+                <?php if($session->read('User.role_id') == 1){?>
                 <div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
                     <a href="<?php echo $this->request->base ."/Franchise/franchiseList";?>">
                         <div class="panel info-box panel-white">
@@ -60,6 +67,7 @@ echo $this->Html->script('lang-all');
                         </div>
                     </a>
                 </div>
+                <?php }?>
                 <div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
                     <a href="<?php echo $this->request->base ."/GymMember/memberList";?>">
                         <div class="panel info-box panel-white">

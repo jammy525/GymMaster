@@ -63,7 +63,8 @@ $(document).ready(function(){
 				echo "<a href='".$this->Gym->createurl('GymAccessRoles','editAccessRoles')."/{$row['id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
 					<a href='".$this->Gym->createurl('GymGroup','deleteAccessRoles')."/{$row['id']}' class='btn btn-flat btn-danger' title='Delete' onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fa fa-trash-o'></i></a>";
 				}
-					echo " <a href='javascript:void(0)' data-url='".$this->request->base ."/GymAjax/viewAccessRole/{$row['slug']}' class='view-grp-member btn btn-flat btn-info' id={$row['id']}><i class='fa fa-eye'></i> ".__("View")."</a>
+					//echo " <a href='javascript:void(0)' data-url='".$this->request->base ."/GymAjax/viewAccessRole/{$row['slug']}' class='view-grp-member btn btn-flat btn-info' id={$row['id']}><i class='fa fa-eye'></i> ".__("View")."</a>
+					echo "
 					</td>
 				</tr>
 				";

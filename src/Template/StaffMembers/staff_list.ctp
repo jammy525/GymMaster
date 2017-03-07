@@ -17,7 +17,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator")
+if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
 { ?>
 <script>
 
@@ -62,10 +62,12 @@ $(document).ready(function(){
 			<tbody>
 			<?php			
 			foreach($data as $row)
-			{				
+			{	
+                            
+                           
 				echo "
 				<tr>					
-					<td><img src='".$this->request->webroot ."upload/{$row['image']}' class='membership-img img-circle'></img></td>
+					<td><img src='".$this->request->webroot ."upload/".((isset($row['image']) && $row['image'] != '') ? $row['image'] : 'profile-placeholder.png')."' class='membership-img img-circle'></img></td>
 					<td>{$row['first_name']} {$row['last_name']}</td>
 					<td>{$row['gym_role']['name']}</td>
 					<td>{$row['email']}</td>
@@ -73,6 +75,7 @@ $(document).ready(function(){
 					<td>
 					<a href='".$this->Gym->createurl('StaffMembers','editStaff')."/{$row['id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
 					<a href='".$this->Gym->createurl('StaffMembers','deleteStaff')."/{$row['id']}' class='btn btn-flat btn-danger' title='Delete' onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fa fa-trash-o'></i></a>
+                                        <a href='javascript:void(0)' id={$row['id']} data-url='".$this->request->base ."/GymAjax/view_staff' class='view_jmodal btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a> 
 					</td>
 				</tr>
 				";

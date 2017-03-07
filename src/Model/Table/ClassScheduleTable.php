@@ -10,8 +10,9 @@ class ClassScheduleTable extends Table
 		$this->addBehavior('Timestamp');
 		$this->belongsTo("GymMember",['foreignKey'=>"assign_staff_mem"]);
 		$this->hasMany("GymNotice",["foreignKey"=>"class_id","dependent"=>true]); // it will also delete all notice for deleted class_id
-		$this->belongsTo("ClassScheduleList");
+		$this->hasMany("ClassScheduleList",["foreignKey"=>"class_id"]);
 		$this->belongsTo("GymMemberClass");
                 $this->belongsTo("GymLocation",["foreignKey"=>"location_id"]);
+                $this->belongsTo("GymClass",["foreignKey"=>"class_name"]);
 	}
 }

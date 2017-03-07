@@ -73,12 +73,23 @@ class GymLocationController extends AppController
 	}
         
 	public function editLocation($pid){	
+            
+            $session = $this->request->session()->read("User");
             $this->set("edit",true);	
             $this->set("title",__("Edit Location"));
             $row = $this->GymLocation->get($pid);
             $this->set("data",$row->toArray());
 
-            //$classes = $this->GymLocation->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"]);
+             /** Edit record checked roles permissions* */
+            if ($session["role_name"] == "franchise") {
+                if ($row['created_by'] != $session['id']) {
+                    $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
+                    return $this->redirect(["action" => "locationList"]);
+                }
+            }
+
+        /** End here * */
+        //$classes = $this->GymLocation->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"]);
             //$this->set("classes",$classes);
 
             if($this->request->is("post")){
@@ -102,37 +113,27 @@ class GymLocationController extends AppController
 	
 	public function deleteLocation($did)
 	{
-		$row = $this->GymLocation->get($did);
-		if($this->GymLocation->delete($row))
+		
+            $session = $this->request->session()->read("User");
+            $row = $this->GymLocation->get($did);
+                
+        /** Edit record checked roles permissions* */
+        if ($session["role_name"] == "franchise") {
+            if ($row['created_by'] != $session['id']) {
+                $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
+                return $this->redirect(["action" => "locationList"]);
+            }
+        }
+
+        /** End here * */
+        if($this->GymLocation->delete($row))
 		{
 			$this->Flash->success(__("Success! Record Deleted Successfully Updated."));
 			return $this->redirect(["action"=>"locationList"]); 
 		} 		
 	}
 	
-	public function isAuthorized($user)
-	{
-		$role_name = $user["role_name"];
-		$curr_action = $this->request->action;
-		$members_actions = ["noticeList"];
-		$staff_acc_actions = ["noticeList"];
-		switch($role_name)
-		{			
-			CASE "member":
-				if(in_array($curr_action,$members_actions))
-				{return true;}else{return false;}
-			break;
-			
-			CASE "staff_member":
-				if(in_array($curr_action,$staff_acc_actions))
-				{return true;}else{ return false;}
-			break;
-			
-			CASE "accountant":
-				if(in_array($curr_action,$staff_acc_actions))
-				{return true;}else{return false;}
-			break;
-		}		
-		return parent::isAuthorized($user);
+	public function isAuthorized($user){
+            return parent::isAuthorizedCustom($user);
 	}
 }

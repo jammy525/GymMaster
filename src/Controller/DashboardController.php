@@ -15,9 +15,9 @@ class DashboardController extends AppController
 	}
 	
 	public function index()
-	{	
-		$session = $this->request->session()->read("User");
-		switch($session["role_name"])
+	{
+		//$session = $this->request->session()->read("User");
+		/*switch($session["role_name"])
 		{
 			CASE "administrator":
 				return $this->redirect(["action"=>"adminDashboard"]);
@@ -33,127 +33,133 @@ class DashboardController extends AppController
                     
 			default:	
 				return $this->redirect(["action"=>"staffAccDashboard"]);
-		}		
+		}*/
+                return $this->redirect(["action"=>"adminDashboard"]);
 	}
-	
+        
+        
 	public function adminDashboard()
 	{
-		$session = $this->request->session()->read("User");
-		$conn = ConnectionManager::get('default');
-		$this->autoRender = false;
-		$mem_table = TableRegistry::get("GymMember");
-		$grp_tbl = TableRegistry::get("GymGroup");
-		$message_tbl = TableRegistry::get("GymMessage");
-		$membership_tbl = TableRegistry::get("Membership");				
-		$notice_tbl = TableRegistry::get("gym_notice");		
-		
-		$members = $mem_table->find("all")->where(["role_name"=>"member"]);
-		$members = $members->count();
-		
-		$staff_members = $mem_table->find("all")->where(["role_name"=>"staff_member"]);
-		$staff_members = $staff_members->count();
-                
-                $franchise = $mem_table->find("all")->where(["role_name"=>"franchise"]);
-		$franchise = $franchise->count();
-		
-		$curr_id = intval($session["id"]);
-		$messages = $message_tbl->find("all")->where(["receiver"=>$curr_id]);
-		$messages = $messages->count();
-		
-		$groups = $grp_tbl->find("all");
-		$groups = $groups->count();
-		
-		$membership = $membership_tbl->find("all")->limit(5)->select(["membership_label","gmgt_membershipimage"])->hydrate(false)->toArray();
-		$groups_data = $grp_tbl->find("all")->limit(5)->select(["name","image"])->hydrate(false)->toArray();
-		
-		$cal_lang = $this->GYMFunction->getSettings("calendar_lang");
-		
-		$this->set("cal_lang",$cal_lang);
-		$this->set("members",$members);
-		$this->set("staff_members",$staff_members);
-                $this->set("franchise",$franchise);
-		$this->set("messages",$messages);
-		$this->set("groups",$groups);
-		$this->set("membership",$membership);
-		$this->set("groups_data",$groups_data);
-		
-		################################################
-		
-		$month =array('1'=>"January",'2'=>"February",'3'=>"March",'4'=>"April",
-		'5'=>"May",'6'=>"June",'7'=>"July",'8'=>"August",
-		'9'=>"September",'10'=>"Octomber",'11'=>"November",'12'=>"December",);
-		$year = date('Y');
-		
-		/* $q="SELECT EXTRACT(MONTH FROM created_date) as date_d,sum(paid_amount) as count_c FROM `membership_payment` WHERE YEAR(created_date) = '".$year."' group by month(created_date) ORDER BY month(created_date) ASC";    NOT WORKING ON MYSQL 5.7/PHP 5.7*/
-		$q="SELECT EXTRACT(MONTH FROM created_date) as date_d,sum(paid_amount) as count_c FROM `membership_payment` WHERE YEAR(created_date) = '".$year."' group by date_d ORDER BY date_d ASC";
-				
-		$result = $conn->execute($q);
-		$result = $result->fetchAll('assoc');		
-		$chart_array_pay = array();
-		$chart_array_pay[] = array('Month','Fee 	Payment');
-		foreach($result as $r){
-                    $chart_array_pay[]=array( $month[$r["date_d"]],(int)$r["count_c"]);
-		}
-		$this->set("chart_array_pay",$chart_array_pay); 
-		$this->set("result_pay",$result); 
-		
-		
-		
-		
-		
-		################################################	
-		
-		$chart_array = array();
-		$report_2 ="SELECT  at.class_id,cl.class_name,
-					SUM(case when `status` ='Present' then 1 else 0 end) as Present,
-					SUM(case when `status` ='Absent' then 1 else 0 end) as Absent
-					from `gym_attendance` as at,`class_schedule` as cl where at.attendance_date >  DATE_SUB(NOW(), INTERVAL 1 WEEK) AND at.class_id = cl.id  AND at.role_name = 'member' GROUP BY at.class_id";
-		$report_2 = $conn->execute($report_2);
-		$report_2 = $report_2->fetchAll('assoc');			
-		$report_2 = $report_2;
-		$chart_array_at[] = array(__('Class'),__('Present'),__('Absent'));	
-		if(!empty($report_2))
-		{
-			foreach($report_2 as $result)
-			{			
-				$cls = $result['class_name'];					
-				$chart_array_at[] = [$result['class_name'],(int)$result["Present"],(int)$result["Absent"]];
-			}
-		}
-		$this->set("report_member",$report_2); 
-		$this->set("chart_array_at",$chart_array_at);
+            //$access_tbl = TableRegistry::get("GymAccessright");
+            //$menus = $access_tbl->find("all")->hydrate(false)->toArray();		
+            //$this->set("menus",$menus);
 
-		##################STAFF ATTENDANCE REPORT#############################	
-	
-		// $sdate = '2016-07-01';
-		// $edate = '2016-08-12';
-		$report_2 = null;
-		
-		$chart_array_staff = array();
-		$report_2 ="SELECT  at.user_id,
-				SUM(case when `status` ='Present' then 1 else 0 end) as Present,
-				SUM(case when `status` ='Absent' then 1 else 0 end) as Absent
-				from `gym_attendance` as at where at.attendance_date >  DATE_SUB(NOW(), INTERVAL 1 WEEK)  AND at.role_name = 'staff_member' GROUP BY at.user_id";
-		
-		$report_2 = $conn->execute($report_2);
-		$report_2 = $report_2->fetchAll('assoc');
-		
-		$chart_array_staff[] = array(__('Staff Member'),__('Present'),__('Absent'));
-		if(!empty($report_2))
-		{
-			foreach($report_2 as $result)
-			{
-				$user_name = $this->GYMFunction->get_user_name($result["user_id"]);
-				$chart_array_staff[] = array("$user_name",(int)$result["Present"],(int)$result["Absent"]);
-			}
-		} 			
-		$this->set("chart_array_staff",$chart_array_staff);
-		$this->set("report_sataff",$report_2);
-		// var_dump($report_2);die;
-		$cal_array = $this->getCalendarData();
-		$this->set("cal_array",$cal_array);		
-		
-		$this->render("dashboard");
+            $session = $this->request->session()->read("User");
+            $conn = ConnectionManager::get('default');
+            $this->autoRender = false;
+            $mem_table = TableRegistry::get("GymMember");
+            $grp_tbl = TableRegistry::get("GymGroup");
+            $message_tbl = TableRegistry::get("GymMessage");
+            $membership_tbl = TableRegistry::get("Membership");				
+            $notice_tbl = TableRegistry::get("gym_notice");		
+
+            $members = $mem_table->find("all")->where(["role_name"=>"member"]);
+            $members = $members->count();
+
+            $staff_members = $mem_table->find("all")->where(["role_name"=>"staff_member"]);
+            $staff_members = $staff_members->count();
+
+            $franchise = $mem_table->find("all")->where(["role_name"=>"franchise"]);
+            $franchise = $franchise->count();
+
+            $curr_id = intval($session["id"]);
+            $messages = $message_tbl->find("all")->where(["receiver"=>$curr_id]);
+            $messages = $messages->count();
+
+            $groups = $grp_tbl->find("all");
+            $groups = $groups->count();
+
+            $membership = $membership_tbl->find("all")->limit(5)->select(["membership_label","gmgt_membershipimage"])->hydrate(false)->toArray();
+            $groups_data = $grp_tbl->find("all")->limit(5)->select(["name","image"])->hydrate(false)->toArray();
+
+            $cal_lang = $this->GYMFunction->getSettings("calendar_lang");
+
+            $this->set("cal_lang",$cal_lang);
+            $this->set("members",$members);
+            $this->set("staff_members",$staff_members);
+            $this->set("franchise",$franchise);
+            $this->set("messages",$messages);
+            $this->set("groups",$groups);
+            $this->set("membership",$membership);
+            $this->set("groups_data",$groups_data);
+
+            ################################################
+
+            $month =array('1'=>"January",'2'=>"February",'3'=>"March",'4'=>"April",
+            '5'=>"May",'6'=>"June",'7'=>"July",'8'=>"August",
+            '9'=>"September",'10'=>"Octomber",'11'=>"November",'12'=>"December",);
+            $year = date('Y');
+
+            /* $q="SELECT EXTRACT(MONTH FROM created_date) as date_d,sum(paid_amount) as count_c FROM `membership_payment` WHERE YEAR(created_date) = '".$year."' group by month(created_date) ORDER BY month(created_date) ASC";    NOT WORKING ON MYSQL 5.7/PHP 5.7*/
+            $q="SELECT EXTRACT(MONTH FROM created_date) as date_d,sum(paid_amount) as count_c FROM `membership_payment` WHERE YEAR(created_date) = '".$year."' group by date_d ORDER BY date_d ASC";
+
+            $result = $conn->execute($q);
+            $result = $result->fetchAll('assoc');		
+            $chart_array_pay = array();
+            $chart_array_pay[] = array('Month','Fee Payment');
+            foreach($result as $r){
+                $chart_array_pay[]=array( $month[$r["date_d"]],(int)$r["count_c"]);
+            }
+            $this->set("chart_array_pay",$chart_array_pay); 
+            $this->set("result_pay",$result); 
+
+
+
+
+
+            ################################################	
+
+            $chart_array = array();
+            $report_2 ="SELECT  at.class_id,cl.class_name,
+                                    SUM(case when `status` ='Present' then 1 else 0 end) as Present,
+                                    SUM(case when `status` ='Absent' then 1 else 0 end) as Absent
+                                    from `gym_attendance` as at,`class_schedule` as cl where at.attendance_date >  DATE_SUB(NOW(), INTERVAL 1 WEEK) AND at.class_id = cl.id  AND at.role_name = 'member' GROUP BY at.class_id";
+            $report_2 = $conn->execute($report_2);
+            $report_2 = $report_2->fetchAll('assoc');			
+            $report_2 = $report_2;
+            $chart_array_at[] = array(__('Class'),__('Present'),__('Absent'));	
+            if(!empty($report_2))
+            {
+                    foreach($report_2 as $result)
+                    {			
+                            $cls = $result['class_name'];					
+                            $chart_array_at[] = [$result['class_name'],(int)$result["Present"],(int)$result["Absent"]];
+                    }
+            }
+            $this->set("report_member",$report_2); 
+            $this->set("chart_array_at",$chart_array_at);
+
+            ##################STAFF ATTENDANCE REPORT#############################	
+
+            // $sdate = '2016-07-01';
+            // $edate = '2016-08-12';
+            $report_2 = null;
+
+            $chart_array_staff = array();
+            $report_2 ="SELECT  at.user_id,
+                            SUM(case when `status` ='Present' then 1 else 0 end) as Present,
+                            SUM(case when `status` ='Absent' then 1 else 0 end) as Absent
+                            from `gym_attendance` as at where at.attendance_date >  DATE_SUB(NOW(), INTERVAL 1 WEEK)  AND at.role_name = 'staff_member' GROUP BY at.user_id";
+
+            $report_2 = $conn->execute($report_2);
+            $report_2 = $report_2->fetchAll('assoc');
+
+            $chart_array_staff[] = array(__('Staff Member'),__('Present'),__('Absent'));
+            if(!empty($report_2))
+            {
+                    foreach($report_2 as $result)
+                    {
+                            $user_name = $this->GYMFunction->get_user_name($result["user_id"]);
+                            $chart_array_staff[] = array("$user_name",(int)$result["Present"],(int)$result["Absent"]);
+                    }
+            } 			
+            $this->set("chart_array_staff",$chart_array_staff);
+            $this->set("report_sataff",$report_2);
+            // var_dump($report_2);die;
+            $cal_array = $this->getCalendarData();
+            $this->set("cal_array",$cal_array);		
+
+            $this->render("dashboard");
 	}
 
 	public function franchiseDashboard()
@@ -259,11 +265,11 @@ class DashboardController extends AppController
 		$chart_array_staff[] = array(__('Staff Member'),__('Present'),__('Absent'));
 		if(!empty($report_2))
 		{
-			foreach($report_2 as $result)
-			{
-				$user_name = $this->GYMFunction->get_user_name($result["user_id"]);
-				$chart_array_staff[] = array("$user_name",(int)$result["Present"],(int)$result["Absent"]);
-			}
+                    foreach($report_2 as $result)
+                    {
+                            $user_name = $this->GYMFunction->get_user_name($result["user_id"]);
+                            $chart_array_staff[] = array("$user_name",(int)$result["Present"],(int)$result["Absent"]);
+                    }
 		} 			
 		$this->set("chart_array_staff",$chart_array_staff);
 		$this->set("report_sataff",$report_2);
@@ -385,7 +391,7 @@ class DashboardController extends AppController
 		$this->set("groups",$groups);
 		$this->set("membership",$membership);
 		$this->set("groups_data",$groups_data);
-		
+		//die('hbjhb');
 	}
 
 	public function getCalendarData()
@@ -467,7 +473,7 @@ class DashboardController extends AppController
 		return $cal_array;		
 	}
 	
-	public function isAuthorized($user)
+	/*public function isAuthorized($user)
 	{
 		$role_name = $user["role_name"];
 		$curr_action = $this->request->action;
@@ -498,5 +504,9 @@ class DashboardController extends AppController
 		}
 		
 		return parent::isAuthorized($user);
+	}*/
+        
+        public function isAuthorized($user){
+            return parent::isAuthorizedCustom($user);
 	}
 }
