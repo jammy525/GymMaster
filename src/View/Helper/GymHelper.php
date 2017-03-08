@@ -496,5 +496,51 @@ public function get_total_group_members($gid)
 						}';
 		return $parameters;
 	}
+        
+        public function get_class_type($mid)
+        {
+            $class_type_table = TableRegistry::get("ClassType");
+            $row = $class_type_table->get($mid)->toArray();
+           return  $row['title']; 
+        }
+        public function get_classes_by_id($id)
+        {
+	$class_table = TableRegistry::get("GymClass");
+	$row = $class_table->get($id)->toArray();	
+	return $row["name"];
+        }
+        public function get_classes_scheduled_by_id($gid)
+        {
+            
+        $class_sche_table = TableRegistry::get("ClassSchedule");
+        $datas = $class_sche_table->find('all')->where(["class_name"=> $gid])->toArray();
+        //print_r( $datas);
+        $sum=0;
+        foreach($datas as $res)
+        {
+            //print_r($res);
+            $id=$res['id'];
+            $class_table = TableRegistry::get("ClassScheduleList");
+            $data = $class_table->find("all")->where(["class_id"=> $id])->select(["id"]); 
+            $count=$data->count();
+            $sum=$sum+$count;
+        }
+	
+	return $sum;
+        }
+        public function get_class_schedule_name($gid)
+        {
+               
+               $class_sche_table = TableRegistry::get("ClassSchedule");
+	       $datas = $class_sche_table->find('all')->where(["id"=> $gid])->toArray();
+                $classes_id=$datas[0]["class_name"]; 
+               
+                $class_table = TableRegistry::get("GymClass");
+                $datass = $class_table->find('all')->where(["id"=> $classes_id])->toArray();
+               
+                return $datass[0]["name"]; 
+               
+     
+        }
 
 }
