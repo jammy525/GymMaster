@@ -4,11 +4,15 @@ echo $this->Html->script('bootstrap-multiselect');
 ?>
 <script type="text/javascript">
 $(document).ready(function() {
+        var date = new Date();
 	$('#specialization').multiselect({
 		includeSelectAllOption: true	
 	});
-	// $(".dob").datepicker({format: '<?php echo $this->Gym->getSettings("date_format"); ?>'});
-	$(".dob").datepicker({format:"yyyy-mm-dd"});
+	$(".dob").datepicker({
+            format: "<?php echo $this->Gym->getSettings('date_format'); ?>",
+            endDate: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0)
+        });
+        
 	var box_height = $(".box").height();
 	var box_height = box_height + 500 ;
 	$(".content-wrapper").css("height",box_height+"px");

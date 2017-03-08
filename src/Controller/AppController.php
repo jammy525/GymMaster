@@ -70,8 +70,21 @@ class AppController extends Controller
             return false;
         }
     }
-	 
-	
+    
+    public function isAuthorizedCustom($user) {
+        $this->loadComponent("GYMFunction");
+        $role_name = $user["role_name"];
+        $controller = $this->request->controller;
+        $curr_action = $this->request->action;
+        $actions_list = $this->GYMFunction->getActionsByRoles($user["role_id"], $controller);
+        
+        if (in_array($curr_action, $actions_list)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function beforeRender(Event $event)
     {
 		if(file_exists(TMP.'installed.txt')) 

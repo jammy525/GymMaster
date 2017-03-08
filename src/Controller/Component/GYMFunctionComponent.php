@@ -682,4 +682,12 @@ Class GYMfunctionComponent extends Component
             }
             return false;
         }
+        
+        public function get_membership_names($ids)
+	{ 		
+		$mem_tbl = TableRegistry::get("Membership");
+		$amt = $mem_tbl->find('all')->where(['id IN' => $ids])->toArray();
+                $this->pre($amt);
+		
+	}
 }

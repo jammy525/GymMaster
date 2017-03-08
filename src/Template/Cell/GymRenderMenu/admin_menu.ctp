@@ -187,7 +187,7 @@ if($is_rtl == "1") { ?>
             </li>
             <li class="<?php echo ($this->request->action == "sellRecord" || $this->request->action == "sellProduct" || $this->request->action == "editRecord") ? "active" : "";?>" style="<?php echo (in_array('GymStore', $controller) && in_array('sellRecord', $action) ) ? 'display:block' : 'display:none';?>">
                 <a href="<?php echo $this->Gym->createurl("GymStore","sellRecord");?>">
-                    <i class="fa fa-circle-o"></i><span><?php echo __('Store');?></span></i>
+                    <i class="fa fa-circle-o"></i><span><?php echo __('Store');?></span>
                 </a>
             </li>				
         </ul>
@@ -245,6 +245,26 @@ if($is_rtl == "1") { ?>
         <a href="<?php echo $this->Gym->createurl("GymLocation","locationList");?>">
             <i class="fa fa-map-marker"></i> <span><?php echo __("Location");?></span>  
         </a>
+    </li>
+    
+    <li class="treeview <?php echo ( ($this->request->controller == "DiscountCode") || ($this->request->controller == "ReferralUrl") ) ? "active" : "";?>" style="<?php echo (in_array('DiscountCode', $controller) && in_array('discountCodeList', $action) ) ? 'display:block' : 'display:none';?>">
+        <a href="#">
+            <i class="fa fa-cart-arrow-down"></i> <span><?php echo __("Discount & Referral");?></span>
+            <i class="fa fa-angle-left <?php echo $pull;?>"></i>
+        </a>
+        <ul class="treeview-menu">
+            <li class="<?php echo ($this->request->action == "discountCodeList" || $this->request->action == "addDiscountCode" || $this->request->action == "editDiscountCode") ? "active" : "";?>" style="<?php echo (in_array('DiscountCode', $controller) && in_array('discountCodeList', $action) ) ? 'display:block' : 'display:none';?>">
+                <a href="<?php echo $this->Gym->createurl("DiscountCode","discountCodeList");?>">
+                    <i class="fa fa-circle-o"></i> <span><?php echo __('Discount Codes');?></span>
+                </a>
+            </li>
+            <li class="<?php echo ($this->request->action == "referralUrlList" || $this->request->action == "addreferralUrl" || $this->request->action == "editreferralUrl") ? "active" : "";?>" style="<?php echo (in_array('ReferralUrl', $controller) && in_array('referralUrlList', $action) ) ? 'display:block' : 'display:none';?>">
+                <a href="<?php echo $this->Gym->createurl("ReferralUrl","referralUrlList");?>">
+                    <i class="fa fa-circle-o"></i><?php echo __('Referral URLs');?>
+                </a>
+            </li>
+        </ul> 
+
     </li>
     <li class="treeview <?php echo ($this->request->controller == "Reports") ? "active" : "";?>" style="<?php echo (in_array('Reports', $controller) && in_array('membershipReport', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("Reports","membershipReport");?>">

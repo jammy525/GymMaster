@@ -24,14 +24,25 @@ class GymAccountantController extends AppController
 		
 		if($this->request->is("post"))
 		{
-			$accountant = $this->GymAccountant->GymMember->newEntity();
+		
+                    $lastid = $this->GymAccountant->GymMember->find("all",["fields"=>"id"])->last();
+                    $lastid = ($lastid != null) ? $lastid->id + 1 : 01 ;
+                    $m = date("d");
+                    $y = date("y");
+                    $prefix = "A".$lastid;
+                    $member_id = $prefix.$m.$y;
+                    
+                    $accountant = $this->GymAccountant->GymMember->newEntity();
 			
 			$image = $this->GYMFunction->uploadImage($this->request->data['image']);
-			$this->request->data['image'] = (!empty($image)) ? $image : "logo.png";
+			$this->request->data['image'] = (!empty($image)) ? $image : "profile-placeholder.png";
 			$this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
 			$this->request->data['created_date'] = date("Y-m-d");
 			$this->request->data['created_by'] = $session["id"];
 			$this->request->data['role_name'] = "accountant";
+                        $this->request->data['role_id'] = 5;
+                        $this->request->data['activated'] = 1;
+                        $this->request->data['member_id'] = $member_id;
 		
 			$accountant = $this->GymAccountant->GymMember->patchEntity($accountant,$this->request->data);
 			if($this->GymAccountant->GymMember->save($accountant))
@@ -105,30 +116,7 @@ class GymAccountantController extends AppController
 		}
 	}
 	
-	public function isAuthorized($user)
-	{
-		$role_name = $user["role_name"];
-		$curr_action = $this->request->action;
-		$members_actions = ["accountantList"];
-		$staff_acc_actions = ["accountantList"];
-		switch($role_name)
-		{			
-			CASE "member":
-				if(in_array($curr_action,$members_actions))
-				{return true;}else{return false;}
-			break;
-			
-			CASE "staff_member":
-				if(in_array($curr_action,$staff_acc_actions))
-				{return true;}else{ return false;}
-			break;
-			
-			CASE "accountant":
-				if(in_array($curr_action,$staff_acc_actions))
-				{return true;}else{return false;}
-			break;
-		}
-		
-		return parent::isAuthorized($user);
+	public function isAuthorized($user){
+            return parent::isAuthorizedCustom($user);
 	}
 }

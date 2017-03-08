@@ -12,6 +12,7 @@ Class GymMemberTable extends Table{
 		$this->addBehavior('Timestamp');
 		$this->belongsTo("StaffMembers",["foreignKey"=>"assign_staff_mem"]);
                 $this->belongsTo("Franchise");
+                $this->belongsTo("DiscountCode");
 		$this->belongsTo("ClassSchedule",["foreignKey"=>"assign_class"]);
 		$this->belongsTo("GymGroup",["foreignKey"=>"assign_group"]);
 		$this->belongsTo("GymInterestArea",["foreignKey"=>"intrested_area"]);

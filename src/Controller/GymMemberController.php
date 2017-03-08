@@ -42,6 +42,10 @@ Class GymMemberController extends AppController
 			}else{
 				$data = $this->GymMember->find("all")->where(["role_name"=>"member"])->hydrate(false)->toArray();
 			}
+		}else if($session["role_name"] == "franchise")
+		{       $uid = intval($session["id"]);
+			/* $data = $this->GymMember->find("all")->where(["OR"=>[["role_name"=>"member"],["role_name"=>"administrator"]]])->hydrate(false)->toArray(); */
+			$data = $this->GymMember->find("all")->where(["created_by"=>$uid,"role_name"=>"member"])->hydrate(false)->toArray();
 		}
 		else{
 			$data = $this->GymMember->find("all")->where(["role_name"=>"member"])->hydrate(false)->toArray();
@@ -57,7 +61,7 @@ Class GymMemberController extends AppController
 		
 		$lastid = $this->GymMember->find("all",["fields"=>"id"])->last();
 		$lastid = ($lastid != null) ? $lastid->id + 1 : 01 ;
-		
+		$session = $this->request->session()->read("User");
 		$member = $this->GymMember->newEntity();
 		$m = date("d");
 		$y = date("y");
@@ -67,8 +71,13 @@ Class GymMemberController extends AppController
 		$this->set("member_id",$member_id);
 		$staff = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"staff_member"]);
 		$staff = $staff->select(["id","name"=>$staff->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
-		$classes = $this->GymMember->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"]);
-		$groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
+		
+                $referrer_by = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_id !="=>"1"]);
+		$referrer_by = $referrer_by->select(["id","name"=>$referrer_by->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
+                
+                $classes = $this->GymMember->GymClass->find("list",["keyField"=>"id","valueField"=>"name"]);
+		
+                $groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
 		$interest = $this->GymMember->GymInterestArea->find("list",["keyField"=>"id","valueField"=>"interest"]);
 		$source = $this->GymMember->GymSource->find("list",["keyField"=>"id","valueField"=>"source_name"]);
 		$membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
@@ -79,13 +88,20 @@ Class GymMemberController extends AppController
 		$this->set("interest",$interest);
 		$this->set("source",$source);
 		$this->set("membership",$membership);
-		$this->set("referrer_by",$staff);
+		$this->set("referrer_by",$referrer_by);
 		
 		if($this->request->is("post"))
 		{
+                    $this->request->data['role_id'] = 4;
+                    $this->request->data['alert_sent'] = 1;
+                    //$this->request->data['assign_staff_mem'] = '';
+                    //$this->request->data['role_id'] = 4;
+                    
 			$this->request->data['member_id'] = $member_id;
+                        $this->request->data['created_by']=$session["id"];  
+                        $this->request->data['assign_group']=0;
 			$image = $this->GYMFunction->uploadImage($this->request->data['image']);
-			$this->request->data['image'] = (!empty($image)) ? $image : "logo.png";
+			$this->request->data['image'] = (!empty($image)) ? $image : "profile-placeholder.png";
 			$this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
 			$this->request->data['inquiry_date'] = date("Y-m-d",strtotime($this->request->data['inquiry_date']));
 			$this->request->data['trial_end_date'] = date("Y-m-d",strtotime($this->request->data['trial_end_date']));
@@ -127,15 +143,15 @@ Class GymMemberController extends AppController
 					$this->Flash->success(__("Success! Record Saved Successfully."));					
 				}
 				
-				foreach($this->request->data["assign_class"] as $class)
-				{
-					$new_row = $this->GymMember->GymMemberClass->newEntity();
-					$data = array();
-					$data["member_id"] = $member->id;
-					$data["assign_class"] = $class;
-					$new_row = $this->GymMember->GymMemberClass->patchEntity($new_row,$data);
-					$this->GymMember->GymMemberClass->save($new_row);
-				}
+				//foreach($this->request->data["assign_class"] as $class)
+				//{
+					//$new_row = $this->GymMember->GymMemberClass->newEntity();
+					//$data = array();
+					//$data["member_id"] = $member->id;
+					//$data["assign_class"] = $class;
+					//$new_row = $this->GymMember->GymMemberClass->patchEntity($new_row,$data);
+					//$this->GymMember->GymMemberClass->save($new_row);
+				//}
 			}else
 			{				
 				if($member->errors())
@@ -183,9 +199,9 @@ Class GymMemberController extends AppController
 		
 		$membership_classes = $this->GymMember->Membership->find()->where(["id"=>$data['selected_membership']])->select(["membership_class"])->hydrate(false)->toArray();		
 			
-		$membership_classes = (json_decode($membership_classes[0]["membership_class"])); /*ERROR IN NEW PHP 5.7 VERSION */
-		/* if(!empty($membership_classes)) FOR PHP 5.7 But NOT WORKNIG
-		{
+		// $membership_classes = (json_decode($membership_classes[0]["membership_class"])); /*ERROR IN NEW PHP 5.7 VERSION */
+		/* if(!empty($membership_classes)) FOR PHP 5.7 But NOT WORKNIG*/
+		if(!empty($membership_classes)){
 			$membership_classes = $membership_classes[0]["membership_class"];
 			$membership_classes = str_ireplace(array("[","]","'"),"",$membership_classes);
 			$membership_classes = explode(",",$membership_classes);	
@@ -193,14 +209,16 @@ Class GymMemberController extends AppController
 
 		}
 		else{
-			$classes = array();
-		} */
-		if(!empty($membership_classes)) 
+			//$classes = array();
+                    $classes = $this->GymMember->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"]);
+		}
+                
+		/*if(!empty($membership_classes)) 
 		{
 			$classes = $this->GymMember->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"])->where(["id IN"=>$membership_classes])->toArray();
 		}else{
 			$classes = array();
-		} 
+		} */
 				
 		$member_classes = $this->GymMember->GymMemberClass->find()->where(["member_id"=>$id])->select(["assign_class"])->hydrate(false)->toArray();
 		$mem_classes = array();
@@ -210,7 +228,7 @@ Class GymMemberController extends AppController
 		}
 		
 		$this->set("member_class",$mem_classes);
-		if($session["id"] != $data["id"] && $session["role_name"] != 'administrator')
+		if($session["id"] != $data["created_by"] && $session["role_name"] == 'franchise')
 		{
 			echo $this->Flash->error("No sneaking around! ;( ");
 			return $this->redirect(["action"=>"memberList"]);			
@@ -245,6 +263,7 @@ Class GymMemberController extends AppController
 			}else{
 				unset($this->request->data['image']);
 			}
+                        
 			/* $this->request->data['image'] = $image ; */
 			$this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
 			$this->request->data['inquiry_date'] = date("Y-m-d",strtotime($this->request->data['inquiry_date']));
@@ -258,8 +277,10 @@ Class GymMemberController extends AppController
 				$this->request->data['membership_valid_to'] = date("Y-m-d",strtotime($this->request->data['membership_valid_to']));
 			}
 			$this->request->data['first_pay_date'] = date("Y-m-d",strtotime($this->request->data['first_pay_date']));
-			$this->request->data['assign_group'] = json_encode($this->request->data['assign_group']);
-			
+			//$this->request->data['assign_group'] = json_encode($this->request->data['assign_group']);
+			 $this->request->data['assign_group']=0;
+                         $this->request->data['created_by']=$session["id"];
+                         
 			$update = $this->GymMember->patchEntity($row,$this->request->data);
 			if($this->GymMember->save($update))
 			{
@@ -294,7 +315,16 @@ Class GymMemberController extends AppController
 	
 	public function deleteMember($id)
 	{
-		$row = $this->GymMember->get($id);
+	      
+              $session = $this->request->session()->read("User");
+              $row = $this->GymMember->get($id);
+                
+                if($session["id"] != $row["created_by"] && $session["role_name"] == 'franchise')
+		{
+			echo $this->Flash->error("No sneaking around! ;( ");
+			return $this->redirect(["action"=>"memberList"]);			
+		}
+                
 		if($this->GymMember->delete($row))
 		{
 			$this->Flash->success(__("Success! Record Deleted Successfully."));
@@ -384,18 +414,18 @@ Class GymMemberController extends AppController
 	
 	public function activateMember($aid)
 	{
-		$this->autoRender = false;
-		$row = $this->GymMember->get($aid);
-		$row->activated = 1;
-		if($this->GymMember->save($row))
-		{
-			$this->Flash->success(__("Success! Member activated successfully."));
-			return $this->redirect(["action"=>"memberList"]);
-		}
+            $this->autoRender = false;
+            $row = $this->GymMember->get($aid);
+            $row->activated = 1;
+            if($this->GymMember->save($row))
+            {
+                    $this->Flash->success(__("Success! Member activated successfully."));
+                    return $this->redirect(["action"=>"memberList"]);
+            }
 	}
 			
 	
-	
+	/*
 	public function isAuthorized($user)
 	{
 		$role_name = $user["role_name"];
@@ -421,6 +451,11 @@ Class GymMemberController extends AppController
 		}
 		
 		return parent::isAuthorized($user);
+	}
+         * */
+        
+        public function isAuthorized($user){
+            return parent::isAuthorizedCustom($user);
 	}
 
 }
