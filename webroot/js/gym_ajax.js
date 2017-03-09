@@ -940,19 +940,49 @@ $("body").on("change",".membership_id",function(){
     
     //general method to view item in modal
     $("body").on("click",".view_jmodal",function(){
-    var ajaxurl = $(this).attr("data-url");	
-    var id = $(this).attr("id");
-    //alert(ajaxurl + '------------'+id);
-    var curr_data = {id:id};
-    $.ajax({
-        url:ajaxurl,
-        data : curr_data,
-        type : "POST",
-        success : function(result){			
-            $('.gym-modal').modal('show');			
-            $(".gym-modal .modal-content").html(result);
-        }
-    });	
+        var ajaxurl = $(this).attr("data-url");	
+        var id = $(this).attr("id");
+        //alert(ajaxurl + '------------'+id);
+        var curr_data = {id:id};
+        $.ajax({
+            url:ajaxurl,
+            data : curr_data,
+            type : "POST",
+            success : function(result){			
+                $('.gym-modal').modal('show');			
+                $(".gym-modal .modal-content").html(result);
+            }
+        });	
+    });
+    
 });
 
-});
+/**
+    *
+    * @param {jqObject} the field where the validation applies
+    * @param {Array[String]} validation rules for this field
+    * @param {int} rule index
+    * @param {Map} form options
+    * @return an error string if validation failed
+    */
+    function checkWORLD(field, rules, i, options){
+        var baseUrl = window.location.protocol + "//" + window.location.host + "/";
+        var dir = '';
+        if(window.location.host == 'localhost'){
+            dir = 'gym_master/';
+        }
+        var code = field.val();
+        
+        $.ajax({
+            url: baseUrl + dir + "GymAjax/discountCodeExist",
+            type : "POST",
+            data: {code:code},
+            success : function(result){	
+                if(result)
+                    return options.allrules.validate2fields.alertText;
+            },
+            error : function(e){
+                return options.allrules.validate2fields.alertText;
+            }
+	});
+    }

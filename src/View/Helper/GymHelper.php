@@ -3,7 +3,7 @@ namespace App\View\Helper;
 use Cake\ORM\TableRegistry; 
 use Cake\View\Helper;
 use  Cake\Utility\Xml; 
-// use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 
 
 Class GymHelper extends Helper
@@ -542,5 +542,46 @@ public function get_total_group_members($gid)
                
      
         }
+        public function get_user_name($uid)
+	{
+		$mem_table = TableRegistry::get("GymMember");
+		$name = $mem_table->find('all')
+                                    ->where(['id' => $uid])
+                                    ->select(['first_name','last_name'])
+                                    ->first();
+                //echo '<pre>';print_r($name);die;
+		return $name["first_name"] ." ". $name["last_name"];
+	}
+        public function get_membership_names($ids){
+            $conn = ConnectionManager::get('default');
+            $stmt = $conn->execute("SELECT `membership_label` FROM `membership` WHERE id IN ($ids)");
+            return $rows = $stmt->fetchAll('assoc');
+            //$res = $mem_tbl->find('all')
+                            //->where(['id IN' => $ids])
+                            //->select(['membership_label'])
+                            //->toArray();
+            //print_r($rows);die;
+            
+	}
+        public function get_membership_name($mid)
+	{ 		
+		$mem_tbl = TableRegistry::get("Membership");
+		$amt = $mem_tbl->get($mid)->toArray();		
+		return $amt["membership_label"];
+	}
+        public function usernameExist($email)
+	{
+		$member_tbl = TableRegistry::get("GymMember");
+		$query = $member_tbl->find()->where(["username"=>$email])->first();
+		$count = intval($query->count());
+		if($count == 1){return true;}else{return false;}
+	}
+        public function emailExist($email)
+	{
+		$member_tbl = TableRegistry::get("GymMember");
+		$query = $member_tbl->find()->where(["username"=>$username])->first();
+		$count = intval($query->count());
+		if($count == 1){return true;}else{return false;}
+	}
 
 }

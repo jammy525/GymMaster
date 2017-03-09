@@ -13,7 +13,8 @@ $(document).ready(function() {
     $("#valid_till").datepicker({
         format: "<?php echo $this->Gym->getSettings('date_format'); ?>",
         startDate: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-        enableOnReadonly: false
+        enableOnReadonly: false,
+        updateViewDate:false,
     });
     var box_height = $(".box").height();
     var box_height = box_height + 500 ;
@@ -36,9 +37,13 @@ function validate_multiselect(){
 		<div class="box-header">
 			<section class="content-header">
 			  <h1>
-				<i class="fa fa-plus"></i>
+                              <?php if($edit){?>
+				<i class="fa fa-edit"></i>
+                              <?php }else{ ?>
+                                <i class="fa fa-plus"></i>
+                              <?php }?>
                                 <?php echo $title;?>
-				<small><?php echo __("Add Discount Code");?></small>
+				<small><?php echo __("Discount Code");?></small>
 			  </h1>
 			  <ol class="breadcrumb">
 				<a href="<?php echo $this->Gym->createurl("DiscountCode","discountCodeList");?>" class="btn btn-flat btn-custom"><i class="fa fa-bars"></i> <?php echo __("Discount Code List");?></a>
@@ -48,22 +53,18 @@ function validate_multiselect(){
 		<hr>
 		<div class="box-body">					
 		<form class="validateForm form-horizontal" method="post" role="form" onsubmit="return validate_multiselect()">		
-                    
-                    <!-- hidden field for created by input -->
-                    <input type="hidden" name="created_by" id="created_by" class="form-control validate[required]" value="<?php echo $this->request->session()->read("User.id");?>">
-            
-                    
+              
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="code"><?php  echo __("Discount Code");?><span class="text-danger"> *</span></label>
                         <div class="col-md-6">
-                            <input type="text" name="code" id="code" class="form-control validate[required,custom[onlyLetterNumber]]" value="">
+                            <input type="text" name="code" id="code" class="form-control validate[required,custom[onlyLetterNumber],funcCall[checkWORLD]]" value="<?php echo (($edit)?$data['code']:'');?>">
                         </div>	
                     </div>
                     
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="discount"><?php  echo __("Discount Rate(%)");?><span class="text-danger"> *</span></label>
                         <div class="col-md-6">
-                            <input type="text" name="discount" id="discount" class="form-control validate[required,custom[number]]" value="">
+                            <input type="text" name="discount" id="discount" class="form-control validate[required,custom[number]]" value="<?php echo (($edit)?$data['discount']:'');?>">
                         </div>	
                     </div>
                     <?php
@@ -77,7 +78,7 @@ function validate_multiselect(){
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="valid_till"><?php  echo __("Validity");?></label>
                         <div class="col-md-6">
-                            <input type="text" name="valid_till" id="valid_till" class="form-control" value="" readonly="eadonly">
+                            <input type="text" name="valid_till" id="valid_till" class="form-control" value="<?php echo (($edit && isset($data['valid_till']) && $data['valid_till'] != '')?(date('F j, Y',$data['valid_till'])):'');?>" readonly="eadonly">
                         </div>	
                     </div>
                     

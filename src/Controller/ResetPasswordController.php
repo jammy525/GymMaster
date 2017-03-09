@@ -127,7 +127,7 @@ Class ResetPasswordController extends AppController {
         for ($i = 0; $i < 20; $i++) {
             $hash = $hasher->hash($hash, 'sha256', true);
         }
-        $user['reset_password_token'] = str_replace('/', '%', $hash);
+        $user['reset_password_token'] = str_replace('/', '$', $hash);
         $user['token_created_at']     = date('Y-m-d H:i:s');
         return $user;
     }

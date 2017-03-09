@@ -2193,8 +2193,31 @@ public function addLocation(){
 		}
 	}
         
-        
+        public function emailExist($email){
+            $member_tbl = TableRegistry::get("GymMember");
+            $query = $member_tbl->find()->where(["username"=>$email])->first();
+            $count = intval($query->count());
+            if($count == 1){return true;}else{return false;}
+        }
+        public function usernameExist($username){
+            $member_tbl = TableRegistry::get("GymMember");
+            $query = $member_tbl->find()->where(["username"=>$username])->first();
+            $count = intval($query->count());
+            if($count == 1){return true;}else{return false;}
+        }
+        public function discountCodeExist(){
+            $code = $this->request->data['code'];
+            $discount_code_tbl = TableRegistry::get("DiscountCode");
+            $query = $discount_code_tbl->find()->where(["code"=>$code])->first();
+           //echo '<pre>';print_r($query);die;
+            $count = intval(count($query));
+            if($count == 1){
+                echo true;
+            }else{
+                echo false;
+            }
+        }
         
         /** End here **/
-                        }
+}
                         

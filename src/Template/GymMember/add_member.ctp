@@ -1,6 +1,7 @@
 <?php
 echo $this->Html->css('bootstrap-multiselect');
 echo $this->Html->script('bootstrap-multiselect');
+$session = $this->request->session()->read("User");
 ?>
 <script type="text/javascript">
 $(document).ready(function() {	
@@ -12,7 +13,7 @@ $(document).ready(function() {
 	var box_height = box_height + 500 ;
 	$(".content-wrapper").css("height",box_height+"px");
 	
-	$('.class_list').multiselect({
+	$('.assign_class').multiselect({
 		includeSelectAllOption: true		
 	});
 	
@@ -47,7 +48,7 @@ $(document).ready(function() {
 
 function validate_multiselect()
 {		
-		var classes = $("#class_list").val();
+		var classes = $("#assign_class").val();
 		if(classes == null)
 		{
 			alert("Please Select Class or Add class class first.");
@@ -76,7 +77,7 @@ function validate_multiselect()
 		<hr>
 		<div class="box-body">
 		<?php				
-			echo $this->Form->create("addgroup",["type"=>"file","class"=>"validateForm123 form-horizontal","role"=>"form","onsubmit"=>"return validate_multiselect()"]);
+			echo $this->Form->create("addgroup",["type"=>"file","class"=>"validateForm123 form-horizontal","role"=>"form"]);
 			echo "<fieldset><legend>". __('Personal Information')."</legend>";
 						
 			echo "<div class='form-group'>";	
@@ -126,7 +127,7 @@ function validate_multiselect()
 			echo "</div>";	
 			echo "</div>";
 			
-			echo "<div class='form-group'>";
+			/*echo "<div class='form-group'>";
 			echo '<label class="control-label col-md-2" for="email">'. __("Group").'</label>';
 			echo '<div class="col-md-8">';			
 			echo @$this->Form->select("assign_group",$groups,["default"=>json_decode($data['assign_group']),"multiple"=>"multiple","class"=>"form-control group_list"]);
@@ -134,7 +135,7 @@ function validate_multiselect()
 			echo '<div class="col-md-2">';
 			echo "<a href='{$this->request->base}/GymGroup/addGroup/' class='btn btn-flat btn-default'>".__("Add Group")."</a>";
 			echo "</div>";	
-			echo "</div>";
+			echo "</div>";*/
 			echo "</fieldset>";
 						
 			echo "<fieldset><legend>". __('Contact Information')."</legend>";
@@ -262,42 +263,48 @@ function validate_multiselect()
 			echo '<label class="control-label col-md-2" for="email">'. __("Display Image").'</label>';
 			echo '<div class="col-md-4">';
 			echo $this->Form->file("image",["class"=>"form-control"]);
-			$image = ($edit && !empty($data['image'])) ? $data['image'] : "logo.png";
-			echo "<br><img src='{$this->request->webroot}webroot/upload/{$image}'>";
+			$image = ($edit && !empty($data['image'])) ? $data['image'] : "profile-placeholder.png";
+			echo "<br><img width='150' src='{$this->request->webroot}webroot/upload/{$image}'>";
 			echo "</div>";	
 			echo "</div>";			
 			echo "</fieldset>";
 								
 			echo "<fieldset><legend>". __('More Information')."</legend>";			
-			echo "<div class='form-group'>";	
-			echo '<label class="control-label col-md-2" for="email">'. __("Select Staff Member").'<span class="text-danger"> *</span></label>';
-			echo '<div class="col-md-6">';			
-			echo @$this->Form->select("assign_staff_mem",$staff,["default"=>$data['assign_staff_mem'],"empty"=>__("Select Staff Member"),"class"=>"form-control validate[required]"]);
-			echo "</div>";	
-			echo '<div class="col-md-2">';
-			echo "<a href='{$this->request->base}/StaffMembers/addStaff/' class='btn btn-flat btn-default'>".__("Add Staff")."</a>";
-			echo "</div>";	
-			echo "</div>";
 			
-			echo "<div class='form-group'>";	
-			echo '<label class="control-label col-md-2" for="email">'. __("Interested Area").'</label>';
-			echo '<div class="col-md-6">';			
-			echo @$this->Form->select("intrested_area",$interest,["default"=>$data['intrested_area'],"empty"=>__("Select Interest"),"class"=>"form-control interest_list"]);
-			echo "</div>";	
-			echo '<div class="col-md-2">';
-			echo "<a href='javascript:void(0)' class='btn btn-flat btn-default interest-list' data-url='{$this->request->base}/GymAjax/interestList'>".__("Add/Remove")."</a>";
-			echo "</div>";	
-			echo "</div>";
+                        if($session['role_id'] == 3){
+                            echo $this->Form->input("",["label"=>false,"name"=>"assign_staff_mem","type"=>"hidden","value"=>$session['id']]); 
+                        }else{
+                            echo "<div class='form-group'>";	
+                            echo '<label class="control-label col-md-2" for="email">'. __("Select Staff Member").'<span class="text-danger"> *</span></label>';
+                            echo '<div class="col-md-6">';			
+                            echo @$this->Form->select("assign_staff_mem",$staff,["default"=>$data['assign_staff_mem'],"empty"=>__("Select Staff Member"),"class"=>"form-control validate[required]"]);
+                            echo "</div>";	
+                            echo '<div class="col-md-2">';
+                            echo "<a href='{$this->request->base}/StaffMembers/addStaff/' class='btn btn-flat btn-default'>".__("Add Staff")."</a>";
+                            echo "</div>";	
+                            echo "</div>";
+                        }
+                         
 			
-			echo "<div class='form-group'>";	
-			echo '<label class="control-label col-md-2" for="email">'. __("Source").'</label>';
-			echo '<div class="col-md-6">';			
-			echo @$this->Form->select("source",$source,["default"=>$data['source'],"empty"=>__("Select Source"),"class"=>"form-control source_list"]);
-			echo "</div>";	
-			echo '<div class="col-md-2">';
-			echo "<a href='javascript:void(0)' class='btn btn-flat btn-default source-list' data-url='{$this->request->base}/GymAjax/sourceList'>".__("Add/Remove")."</a>";
-			echo "</div>";	
-			echo "</div>";
+			//echo "<div class='form-group'>";	
+			//echo '<label class="control-label col-md-2" for="email">'. __("Interested Area").'</label>';
+			//echo '<div class="col-md-6">';			
+			//echo @$this->Form->select("intrested_area",$interest,["default"=>$data['intrested_area'],"empty"=>__("Select Interest"),"class"=>"form-control interest_list"]);
+			//echo "</div>";	
+			//echo '<div class="col-md-2">';
+			//echo "<a href='javascript:void(0)' class='btn btn-flat btn-default interest-list' data-url='{$this->request->base}/GymAjax/interestList'>".__("Add/Remove")."</a>";
+			//echo "</div>";	
+			//echo "</div>";
+			
+			//echo "<div class='form-group'>";	
+			//echo '<label class="control-label col-md-2" for="email">'. __("Source").'</label>';
+			//echo '<div class="col-md-6">';			
+			//echo @$this->Form->select("source",$source,["default"=>$data['source'],"empty"=>__("Select Source"),"class"=>"form-control source_list"]);
+			//echo "</div>";	
+			//echo '<div class="col-md-2">';
+			//echo "<a href='javascript:void(0)' class='btn btn-flat btn-default source-list' data-url='{$this->request->base}/GymAjax/sourceList'>".__("Add/Remove")."</a>";
+			//echo "</div>";	
+			//echo "</div>";
 			
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("Referred By").'</label>';
@@ -323,7 +330,16 @@ function validate_multiselect()
 			echo "</div>";	
 			echo "</div>";
 			?>
-			
+			<div class="form-group">
+				<div class="control-label col-md-2">
+					<label><?php echo __("Class Type");?></label>
+				</div>
+				<div class="col-md-6">
+					<label class="radio-inline"><input type="radio" name="class_type" value="Group" class="membership_status_type" <?php echo ($edit && $data['class_type'] == "Group") ? "checked":"checked";?>><?php echo __("Group");?></label>
+					<label class="radio-inline"><input type="radio" name="class_type" value="Individual" class="membership_status_type" <?php echo ($edit && $data['class_type'] == "Individual") ? "checked":"";?>><?php echo __("Individual");?></label>
+					
+				</div>
+			</div>	
 			<div class="form-group">
 				<div class="control-label col-md-2">
 					<label><?php echo __("Member Type");?></label>
@@ -336,7 +352,14 @@ function validate_multiselect()
 			</div>	
 			
 			<?php
-			echo "<div class='form-group class-member'>";	
+                        if(@$data['member_type']=='Prospect' || @$data['member_type']=='Alumni')
+                        {
+                            $styles="style='display:none;'";
+                        }else{
+                             $styles="style='display:block;'";
+                        }
+                        
+			echo "<div class='form-group class-member'  $styles>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("Membership").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';			
 			echo @$this->Form->select("selected_membership",$membership,["default"=>$data['selected_membership'],"empty"=>__("Select Membership"),"class"=>"form-control validate[required] membership_id"]);
@@ -346,15 +369,21 @@ function validate_multiselect()
 			echo "</div>";	
 			echo "</div>";				
 					
-			echo "<div class='form-group'>";	
-			echo '<label class="control-label col-md-2" for="email">'. __("Class").'<span class="text-danger"> *</span></label>';
-			echo '<div class="col-md-6">';			
-			echo $this->Form->select("assign_class",($edit)?$classes:"",["default"=>($edit)?$member_class:"","class"=>"class_list form-control","id"=>"class_list","multiple"=>"multiple"]);
-			echo "</div>";	
-			echo '<div class="col-md-2">';
-			echo "<a href='{$this->request->base}/ClassSchedule/addClass/' class='btn btn-flat btn-default'>".__("Add Class")."</a>";
-			echo "</div>";	
-			echo "</div>";
+			//echo "<div class='form-group'>";	
+			//echo '<label class="control-label col-md-2" for="email">'. __("Class").'<span class="text-danger"> *</span></label>';
+			//echo '<div class="col-md-6">';
+                        //if($edit)
+                        //{
+                         //echo $this->Form->select("assign_class",($edit)?$classes:"",["default"=>($edit)?$member_class:"","class"=>"assign_class form-control","id"=>"assign_class","multiple"=>"multiple"]);
+                        //}else{
+                            //echo $this->Form->select("assign_class",$classes,["default"=>($edit)?$member_class:"","class"=>"assign_class form-control","id"=>"assign_class","multiple"=>"multiple"]);
+			
+                        //}
+			//echo "</div>";	
+			//echo '<div class="col-md-2">';
+			//echo "<a href='{$this->request->base}/ClassSchedule/addClass/' class='btn btn-flat btn-default'>".__("Add Class")."</a>";
+			//echo "</div>";	
+			//echo "</div>";
 			
 			if($edit)
 			{
@@ -371,7 +400,7 @@ function validate_multiselect()
 				</div>	
 			<?php
 			}
-			echo "<div class='form-group class-member'>";	
+			echo "<div class='form-group class-member'  $styles >";	
 			echo '<label class="control-label col-md-2" for="email">'. __("Membership Valid From").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-2">';
 			echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_from","class"=>"form-control validate[required] mem_valid_from","value"=>(($edit && $data['membership_valid_from']!="")?date("Y-m-d",strtotime($data['membership_valid_from'])):'')]);
@@ -421,6 +450,5 @@ if($(".membership_status_type:checked").val() == "Prospect" || $(".membership_st
 $(".class-member").hide("SlideDown");
 $(".class-member input,.class-member select").attr("disabled", "disabled");		
 }
-
 	
 </script>

@@ -167,7 +167,12 @@ $(document).ready(function(){
 			echo "<div class='col-md-8'>";				
 			// $format = ["yy/mm/dd"=>"yy/mm/dd","dd/mm/yy"=>"dd/mm/yy","mm/dd/yy"=>"mm/dd/yy","yyyy/mm/dd"=>"yyyy/mm/dd","mm/dd/yyyy"=>"mm/dd/yyyy"];
 			// $format = ["Y-m-d"=>"yyyy-m-d","d-m-Y"=>"d-m-yyyy","m-d-y"=>"m-d-yyyy"];
-			$format = ["F j, Y"=>date("F j, Y"),"Y-m-d"=>date("Y-m-d"),"m/d/Y"=>date("m/d/Y"),"d/m/Y"=>date("d/m/Y")];
+			$format = [
+                            "MM dd, yyyy"=>date("F j, Y"),
+                            "yyyy-dd-mm"=>date("Y-m-d"),
+                            "mm/dd/yyyy"=>date("m/d/Y"),
+                            "dd/mm/yyyy"=>date("d/m/Y")
+                        ];
 			
 			$default = ($edit && !empty($data['date_format'])) ? [$data['date_format']] : ['yy/mm/dd'];
 			echo $this->Form->select("date_format",$format,["default"=>$default,"class"=>"form-control plan_list validate[required]"]);

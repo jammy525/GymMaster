@@ -19,7 +19,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "member" || $session["role_name"] == "staff_member")
+if($session["role_name"] == "administrator" || $session["role_name"] == "member" || $session["role_name"] == "staff_member" || $session["role_name"] == "franchise")
 { ?>
 <script>
 $(document).ready(function(){
@@ -29,7 +29,7 @@ $(document).ready(function(){
 </script>
 <?php } 
 
-if($session["role_name"] == "administrator")
+if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
 {?>
 <script>
 $(document).ready(function(){
@@ -49,7 +49,7 @@ $(document).ready(function(){
 				<small><?php echo __("Member");?></small>
 			  </h1>
 			   <?php
-				if($session["role_name"] == "administrator")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
 				{ ?>
 			  <ol class="breadcrumb">
 				<a href="<?php echo $this->Gym->createurl("GymMember","addMember");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Member");?></a>
@@ -88,7 +88,7 @@ $(document).ready(function(){
 					<td>
 					
 						<a href='{$this->request->base}/GymMember/viewMember/{$row['id']}' title='View' class='btn btn-flat btn-info'><i class='fa fa-eye'></i></a>";
-					if($session["role_name"] == "administrator")
+					if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
 					{	
 					echo " <a href='{$this->request->base}/GymMember/editMember/{$row['id']}' title='Edit' class='btn btn-flat btn-primary'><i class='fa fa-edit'></i></a>
 						<a href='{$this->request->base}/GymMember/deleteMember/{$row['id']}' title='Delete' class='btn btn-flat btn-danger' onClick=\"return confirm('Are you sure,You want to delete this record?');\"><i class='fa fa-trash-o'></i></a>";

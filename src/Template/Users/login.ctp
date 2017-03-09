@@ -26,6 +26,7 @@ $logo = (!empty($logo)) ? $this->request->base ."/webroot/upload/" . $logo : $th
     <input type="text" placeholder="<?php echo __("Username");?>" name="username" />
     <input type="password" placeholder="<?php echo __("Password");?>" name="password"/>
     <button id="btn_login"><?php echo __("Login");?></button>
+    <p class="message"><a href="<?php echo $this->request->base;?>/reset-password/"><?php echo __("Forgot Password?");?></a>
    <p class="message"><a href="<?php echo $this->request->base;?>/MemberRegistration/"><?php echo __("Member Registration");?></a>
    <!--&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#">View Plan</a></p> -->
   </form>

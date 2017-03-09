@@ -15,6 +15,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 // for built-in server
+
 if (php_sapi_name() === 'cli-server') {
     $_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
 
@@ -24,6 +25,7 @@ if (php_sapi_name() === 'cli-server') {
         return false;
     }
 }
+
 require dirname(__DIR__) . '/config/bootstrap.php';
 
 use Cake\Network\Request;
@@ -35,3 +37,4 @@ $dispatcher->dispatch(
     Request::createFromGlobals(),
     new Response()
 );
+

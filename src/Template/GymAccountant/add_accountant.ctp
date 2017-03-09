@@ -128,8 +128,8 @@ $(document).ready(function() {
 			echo '<label class="control-label col-md-2" for="email">'. __("Display Image").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-4">';
 			echo $this->Form->file("image",["class"=>"form-control"]);
-			$image = ($edit && !empty($data['image'])) ? $data['image'] : "logo.png";
-			echo "<br><img src='{$this->request->webroot}webroot/upload/{$image}'>";
+			$image = ($edit && !empty($data['image'])) ? $data['image'] : "profile-placeholder.png";
+			echo "<br><img width='150' src='{$this->request->webroot}webroot/upload/{$image}'>";
 			echo "</div>";	
 			echo "</div>";			
 			echo "</fieldset>";

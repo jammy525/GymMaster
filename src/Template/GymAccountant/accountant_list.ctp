@@ -72,6 +72,7 @@ $(document).ready(function(){
 					<td>
 					<a href='".$this->Gym->createurl('GymAccountant','editAccountant')."/{$row['id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
 					<a href='".$this->Gym->createurl('GymAccountant','deleteAccountant')."/{$row['id']}' class='btn btn-flat btn-danger' title='Delete' onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fa fa-trash-o'></i></a>
+                                        <a href='javascript:void(0)' id={$row['id']} data-url='".$this->request->base ."/GymAjax/view_accountant' class='view_jmodal btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a> 
 					</td>
 				</tr>
 				";
