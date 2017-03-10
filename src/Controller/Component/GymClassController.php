@@ -10,7 +10,6 @@ Class GymClassController extends AppController
 			parent::initialize();
                         $this->loadComponent("GYMFunction");
 	}
-		
 	public function ClassesList()
 	{ 
 		// var_dump($this->request->session()->read("Config.username"));
@@ -20,7 +19,7 @@ Class GymClassController extends AppController
                         $data = $this->GymClass->find("all")->contain(['GymMember'])->hydrate(false)->toArray();
                 break;
 
-                CASE "franchise" :
+                CASE "licensee" :
                         $data = $this->GymClass->find("all")->contain(['GymMember'])->where(["GymClass.created_by"=>$session["id"]])->hydrate(false)->toArray();
                 break;
 

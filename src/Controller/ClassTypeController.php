@@ -18,7 +18,7 @@ class ClassTypeController extends AppController
                         $data = $this->ClassType->find("all")->contain(['GymMember'])->hydrate(false)->toArray();
                 break;
 
-                CASE "franchise" :
+                CASE "licensee" :
                         $data = $this->ClassType->find("all")->contain(['GymMember'])->where(["ClassType.created_by"=>$session["id"]])->orWhere(['ClassType.role_name' => 'administrator'])->hydrate(false)->toArray();
                 break;
 
@@ -75,7 +75,7 @@ class ClassTypeController extends AppController
             $this->set("data",$row->toArray());
 
              /** Edit record checked roles permissions* */
-            if ($session["role_name"] == "franchise" || $session["role_name"] == "staff_member") {
+            if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
                 if ($row['created_by'] != $session['id']) {
                     $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                     return $this->redirect(["action" => "classtypeList"]);
@@ -114,7 +114,7 @@ class ClassTypeController extends AppController
             $row = $this->ClassType->get($did);
                 
         /** Edit record checked roles permissions* */
-      if ($session["role_name"] == "franchise" || $session["role_name"] == "staff_member") {
+      if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
             if ($row['created_by'] != $session['id']) {
                 $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                 return $this->redirect(["action" => "classtypeList"]);

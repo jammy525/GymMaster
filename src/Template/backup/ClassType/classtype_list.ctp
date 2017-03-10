@@ -25,7 +25,7 @@ $(document).ready(function(){
 				<small><?php echo __("Class Type");?></small>
 			  </h1>
 			  <?php
-			if($session["role_name"] == "administrator" || $session["role_name"] == "franchise"){ ?>
+			if($session["role_name"] == "administrator" || $session["role_name"] == "licensee"){ ?>
 			  <ol class="breadcrumb">				
 				<a href="<?php echo $this->Gym->createurl("ClassType","addclassType");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Class Type");?></a>
 			  </ol>
@@ -54,7 +54,7 @@ $(document).ready(function(){
 					  <td>".(($row['status']) ? '<span class="label label-success">Active</span>' :'<span class="label label-warning">Inactive</span>')."</td>
                                           <td>".date('M d,Y H:i A',time($row['created_date'])) ."</td>
 					  <td>";
-				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 				{
 					echo " <a href='".$this->request->base ."/ClassType/editclassType/{$row['id']}' class='btn btn-flat btn-primary' title='".__('Edit')."'><i class='fa fa-edit'></i></a>
 						<a href='{$this->request->base}/ClassType/deleteclassType/{$row['id']}' class='btn btn-flat btn-danger' title='".__('Delete')."' onclick=\"return confirm('Are you sure you want to delete this class type?')\"><i class='fa fa-trash'></i></a>";

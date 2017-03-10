@@ -128,14 +128,14 @@ if($is_rtl == "1") { ?>
                     </ul>	
 		</li>
 
-    <li class="treeview <?php echo ($this->request->controller == "GymMember" || $this->request->controller == "Franchise" || $this->request->controller == "StaffMembers" || $this->request->controller == "GymAccountant") ? "active" : "";?>">
+    <li class="treeview <?php echo ($this->request->controller == "GymMember" || $this->request->controller == "Licensee" || $this->request->controller == "StaffMembers" || $this->request->controller == "GymAccountant") ? "active" : "";?>">
         <a href="#">
             <i class="fa fa-user"></i> <span><?php echo __('Member Management');?></span></i><i class="fa fa-angle-left <?php echo $pull;?>"></i>
         </a>
         <ul class="treeview-menu">
 
-            <li class="<?php echo ($this->request->action == "franchiseList" || $this->request->action == "addFranchise" || $this->request->action == "editFranchise" || $this->request->action == "viewFranchise") ? "active" : "";?>" style="<?php echo (in_array('Franchise', $controller) && in_array('franchiseList', $action) ) ? 'display:block' : 'display:none';?>">
-                <a href="<?php echo $this->Gym->createurl("Franchise","franchiseList");?>"><i class="fa fa-circle-o"></i><?php echo __('Franchise');?></a>
+            <li class="<?php echo ($this->request->action == "licenseeList" || $this->request->action == "addLicensee" || $this->request->action == "editLicensee" || $this->request->action == "viewLicensee") ? "active" : "";?>" style="<?php echo (in_array('Licensee', $controller) && in_array('licenseeList', $action) ) ? 'display:block' : 'display:none';?>">
+                <a href="<?php echo $this->Gym->createurl("Licensee","licenseeList");?>"><i class="fa fa-circle-o"></i><?php echo __('Licensee');?></a>
             </li>
 
             <li class="<?php echo ($this->request->action == "staffList" || $this->request->action == "addStaff") ? "active" : "";?>"  style="<?php echo (in_array('StaffMembers', $controller) && in_array('StaffList', $action) ) ? 'display:block' : 'display:none';?>">
@@ -197,11 +197,25 @@ if($is_rtl == "1") { ?>
             <i class="fa fa-ticket"></i> <span><?php echo __("Reservation");?></span>  
         </a>
     </li>
-    <li class="treeview <?php echo ($this->request->controller == "GymAttendance") ? "active" : "";?>" style="<?php echo (in_array('GymAttendance', $controller) && in_array('attendance', $action) ) ? 'display:block' : 'display:none';?>">
-        <a href="<?php echo $this->Gym->createurl("GymAttendance","attendance");?>">
-            <i class="fa fa-braille"></i> <span><?php echo __("Attendance");?></span>  
-        </a>
-    </li>			
+    <li class="treeview <?php echo ($this->request->controller == "GymAttendance") ? "active" : "";?>" style="<?php echo (in_array('GymAttendance', $controller) ) ? 'display:block' : 'display:none';?>">
+                    <a href="#">
+                        <i class="fa fa-braille"></i> <span><?php echo __("Attendance Management");?></span><i class="fa fa-angle-left <?php echo $pull;?>"></i>
+                    </a>
+                    <ul class="treeview-menu">	
+                        <li class="<?php echo ($this->request->action == "attendance" || $this->request->action == "attendance") ? "active" : "";?>" style="<?php echo (in_array('GymAttendance', $controller) && in_array('attendance', $action) ) ? 'display:block' : 'display:none';?>">
+                            <a href="<?php echo $this->Gym->createurl("GymAttendance","attendance");?>">
+                                <i class="fa fa-circle-o"></i><span><?php echo __('Member Attendance');?></span></i>
+                            </a>
+                        </li>
+                        <li class="<?php echo ($this->request->action == "staffAttendance" || $this->request->action == "staffAttendance") ? "active" : "";?>" style="<?php echo (in_array('GymAttendance', $controller) && in_array('staffAttendance', $action) ) ? 'display:block' : 'display:none';?>">
+                            <a href="<?php echo $this->Gym->createurl("GymAttendance","staffAttendance");?>">
+                                <i class="fa fa-circle-o"></i><span><?php echo __('Staff Attendance');?></span></i>
+                            </a>
+                        </li>
+                        
+                      	
+                    </ul>	
+		</li>			
     <li class="treeview <?php echo ($this->request->controller == "MembershipPayment") ? "active" : "";?>" style="<?php echo (in_array('MembershipPayment', $controller) && in_array('paymentList', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("MembershipPayment","paymentList");?>">
             <i class="fa fa-money"></i> <span><?php echo __("Payment");?></span><i class="fa fa-angle-left <?php echo $pull;?>"></i>

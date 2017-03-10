@@ -127,6 +127,17 @@ function validate_multiselect()
 			echo "</div>";	
 			echo "</div>";
 			
+
+			echo "<div class='form-group'>";
+			echo '<label class="control-label col-md-2" for="email">'. __("Group").'</label>';
+			echo '<div class="col-md-8">';			
+			echo @$this->Form->select("assign_group",$groups,["default"=>json_decode($data['assign_group']),"multiple"=>"multiple","class"=>"form-control group_list"]);
+			echo "</div>";	
+			echo '<div class="col-md-2">';
+			echo "<a href='{$this->request->base}/GymGroup/addGroup/' class='btn btn-flat btn-default'>".__("Add Group")."</a>";
+			echo "</div>";	
+			echo "</div>";
+			
 			/*echo "<div class='form-group'>";
 			echo '<label class="control-label col-md-2" for="email">'. __("Group").'</label>';
 			echo '<div class="col-md-8">';			

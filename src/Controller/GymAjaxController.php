@@ -1665,20 +1665,20 @@ public function addLocation(){
                             $this->autoRender = false;
     }
 
-    public function viewFranchise() {
+    public function viewLicensee() {
                             //echo $this->request->data["id"];die;
                             if ($this->request->is("ajax")) {
                                 $id = $this->request->data["id"];
-                                $member_tbl = TableRegistry::get("Franchise");
-                                $row = $member_tbl->GymMember->find()->contain(['GymLocation'])->where(["GymMember.role_name" => "franchise", "GymMember.role_id" => 2, "GymMember.id" => $id])->hydrate(false)->toArray();
+                                $member_tbl = TableRegistry::get("Licensee");
+                                $row = $member_tbl->GymMember->find()->contain(['GymLocation'])->where(["GymMember.role_name" => "licensee", "GymMember.role_id" => 2, "GymMember.id" => $id])->hydrate(false)->toArray();
                                 //$member_tbl = TableRegistry::get("GymMember");
-                                //$row = $member_tbl->GymMember->get($id)->contain(['GymLocation'])->where(["GymMember.role_name"=>"franchise","GymMember.role_id"=>2])->toArray();
+                                //$row = $member_tbl->GymMember->get($id)->contain(['GymLocation'])->where(["GymMember.role_name"=>"licensee","GymMember.role_id"=>2])->toArray();
                                 //echo '<pre>'; print_r($row);die;
                                 $row = $row[0];
                                 ?>
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h3 class="modal-title" id="gridSystemModalLabel"><?php echo __("Franchise Detail"); ?></h3>
+                                <h3 class="modal-title" id="gridSystemModalLabel"><?php echo __("Licensee Detail"); ?></h3>
                             </div>
                             <div class="modal-body">		
                                 <div class="panel panel-white form-horizontal">
@@ -1690,7 +1690,7 @@ public function addLocation(){
                                         <div class="col-sm-9"> <?php echo $row["username"]; ?> </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="franchise_title" class="col-sm-3"><?php echo __("Name"); ?>          : </label>
+                                        <label for="licensee_title" class="col-sm-3"><?php echo __("Name"); ?>          : </label>
                                         <div class="col-sm-9"> <?php echo $row["first_name"] . ( (isset($row["middle_name"])) ? (' ' . $row["middle_name"] ) : '' ) . ( (isset($row["last_name"])) ? (' ' . $row["last_name"] ) : '' ); ?> </div>
                                     </div>
                                     <div class="form-group">
@@ -1776,7 +1776,7 @@ public function addLocation(){
                             <div class="col-sm-9"> <?php echo $row["username"]; ?> </div>
                         </div>
                         <div class="form-group">
-                            <label for="franchise_title" class="col-sm-3"><?php echo __("Name"); ?>          : </label>
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Name"); ?>          : </label>
                             <div class="col-sm-9"> <?php echo $row["first_name"] . ( (isset($row["middle_name"])) ? (' ' . $row["middle_name"] ) : '' ) . ( (isset($row["last_name"])) ? (' ' . $row["last_name"] ) : '' ); ?> </div>
                         </div>
                         <!--<div class="form-group">
@@ -1873,11 +1873,11 @@ public function addLocation(){
                             <div class="col-sm-9"> <?php echo $row["username"]; ?> </div>
                         </div>
                         <div class="form-group">
-                            <label for="franchise_title" class="col-sm-3"><?php echo __("Name"); ?>          : </label>
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Name"); ?>          : </label>
                             <div class="col-sm-9"> <?php echo $row["first_name"] . ( (isset($row["middle_name"])) ? (' ' . $row["middle_name"] ) : '' ) . ( (isset($row["last_name"])) ? (' ' . $row["last_name"] ) : '' ); ?> </div>
                         </div>
                         <div class="form-group">
-                            <label for="associated_franchise" class="col-sm-3"><?php echo __("Associated Franchise"); ?>          : </label>
+                            <label for="associated_licensee" class="col-sm-3"><?php echo __("Associated Licensee"); ?>          : </label>
                             <div class="col-sm-9"> <?php echo $row["gym_member1"]['first_name'];  ?> </div>
                         </div>
                         <div class="form-group">
@@ -2062,7 +2062,7 @@ public function addLocation(){
                         $member_tbl = TableRegistry::get("ClassSchedule");
                         $row = $member_tbl->find()->contain(["GymMember","GymLocation","GymClass"])->where(["ClassSchedule.id"=>$id])->hydrate(false)->toArray();
 			//$member_tbl = TableRegistry::get("GymMember");
-			//$row = $member_tbl->GymMember->get($id)->contain(['GymLocation'])->where(["GymMember.role_name"=>"franchise","GymMember.role_id"=>2])->toArray();
+			//$row = $member_tbl->GymMember->get($id)->contain(['GymLocation'])->where(["GymMember.role_name"=>"licensee","GymMember.role_id"=>2])->toArray();
                         //echo '<pre>'; print_r($row);die;
                         $row = $row[0];
                         $class_schedule_tbl = TableRegistry::get("ClassScheduleList");
@@ -2127,11 +2127,11 @@ public function addLocation(){
                                     
                                       <legend><?php echo __("Staff Information");?></legend>
                                     <div class="form-group">
-                                          <label for="franchise_title" class="col-sm-3"><?php echo __("Staff Name");?> : </label>
+                                          <label for="licensee_title" class="col-sm-3"><?php echo __("Staff Name");?> : </label>
                                           <div class="col-sm-9"> <?php echo $row['gym_member']["first_name"] . ( (isset($row['gym_member']["middle_name"])) ? (' '.$row['gym_member']["middle_name"] ) : '' ) . ( (isset($row['gym_member']["last_name"])) ? (' '.$row['gym_member']["last_name"] ) : '' ); ?> </div>
                                     </div>
                                      <div class="form-group">
-                                          <label for="franchise_title" class="col-sm-3"><?php echo __("Pay Rate");?> : </label>
+                                          <label for="licensee_title" class="col-sm-3"><?php echo __("Pay Rate");?> : </label>
                                           <div class="col-sm-9"> <?php echo $row["pay_rate"] ; ?> </div>
                                     </div>
                                     <legend><?php echo __("Location Information");?></legend>

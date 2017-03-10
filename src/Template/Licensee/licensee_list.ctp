@@ -34,14 +34,14 @@ $(document).ready(function(){
 			<section class="content-header">
 			  <h1>
 				<i class="fa fa-bars"></i>
-				<?php echo __("Franchise List");?>
-				<small><?php echo __("Franchise");?></small>
+				<?php echo __("Licensee List");?>
+				<small><?php echo __("Licensee");?></small>
 			  </h1>
 			  <?php
 				if($session["role_name"] == "administrator" || $session["role_id"] == 1)
 				{ ?>
 			  <ol class="breadcrumb">
-				<a href="<?php echo $this->Gym->createurl("Franchise","addFranchise");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Franchise");?></a>
+				<a href="<?php echo $this->Gym->createurl("Licensee","addLicensee");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Licensee");?></a>
 			  </ol>
 			  <?php } ?>
 			</section>
@@ -52,7 +52,7 @@ $(document).ready(function(){
 			<thead>
 				<tr>
 					<th><?php echo __("Photo");?></th>
-					<th><?php echo __("Franchise Name");?></th>
+					<th><?php echo __("Licensee Name");?></th>
 					<th><?php echo __("Location");?></th>					
 					<th><?php echo __("Email");?></th>					
 					<th><?php echo __("Mobile");?></th>					
@@ -71,9 +71,9 @@ $(document).ready(function(){
                                     <td>{$row['email']}</td>
                                     <td>{$row['mobile']}</td>
                                     <td>
-                                        <a href='".$this->Gym->createurl('Franchise','editFranchise')."/{$row['id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
-                                        <a href='".$this->Gym->createurl('Franchise','deleteFranchise')."/{$row['id']}' class='btn btn-flat btn-danger' title='Delete' onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fa fa-trash-o'></i></a>
-                                        <a href='javascript:void(0)' id={$row['id']} data-url='".$this->request->base ."/GymAjax/view_franchise' class='view_jmodal btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a> 
+                                        <a href='".$this->Gym->createurl('Licensee','editLicensee')."/{$row['id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
+                                        <a href='".$this->Gym->createurl('Licensee','deleteLicensee')."/{$row['id']}' class='btn btn-flat btn-danger' title='Delete' onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fa fa-trash-o'></i></a>
+                                        <a href='javascript:void(0)' id={$row['id']} data-url='".$this->request->base ."/GymAjax/view_licensee' class='view_jmodal btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a> 
                                     </td>
 				</tr>
 				";
@@ -83,7 +83,7 @@ $(document).ready(function(){
 			<tfoot>
 				<tr>
 					<th><?php echo __("Photo");?></th>
-					<th><?php echo __("Franchise Name");?></th>
+					<th><?php echo __("Licensee Name");?></th>
 					<th><?php echo __("Location");?></th>					
 					<th><?php echo __("Email");?></th>					
 					<th><?php echo __("Mobile");?></th>					

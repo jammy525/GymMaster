@@ -30,7 +30,7 @@ $(document).ready(function(){
 				<small><?php echo __("Discount Code");?></small>
 			  </h1>
 			  <?php
-			if($session["role_name"] == "administrator" || $session["role_name"] == "franchise" || $session["id"] == 1 || $session["id"] == 2 ){ ?>
+			if($session["role_name"] == "administrator" || $session["role_name"] == "licensee" || $session["id"] == 1 || $session["id"] == 2 ){ ?>
 			  <ol class="breadcrumb">				
 				<a href="<?php echo $this->Gym->createurl("DiscountCode","addDiscountCode");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Discount Code");?></a>
 			  </ol>
@@ -75,7 +75,7 @@ $(document).ready(function(){
                                     <td>".$expires_on." </td>
                                     <td>".(($row['status']) ? '<span class="label label-success">Active</span>' :'<span class="label label-warning">Inactive</span>')."</td>
                                     <td>";
-				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 				{
 					echo " <a href='".$this->request->base ."/discount-code/edit-discount-code/{$row['id']}' class='btn btn-flat btn-primary' title='".__('Edit')."'><i class='fa fa-edit'></i></a>
 						<a href='{$this->request->base}/discount-code/delete-discount-code/{$row['id']}' class='btn btn-flat btn-danger' title='".__('Delete')."' onclick=\"return confirm('Are you sure you want to delete this code?')\"><i class='fa fa-trash'></i></a>";

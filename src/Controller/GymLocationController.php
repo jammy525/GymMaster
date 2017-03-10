@@ -17,7 +17,7 @@ class GymLocationController extends AppController
                         $data = $this->GymLocation->find("all")->contain(['GymMember'])->hydrate(false)->toArray();
                 break;
 
-                CASE "franchise" :
+                CASE "licensee" :
                         $data = $this->GymLocation->find("all")->contain(['GymMember'])->where(["GymLocation.created_by"=>$session["id"]])->hydrate(false)->toArray();
                 break;
 
@@ -81,7 +81,7 @@ class GymLocationController extends AppController
             $this->set("data",$row->toArray());
 
              /** Edit record checked roles permissions* */
-            if ($session["role_name"] == "franchise") {
+            if ($session["role_name"] == "licensee") {
                 if ($row['created_by'] != $session['id']) {
                     $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                     return $this->redirect(["action" => "locationList"]);
@@ -118,7 +118,7 @@ class GymLocationController extends AppController
             $row = $this->GymLocation->get($did);
                 
         /** Edit record checked roles permissions* */
-        if ($session["role_name"] == "franchise") {
+        if ($session["role_name"] == "licensee") {
             if ($row['created_by'] != $session['id']) {
                 $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                 return $this->redirect(["action" => "locationList"]);

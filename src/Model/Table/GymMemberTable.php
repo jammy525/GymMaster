@@ -11,8 +11,7 @@ Class GymMemberTable extends Table{
 	{
 		$this->addBehavior('Timestamp');
 		$this->belongsTo("StaffMembers",["foreignKey"=>"assign_staff_mem"]);
-                $this->belongsTo("Franchise");
-                $this->belongsTo("DiscountCode");
+                $this->belongsTo("Licensee");
 		$this->belongsTo("ClassSchedule",["foreignKey"=>"assign_class"]);
 		$this->belongsTo("GymGroup",["foreignKey"=>"assign_group"]);
 		$this->belongsTo("GymInterestArea",["foreignKey"=>"intrested_area"]);
@@ -25,9 +24,10 @@ Class GymMemberTable extends Table{
 		$this->belongsTo("GymMemberClass",["targetForeignKey"=>"member_id"]);
 		$this->belongsTo("GymMemberClass");
 		$this->BelongsTo("GymRoles",["foreignKey"=>"role"]); //for staffmember
-                $this->BelongsTo("GymMember1",['className' => 'GymMember',"foreignKey"=>"associated_franchise"]);
-                $this->BelongsTo("GymLocation",["foreignKey"=>"location_id"]); //for franchise
+                $this->BelongsTo("GymMember1",['className' => 'GymMember',"foreignKey"=>"associated_licensee"]);
+                $this->BelongsTo("GymLocation",["foreignKey"=>"location_id"]); //for licensee
                 $this->BelongsTo("GymClass"); 
+                $this->BelongsTo("ClassScheduleList"); 
 		$this->BelongsTo("Specialization",["foreignKey"=>"s_specialization","propertyName"=>"specialization"]); //for staffmember
 		/* 
 		// $this->belongsTo("Installment_Plan",[

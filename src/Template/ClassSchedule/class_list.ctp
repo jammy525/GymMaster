@@ -17,7 +17,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 { ?>
 <script>
 
@@ -40,11 +40,11 @@ $(document).ready(function(){
 			  </h1>
 			  <ol class="breadcrumb">
 				<?php
-				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise" || $session["role_name"] == "member" || $session["role_name"] == "staff_member")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee" || $session["role_name"] == "member" || $session["role_name"] == "staff_member")
 				{ ?>
 				<a href="<?php echo $this->Gym->createurl("ClassSchedule","viewSchedules");?>" class="btn btn-flat btn-custom"><i class="fa fa-calendar"></i> <?php echo __("Class Schedules");?></a>
 		   <?php }
-				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise" || $session["role_name"] == "staff_member")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee" || $session["role_name"] == "staff_member")
 				{ ?>
 				&nbsp;
 				<a href="<?php echo $this->Gym->createurl("ClassSchedule","addClass");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Class Schedule");?></a>

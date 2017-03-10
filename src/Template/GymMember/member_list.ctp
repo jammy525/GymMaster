@@ -19,7 +19,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "member" || $session["role_name"] == "staff_member" || $session["role_name"] == "franchise")
+if($session["role_name"] == "administrator" || $session["role_name"] == "member" || $session["role_name"] == "staff_member" || $session["role_name"] == "licensee")
 { ?>
 <script>
 $(document).ready(function(){
@@ -29,7 +29,7 @@ $(document).ready(function(){
 </script>
 <?php } 
 
-if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 {?>
 <script>
 $(document).ready(function(){
@@ -49,7 +49,7 @@ $(document).ready(function(){
 				<small><?php echo __("Member");?></small>
 			  </h1>
 			   <?php
-				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 				{ ?>
 			  <ol class="breadcrumb">
 				<a href="<?php echo $this->Gym->createurl("GymMember","addMember");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Member");?></a>
@@ -67,7 +67,7 @@ $(document).ready(function(){
 					<th><?php echo __("Member ID");?></th>					
 					<th><?php echo __("Joining Date");?></th>					
 					<th><?php echo __("Expire Date");?></th>					
-					<th><?php echo __("Member Type");?></th>					
+					<th width="18%"><?php echo __("Assign Class");?></th>					
 					<th><?php echo __("Membership Status");?></th>					
 					<th><?php echo __("Action");?></th>
 					<th><?php echo __("Status");?></th>
@@ -77,18 +77,24 @@ $(document).ready(function(){
 			<?php
 				foreach($data as $row)
 				{
+                                    if($this->Gym->get_member_assign_class($row['id'])>0)
+                                    {
+                                     $assign_label="<i class='fa fa-pencil'></i>Update Assign Class";   
+                                    }else{
+                                       $assign_label="<i class='fa fa-plus'></i>Assign Class"; 
+                                    }
 					echo "<tr>
 					<td><img src='{$this->request->base}/webroot/upload/{$row['image']}' class='membership-img img-circle'></td>
 					<td>{$row['first_name']} {$row['last_name']}</td>
 					<td>{$row['member_id']}</td>
 					<td>".(($row['membership_valid_from'] != '')?date($this->Gym->getSettings("date_format"),strtotime($row['membership_valid_from'])):'Null')."</td>
 					<td>".(($row['membership_valid_to'] != '')?date($this->Gym->getSettings("date_format"),strtotime($row['membership_valid_to'])):'Null')."</td>
-					<td>{$row['member_type']}</td>
+					<td><a href='{$this->request->base}/GymMember/assign-member/{$row['id']}' title='Assign Classes'>".$assign_label."</a></td>
 					<td>{$row['membership_status']}</td>
 					<td>
 					
 						<a href='{$this->request->base}/GymMember/viewMember/{$row['id']}' title='View' class='btn btn-flat btn-info'><i class='fa fa-eye'></i></a>";
-					if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+					if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 					{	
 					echo " <a href='{$this->request->base}/GymMember/editMember/{$row['id']}' title='Edit' class='btn btn-flat btn-primary'><i class='fa fa-edit'></i></a>
 						<a href='{$this->request->base}/GymMember/deleteMember/{$row['id']}' title='Delete' class='btn btn-flat btn-danger' onClick=\"return confirm('Are you sure,You want to delete this record?');\"><i class='fa fa-trash-o'></i></a>";
@@ -115,7 +121,7 @@ $(document).ready(function(){
 					<th><?php echo __("Member ID");?></th>					
 					<th><?php echo __("Joining Date");?></th>					
 					<th><?php echo __("Expire Date");?></th>					
-					<th><?php echo __("Member Type");?></th>					
+					<th><?php echo __("Assign Class");?></th>					
 					<th><?php echo __("Membership Status");?></th>					
 					<th><?php echo __("Action");?></th>
 					<th><?php echo __("Status");?></th>

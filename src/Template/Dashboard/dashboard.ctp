@@ -56,12 +56,12 @@ echo $this->Html->script('lang-all');
             <div class="row left_section col-md-8 col-sm-8">
                 <?php if($session->read('User.role_id') == 1){?>
                 <div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
-                    <a href="<?php echo $this->request->base ."/Franchise/franchiseList";?>">
+                    <a href="<?php echo $this->request->base ."/Licensee/licenseeList";?>">
                         <div class="panel info-box panel-white">
                             <div class="panel-body member">
                                 <img src="<?php echo $this->request->base;?>/webroot/img/dashboard/group.png" class="dashboard_background">
                                 <div class="info-box-stats">
-                                    <p class="counter"><?php echo $franchise;?> <span class="info-box-title"><?php echo __("Franchise");?></span></p>
+                                    <p class="counter"><?php echo $licensee;?> <span class="info-box-title"><?php echo __("Licensee");?></span></p>
                                 </div>
                             </div>
                         </div>

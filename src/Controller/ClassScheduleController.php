@@ -23,7 +23,7 @@ class ClassScheduleController extends AppController
                    }
                 break;
 
-                CASE "franchise" :
+                CASE "licensee" :
                  if($class_id){
                     $data = $this->ClassSchedule->find()->where(["ClassSchedule.class_name"=>$class_id,"ClassSchedule.created_by"=>$session["id"]]);
                    }else{
@@ -175,7 +175,7 @@ class ClassScheduleController extends AppController
             $this->render("addClass");
                   
              /** Edit record checked roles permissions* */
-               if ($session["role_name"] == "franchise" || $session["role_name"] == "staff_member") {
+               if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
                     if ($row['created_by'] != $session['id']) {
                         $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                         return $this->redirect(["action" => "classList"]);
@@ -219,7 +219,7 @@ class ClassScheduleController extends AppController
               $row = $this->ClassSchedule->get($id);
             
              /** Edit record checked roles permissions* */
-                if ($session["role_name"] == "franchise" || $session["role_name"] == "staff_member") {
+                if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
                     if ($row['created_by'] != $session['id']) {
                         $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                         return $this->redirect(["action" => "classList"]);

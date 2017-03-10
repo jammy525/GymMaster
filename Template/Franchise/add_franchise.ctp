@@ -34,10 +34,10 @@ function validate_multiselect()
 			  <h1>		
 				<i class="fa fa-user"></i>
 				<?php echo $title;?>
-				<small><?php echo __("Franchise");?></small>
+				<small><?php echo __("Licensee");?></small>
 			  </h1>
 			  <ol class="breadcrumb">
-				<a href="<?php echo $this->Gym->createurl("Franchise","FranchiseList");?>" class="btn btn-flat btn-custom"><i class="fa fa-bars"></i> <?php echo __("Franchise List");?></a>
+				<a href="<?php echo $this->Gym->createurl("Licensee","LicenseeList");?>" class="btn btn-flat btn-custom"><i class="fa fa-bars"></i> <?php echo __("Licensee List");?></a>
 			  </ol>
 			</section>
 		</div>
@@ -45,9 +45,9 @@ function validate_multiselect()
 		<div class="box-body">			
 			<?php				
 			echo $this->Form->create("addgroup",["type"=>"file","class"=>"validateForm form-horizontal","role"=>"form"]);
-			echo "<fieldset><legend>". __('Franchise Information')."</legend>";
+			echo "<fieldset><legend>". __('Licensee Information')."</legend>";
 			echo "<div class='form-group'>";	
-			echo '<label class="control-label col-md-2" for="first_name">'. __("Franchise Name").'<span class="text-danger"> *</span></label>';
+			echo '<label class="control-label col-md-2" for="first_name">'. __("Licensee Name").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
 			echo $this->Form->input("",["label"=>false,"name"=>"first_name", "id"=>"first_name", "class"=>"form-control validate[required]","value"=>(($edit)?$data['first_name']:'')]);
 			echo "</div>";	
@@ -193,7 +193,7 @@ function validate_multiselect()
 			echo "</div>";			
 			echo "</fieldset>";
 			
-			echo $this->Form->button(__("Save Franchise"),['class'=>"btn btn-flat btn-primary","name"=>"add_group"]);
+			echo $this->Form->button(__("Save Licensee"),['class'=>"btn btn-flat btn-primary","name"=>"add_group"]);
 			echo $this->Form->end();
 			?>				
 		</div>	

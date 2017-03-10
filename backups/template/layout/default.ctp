@@ -34,8 +34,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                         $menu_cell = $this->cell('GymRenderMenu::adminMenu');
                     break;
 
-                    CASE "franchise":
-                        $menu_cell = $this->cell('GymRenderMenu::franchiseMenu');
+                    CASE "licensee":
+                        $menu_cell = $this->cell('GymRenderMenu::licenseeMenu');
                     break;
 
                     CASE "member":

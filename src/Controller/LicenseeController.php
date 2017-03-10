@@ -2,7 +2,7 @@
 namespace App\Controller;
 use Cake\App\Controller;
 use Cake\ORM\TableRegistry;
-class FranchiseController extends AppController
+class LicenseeController extends AppController
 {
 	public function initialize()
 	{
@@ -10,30 +10,30 @@ class FranchiseController extends AppController
 		$this->loadComponent("GYMFunction");	
 	}
 	
-	public function franchiseList()
+	public function licenseeList()
 	{ 	
-            $data = $this->Franchise->GymMember->find()->contain(['GymLocation'])->where(["GymMember.role_name"=>"franchise"])->select(['GymLocation.location'])->select($this->Franchise->GymMember)->hydrate(false)->toArray();
+            $data = $this->Licensee->GymMember->find()->contain(['GymLocation'])->where(["GymMember.role_name"=>"licensee"])->select(['GymLocation.location'])->select($this->Licensee->GymMember)->hydrate(false)->toArray();
             $this->set("data",$data);
 	}
 	
-	public function addFranchise(){
+	public function addLicensee(){
             $this->set("edit",false);
-            $this->set("title",__("Add Franchise"));
+            $this->set("title",__("Add Licensee"));
 
-            //$roles = $this->Franchise->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
+            //$roles = $this->Licensee->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
             //$this->set("roles",$roles);
             
-            $location = $this->Franchise->GymMember->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"])->hydrate(false)->toArray();
+            $location = $this->Licensee->GymMember->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"])->hydrate(false)->toArray();
             $this->set("location",$location);
 
-            //$specialization = $this->Franchise->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
+            //$specialization = $this->Licensee->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
             //$this->set("specialization",$specialization);		
 
             if($this->request->is("post")){
                 // Active User
                 $session = $this->request->session()->read("User");
                 
-                $franchise = $this->Franchise->GymMember->newEntity();
+                $licensee = $this->Licensee->GymMember->newEntity();
 
                 $image = $this->GYMFunction->uploadImage($this->request->data['image']);
                 $this->request->data['image'] = (!empty($image)) ? $image : "profile-placeholder.png";
@@ -42,21 +42,21 @@ class FranchiseController extends AppController
                 $this->request->data["activated"]= 1;
                 $this->request->data["created_by"]= $session['id'];
                 $this->request->data["alert_sent"]= 1;
-                $this->request->data["role_name"]= 'franchise';
+                $this->request->data["role_name"]= 'licensee';
                 $this->request->data["role_id"]= 2;
                 $this->request->data["alert_sent"]= 1;
                  
                 
-                //$row = $this->Franchise->GymMember->newEntity();	
-                $franchise = $this->Franchise->GymMember->patchEntity($franchise,$this->request->data);
+                //$row = $this->Licensee->GymMember->newEntity();	
+                $licensee = $this->Licensee->GymMember->patchEntity($licensee,$this->request->data);
                 
-                if($this->Franchise->GymMember->save($franchise)){
+                if($this->Licensee->GymMember->save($licensee)){
                     $this->Flash->success(__("Success! Record Successfully Saved."));
-                    return $this->redirect(["action"=>"franchiseList"]);
+                    return $this->redirect(["action"=>"licenseeList"]);
                 }else{				
-                    if($franchise->errors()){	
-                        foreach($franchise->errors() as $error){
-                            foreach($franchise as $key=>$value){
+                    if($licensee->errors()){	
+                        foreach($licensee->errors() as $error){
+                            foreach($licensee as $key=>$value){
                                 $this->Flash->error(__($value));
                             }						
                         }
@@ -65,22 +65,22 @@ class FranchiseController extends AppController
             }
 	}
 	
-	public function editFranchise($id){
+	public function editLicensee($id){
             $this->set("edit",true);
-            $this->set("title",__("Edit Franchise"));
+            $this->set("title",__("Edit Licensee"));
 
-            $data = $this->Franchise->GymMember->get($id)->toArray();
-            //$roles = $this->Franchise->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
-            //$specialization = $this->Franchise->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
-            $location = $this->Franchise->GymMember->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"])->hydrate(false)->toArray();
+            $data = $this->Licensee->GymMember->get($id)->toArray();
+            //$roles = $this->Licensee->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
+            //$specialization = $this->Licensee->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
+            $location = $this->Licensee->GymMember->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"])->hydrate(false)->toArray();
             $this->set("location",$location);
             //$this->set("specialization",$specialization);
             //$this->set("roles",$roles);		
             $this->set("data",$data);
-            $this->render("AddFranchise");
+            $this->render("AddLicensee");
 
             if($this->request->is("post")){
-                $row = $this->Franchise->GymMember->get($id);
+                $row = $this->Licensee->GymMember->get($id);
                 $this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
                 //$this->request->data['s_specialization'] = json_encode($this->request->data['s_specialization']);
                 $image = $this->GYMFunction->uploadImage($this->request->data['image']);
@@ -90,10 +90,10 @@ class FranchiseController extends AppController
                     unset($this->request->data['image']);
                 }
                 /* $this->request->data['image'] = (!empty($image)) ? $image : "logo.png";*/
-                $update = $this->Franchise->GymMember->patchEntity($row,$this->request->data);
-                if($this->Franchise->GymMember->save($update)){
+                $update = $this->Licensee->GymMember->patchEntity($row,$this->request->data);
+                if($this->Licensee->GymMember->save($update)){
                     $this->Flash->success(__("Success! Record Updated Successfully."));
-                    return $this->redirect(["action"=>"franchiseList"]);
+                    return $this->redirect(["action"=>"licenseeList"]);
                 }else{				
                     if($update->errors()){	
                         foreach($update->errors() as $error){
@@ -107,10 +107,10 @@ class FranchiseController extends AppController
             }
 	}
 	
-	public function deleteFranchise($id){
-            $row = $this->Franchise->GymMember->get($id);
-            if($this->Franchise->GymMember->delete($row)){
-                $this->Flash->success(__("Success! Franchise Deleted Successfully."));
+	public function deleteLicensee($id){
+            $row = $this->Licensee->GymMember->get($id);
+            if($this->Licensee->GymMember->delete($row)){
+                $this->Flash->success(__("Success! Licensee Deleted Successfully."));
                 return $this->redirect($this->referer());
             }
 	}

@@ -3,7 +3,7 @@ namespace App\Model\Table;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-Class FranchiseTable extends Table{
+Class LicenseeTable extends Table{
 	
 	public function initialize(array $config)
 	{

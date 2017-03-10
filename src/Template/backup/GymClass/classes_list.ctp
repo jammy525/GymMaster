@@ -69,7 +69,7 @@ $(document).ready(function(){
                                     
                                          echo "<td>".date('M d,Y H:i A',time($row['created_date'])) ."</td>
 					<td>";			
-				if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member" || $session["role_name"] == "franchise" ||$session["role_name"] == "accountant")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member" || $session["role_name"] == "licensee" ||$session["role_name"] == "accountant")
 				{ 
 				echo "<a href='".$this->Gym->createurl('GymClass','editClasses')."/{$row['id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
 					<a href='".$this->Gym->createurl('GymClass','deleteClasses')."/{$row['id']}' class='btn btn-flat btn-danger' title='Delete' onClick=\"return confirm('Are you sure you want to delete?')\"><i class='fa fa-trash-o'></i></a>";

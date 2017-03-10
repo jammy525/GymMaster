@@ -23,8 +23,8 @@ class DashboardController extends AppController
 				return $this->redirect(["action"=>"adminDashboard"]);
 			break;
 			
-			CASE "franchise":
-				return $this->redirect(["action"=>"franchiseDashboard"]);
+			CASE "licensee":
+				return $this->redirect(["action"=>"licenseeDashboard"]);
 			break;
 
 			CASE "member":
@@ -59,8 +59,8 @@ class DashboardController extends AppController
             $staff_members = $mem_table->find("all")->where(["role_name"=>"staff_member"]);
             $staff_members = $staff_members->count();
 
-            $franchise = $mem_table->find("all")->where(["role_name"=>"franchise"]);
-            $franchise = $franchise->count();
+            $licensee = $mem_table->find("all")->where(["role_name"=>"licensee"]);
+            $licensee = $licensee->count();
 
             $curr_id = intval($session["id"]);
             $messages = $message_tbl->find("all")->where(["receiver"=>$curr_id]);
@@ -77,7 +77,7 @@ class DashboardController extends AppController
             $this->set("cal_lang",$cal_lang);
             $this->set("members",$members);
             $this->set("staff_members",$staff_members);
-            $this->set("franchise",$franchise);
+            $this->set("licensee",$licensee);
             $this->set("messages",$messages);
             $this->set("groups",$groups);
             $this->set("membership",$membership);
@@ -162,7 +162,7 @@ class DashboardController extends AppController
             $this->render("dashboard");
 	}
 
-	public function franchiseDashboard()
+	public function licenseeDashboard()
 	{
 		$session = $this->request->session()->read("User");
 		$conn = ConnectionManager::get('default');
@@ -277,7 +277,7 @@ class DashboardController extends AppController
 		$cal_array = $this->getCalendarData();
 		$this->set("cal_array",$cal_array);		
 		
-		$this->render("franchise_dashboard");
+		$this->render("licensee_dashboard");
 	}
 
 	

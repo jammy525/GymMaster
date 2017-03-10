@@ -23,7 +23,7 @@ class StaffMembersController extends AppController
                 ->hydrate(false)->toArray();
             break;
 
-            CASE "franchise" :
+            CASE "licensee" :
                 $data = $this->StaffMembers->GymMember
                 ->find()->contain(['GymRoles'])
                 ->where([
@@ -49,8 +49,8 @@ class StaffMembersController extends AppController
         $this->set("roles",$roles);
         
         if($session['role_id'] == 1){
-            $franchises = $this->StaffMembers->GymMember->find("list",["keyField"=>"id","valueField"=>"first_name"])->where(["GymMember.role_id"=>2, "GymMember.activated"=>1])->hydrate(false)->toArray();
-            $this->set("franchises",$franchises);
+            $licensees = $this->StaffMembers->GymMember->find("list",["keyField"=>"id","valueField"=>"first_name"])->where(["GymMember.role_id"=>2, "GymMember.activated"=>1])->hydrate(false)->toArray();
+            $this->set("licensees",$licensees);
         }
 
         $specialization = $this->StaffMembers->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
@@ -98,8 +98,8 @@ class StaffMembersController extends AppController
         $this->set("title",__("Edit Staff Member"));
         
         if($session['role_id'] == 1){
-            $franchises = $this->StaffMembers->GymMember->find("list",["keyField"=>"id","valueField"=>"first_name"])->where(["GymMember.role_id"=>2, "GymMember.activated"=>1])->hydrate(false)->toArray();
-            $this->set("franchises",$franchises);
+            $licensees = $this->StaffMembers->GymMember->find("list",["keyField"=>"id","valueField"=>"first_name"])->where(["GymMember.role_id"=>2, "GymMember.activated"=>1])->hydrate(false)->toArray();
+            $this->set("licensees",$licensees);
         }
         
        
@@ -108,9 +108,9 @@ class StaffMembersController extends AppController
         $roles = $this->StaffMembers->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
         $specialization = $this->StaffMembers->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
           
-        /** Check edit role for franchises **/
+        /** Check edit role for licensees **/
         
-        if($session["role_name"] == "franchise")
+        if($session["role_name"] == "licensee")
         {
            if($data['created_by']!=$session['id'])
            {
@@ -158,7 +158,7 @@ class StaffMembersController extends AppController
          $row = $this->StaffMembers->GymMember->get($id);
         
         /** Delete record checked roles permissions**/
-        if($session["role_name"] == "franchise")
+        if($session["role_name"] == "licensee")
         {
            if($row['created_by']!=$session['id'])
            {

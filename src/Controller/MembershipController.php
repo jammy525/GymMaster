@@ -24,8 +24,9 @@ Class MembershipController extends AppController
 		$catgories = $this->Membership->Category->find("list",["keyField"=>"id","valueField"=>"name"]);		
 		$catgories = $catgories->toArray();		
 		
-		$classes = $this->Membership->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"])->toArray();
-		$this->set("classes",$classes);	
+		//$classes = $this->Membership->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"])->toArray();
+		$classes = $this->Membership->GymClass->find("list",["keyField"=>"id","valueField"=>"name"])->toArray();
+                $this->set("classes",$classes);	
 		
 		$installment_plan = $this->Membership->Installment_Plan->find("list",["keyField"=>"id","valueField"=>"concatenated"]); //Merging two table column ["col1","col2"]
 		$installment_plan->select(['id',
@@ -90,8 +91,10 @@ Class MembershipController extends AppController
 		$this->set("membership",null);
 		$this->set("title",__("Edit Membership"));	
 		
-		$classes = $this->Membership->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"])->toArray();
-		$this->set("classes",$classes);	
+		//$classes = $this->Membership->ClassSchedule->find("list",["keyField"=>"id","valueField"=>"class_name"])->toArray();
+		$classes = $this->Membership->GymClass->find("list",["keyField"=>"id","valueField"=>"name"])->toArray();
+               
+                $this->set("classes",$classes);	
 		
 		$membership_data = $this->Membership->get($id)->toArray();
 		$catgories = $this->Membership->Category->find("list",["keyField"=>"id","valueField"=>"name"]);		

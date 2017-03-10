@@ -75,14 +75,14 @@ if($is_rtl == "1") { ?>
                     </ul>	
 		</li>
                 
-		<li class="treeview <?php echo ($this->request->controller == "GymMember" || $this->request->controller == "Franchise" || $this->request->controller == "StaffMembers" || $this->request->controller == "GymAccountant") ? "active" : "";?>">
-                    <a href="<?php echo $this->Gym->createurl("Franchise","franchiseList");?>">
+		<li class="treeview <?php echo ($this->request->controller == "GymMember" || $this->request->controller == "Licensee" || $this->request->controller == "StaffMembers" || $this->request->controller == "GymAccountant") ? "active" : "";?>">
+                    <a href="<?php echo $this->Gym->createurl("Licensee","licenseeList");?>">
                         <i class="fa fa-user"></i> <span><?php echo __('Member Management');?></span></i><i class="fa fa-angle-left <?php echo $pull;?>"></i>
                     </a>
                     <ul class="treeview-menu">
                         
-                        <!--<li class="<?php //echo ($this->request->action == "franchiseList" || $this->request->action == "addFranchise" || $this->request->action == "editFranchise" || $this->request->action == "viewFranchise") ? "active" : "";?>">
-                            <a href="<?php //echo $this->Gym->createurl("Franchise","franchiseList");?>"><i class="fa fa-circle-o"></i><?php echo __('Franchise');?></a>
+                        <!--<li class="<?php //echo ($this->request->action == "licenseeList" || $this->request->action == "addLicensee" || $this->request->action == "editLicensee" || $this->request->action == "viewLicensee") ? "active" : "";?>">
+                            <a href="<?php //echo $this->Gym->createurl("Licensee","licenseeList");?>"><i class="fa fa-circle-o"></i><?php echo __('Licensee');?></a>
                         </li>-->
                         <li class="<?php echo ($this->request->action == "staffList" || $this->request->action == "addStaff") ? "active" : "";?>">
                             <a href="<?php echo $this->Gym->createurl("StaffMembers","StaffList");?>">

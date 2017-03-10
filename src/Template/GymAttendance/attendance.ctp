@@ -15,12 +15,12 @@ $(document).ready(function(){
 				<small><?php echo __("Attendance");?></small>
 			  </h1>
 			   <?php
-				if($session["role_name"] == "administrator")
+				/*if($session["role_name"] == "administrator")
 				{ ?>
 			  <ol class="breadcrumb">
 				<a href="<?php echo $this->Gym->createurl("GymAttendance","staffAttendance");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Staff Attendance");?></a>
 			 </ol>
-			 <?php } ?>
+			 <?php }*/ ?>
 			</section>
 		</div>
 		<hr>
@@ -58,8 +58,8 @@ $(document).ready(function(){
 			  <input type="hidden" name="attendance_date" value="<?php echo $attendance_date;?>">
 			 <div class="panel-heading">
 				<h4 class="panel-title">
-				<?php echo __("Class");?> : <?php echo $this->Gym->get_class_by_id($class_id);?> , 
-				<?php echo __("Date");?> : <?php echo (isset($_POST['curr_date'])) ? date($this->Gym->getSettings("date_format"),strtotime($_POST["curr_date"])):"";?></h4>
+				<?php echo __("Class");?> : <?php echo $this->Gym->get_classes_by_id($class_id);?> , 
+				<?php echo __("Date");?> : <?php echo (isset($_POST['curr_date'])) ? date('F j,Y',strtotime($_POST["curr_date"])):"";?></h4>
 			 </div>
 			 <br><br>
 				<div class="clearfix"> </div>
@@ -76,31 +76,42 @@ $(document).ready(function(){
 			   <tr>
 					<th width="70px"><?php echo __("Status");?></th>
 					<th><?php echo __("Photo");?></th>
-					<th width="250px"><?php echo __("Member Name");?></th>				
+					<th width="250px"><?php echo __("Member Name");?></th>
+                                        <th width="250px"><?php echo __("Time");?></th>
 					<th><?php echo __("Status");?></th>			
 				</tr>
 				</thead>
 				<tbody>
 				
-				<?php foreach($data as $row)
-				{ ?>
+				<?php
+                                $record=0;
+                                foreach($data as $row)
+				{
+                                    $days=json_decode($this->Gym->get_schedule_days_by_id($row["assign_schedule"])); 
+                                     $day=date("l", strtotime($_POST["curr_date"]));
+                                    if(@in_array($day, $days))
+                                    {
+                                    ?>
 				<tr> 
-					<td class="checkbox_field"><span><input type="checkbox" class="checkbox1" name="attendance[]" value="<?php echo $row["gym_member"]["id"];?>"></span></td>
+					<td class="checkbox_field"><span><input type="checkbox" class="checkbox1" name="attendance[]" value="<?php echo $row["gym_member"]["id"]."-".$row["assign_schedule"];?>"></span></td>
 					<td><img src="<?php echo $this->request->base ."/webroot/upload/".$row["gym_member"]['image']; ?>" class='membership-img img-circle'></td>
 					<td><span><?php echo $row["gym_member"]['first_name']." ".$row["gym_member"]['last_name']."(".$row["gym_member"]['member_id'].")"; ?></span></td>
-					<td><?php
-						$att_status = $this->Gym->get_attendance_status($row["gym_member"]["id"],$_POST["curr_date"]);
-						echo __($att_status); ?>
+					<td><span><?php echo $this->Gym->get_schedule_time_by_id($row["assign_schedule"]); ?></span></td>
+                                        <td><?php
+                                               $att_status = $this->Gym->get_attendance_custom_status($row["gym_member"]["id"],$row["assign_schedule"],$_POST["curr_date"]);
+                                               echo __($att_status) ?>
 					</td>
 				</tr>
-		  <?php } ?>
+                                <?php  $record++; } } ?>
 				</tbody>
 			</table>
 			  </div>
+                           <?php if( $record>0){?>
 			<div class="col-sm-12"> 
 								
 				<input type="submit" value="<?php echo __("Save Attendance");?>" name="save_attendance" class="btn btn-flat btn-success">
 						</div>
+                           <?php } ?>
 			</form>	
 			</div>
 	<?php

@@ -138,7 +138,7 @@ $(document).ready(function() {
 			echo @$this->Form->select("location_id",$location,["default"=>$data['location_id'],"empty"=>__("Select Location"),"class"=>"form-control validate[required] location_list"]);
 			echo "</div>";	
 			
-			if($this->request->session()->read("User.role_name") == "administrator" || $this->request->session()->read("User.role_name") == "franchise")
+			if($this->request->session()->read("User.role_name") == "administrator" || $this->request->session()->read("User.role_name") == "licensee")
 			{
                             echo '<div class="col-md-2">';
                             //echo "<a href='{$this->request->base}/StaffMembers/addStaff' class='btn btn-flat btn-primary'>".__("Add")."</a>";

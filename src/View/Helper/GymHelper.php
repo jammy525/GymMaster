@@ -542,6 +542,79 @@ public function get_total_group_members($gid)
                
      
         }
+	
+	/// Check member assign class count
+        public function get_member_assign_class($id)
+        {
+            $assign_class_table = TableRegistry::get("GymMemberClass");
+            $data = $assign_class_table->find("all")->where(["member_id"=> $id])->select(["id"]); 
+            return $data->count();
+        }
+       // Overrite assign class to member on view member profile
+        public function get_class_by_members($mid)
+	{
+               // echo $mid;
+		$class_table = TableRegistry::get("GymMemberClass");
+		$class_sche_table = TableRegistry::get("ClassSchedule");
+		$row = $class_table->find()->where(["member_id"=>$mid])->select(["assign_class"]);
+		$row = $row->leftjoin(["GymClass"=>"gym_class"],
+							["GymMemberClass.assign_class = GymClass.id"])->select(["GymClass.name"])->hydrate(false)->toArray();
+                       // print_r($row); die;
+                $class = "None";
+		if(!empty($row))
+		{	$class = "";
+			foreach($row  as $data)
+			{
+				$class .= $data["GymClass"]["name"] .",";
+			}
+		}
+		 $str=trim($class,",");
+                 /// Remove dublicate class name here
+                return $str = implode(',',array_unique(explode(',', $str)));
+	}
+        
+       /// display schedule time display on member attendece lists.
+        public function get_schedule_time_by_id($id)
+        {
+            $class_schedule_list_table = TableRegistry::get("ClassScheduleList");
+            $datass = $class_schedule_list_table->find('all')->where(["id"=> $id])->toArray();
+            return $datass[0]["start_time"]." - ".$datass[0]["end_time"]; 
+        }
+         /// display schedule days display on member attendece lists.
+        public function get_schedule_days_by_id($id)
+        {
+            $class_schedule_list_table = TableRegistry::get("ClassScheduleList");
+            $datass = $class_schedule_list_table->find('all')->where(["id"=> $id])->toArray();
+         //  echo $datass[0]["days"]; die;
+            return @$datass[0]["days"]; 
+        }
+        // Get attadence status Overrite function
+        public function get_attendance_custom_status($id,$schedule_id,$date)
+        { 
+	$date = date("Y-m-d",strtotime($date));
+	$att_table = TableRegistry::get("GymAttendance");
+	$row = $att_table->find()->where(["user_id"=>$id,"schedule_id"=>$schedule_id,"attendance_date"=>"{$date}"])->hydrate(false)->toArray();
+	if(!empty($row))
+	{
+		$att_status=$row[0]["status"];
+                 if($att_status=='Absent'){$style="style='color:red;'";}else {$style="style='color:green;'";}
+		return "<span $style>".__($att_status)."</span>";
+	}
+	else{
+		return __("Not Taken");
+	}
+       }
+        /// display location by class id.
+        public function get_location_by_class_id($id)
+        {
+            $class_schedule_table = TableRegistry::get("ClassSchedule");
+            $location_table = TableRegistry::get("GymLocation");
+            $row = $class_schedule_table->find()->where(["class_name"=>$id])->select(["location_id"]);
+            $row = $row->leftjoin(["GymLocation"=>"gym_location"],
+							["ClassSchedule.location_id = GymLocation.id"])->select(["GymLocation.location"])->hydrate(false)->toArray();
+             return ($row[0]['GymLocation']['location']); 
+        }
+
         public function get_user_name($uid)
 	{
 		$mem_table = TableRegistry::get("GymMember");

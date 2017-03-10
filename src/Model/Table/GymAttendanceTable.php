@@ -1,6 +1,7 @@
 <?php
 namespace App\Model\Table;
 use Cake\ORM\Table;
+use Cake\Validation\Validator;
 
 
 class GymAttendanceTable extends Table
@@ -11,6 +12,7 @@ class GymAttendanceTable extends Table
 		$this->belongsTo("ClassSchedule");
 		$this->belongsTo("GymMember");
 		$this->belongsTo("GymMemberClass");
-		// $this->belongsTo("StaffMembers"); 		
+	        $this->belongsTo("GymClass"); 	
+                
 	}
 }

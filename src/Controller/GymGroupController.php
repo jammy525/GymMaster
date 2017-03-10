@@ -20,14 +20,16 @@ Class GymGroupController extends AppController
 	public function addGroup()
 	{		
 		$this->set("edit",false);
-		$this->set("title",__("Add Group"));	
+		$this->set("title",__("Add Group"));
+                $session = $this->request->session()->read("User");	
 		if($this->request->is("post"))
 		{
 			$this->loadComponent("GYMFunction");
 			$group = $this->GymGroup->newEntity();
 			$new_name = $this->GYMFunction->uploadImage($this->request->data["image"]);
 			$this->request->data["image"] =  $new_name;
-			$this->request->data["created_date"] = date("Y-m-d");			
+			$this->request->data["created_date"] = date("Y-m-d");
+                        $this->request->data["created_by"] = $session["id"];			
 			$group = $this->GymGroup->patchEntity($group,$this->request->data);
 			
 			if($this->GymGroup->save($group))
@@ -41,6 +43,7 @@ Class GymGroupController extends AppController
 	public function editGroup($id){
 		$this->set("title",__("Edit Group"));	
 		$row1 = $this->GymGroup->get($id);
+                $session = $this->request->session()->read("User");
 		$row = $row1->toArray();		
 		$this->set("edit",true);
 		$this->set("data",$row);

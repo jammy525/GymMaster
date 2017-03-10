@@ -693,7 +693,7 @@ class InstallerController extends AppController
 		$year = date("Y");
 		$conn = ConnectionManager::get('install_db');
 		$sql = $insert = "INSERT INTO `general_setting` (`name`, `start_year`, `address`, `office_number`, `country`, `email`, `date_format`, `calendar_lang`, `gym_logo`, `cover_image`, `weight`, `height`, `chest`, `waist`, `thing`, `arms`, `fat`, `member_can_view_other`, `staff_can_view_own_member`, `enable_sandbox`, `paypal_email`, `currency`, `enable_alert`, `reminder_days`, `reminder_message`, `enable_message`, `left_header`, `footer`,`system_installed`) VALUES
-			('{$data['name']}', '{$year}', 'address', '8899665544', '{$data['country']}','{$data['email']}', 'F j, Y', '{$data['calendar_lang']}', '', '', 'KG', 'Centimeter', 'Inches', 'Inches', 'Inches', 'Inches', 'Percentage', 0, 1, 0, 'your_id@paypal.com', '{$data['currency']}', 1, '5', 'Hello GYM_MEMBERNAME,\r\n      Your Membership  GYM_MEMBERSHIP  started at GYM_STARTDATE and it will expire on GYM_ENDDATE.\r\nThank You.', 1,'GYM MASTER','Copyright © 2016-2017. All rights reserved.',1)";
+			('{$data['name']}', '{$year}', 'address', '8899665544', '{$data['country']}','{$data['email']}', 'F j, Y', '{$data['calendar_lang']}', '', '', 'KG', 'Centimeter', 'Inches', 'Inches', 'Inches', 'Inches', 'Percentage', 0, 1, 0, 'your_id@paypal.com', '{$data['currency']}', 1, '5', 'Hello GYM_MEMBERNAME,\r\n      Your Membership  GYM_MEMBERSHIP  started at GYM_STARTDATE and it will expire on GYM_ENDDATE.\r\nThank You.', 1,'Gotribe','Copyright © 2016-2017. All rights reserved.',1)";
 		$stmt = $conn->execute($sql);		
 		
 		

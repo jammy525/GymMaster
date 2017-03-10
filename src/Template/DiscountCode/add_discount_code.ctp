@@ -14,7 +14,6 @@ $(document).ready(function() {
         format: "<?php echo $this->Gym->getSettings('date_format'); ?>",
         startDate: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
         enableOnReadonly: false,
-        updateViewDate:false,
     });
     var box_height = $(".box").height();
     var box_height = box_height + 500 ;

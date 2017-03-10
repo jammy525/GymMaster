@@ -102,16 +102,16 @@ function validate_multiselect()
                         
                         if($session['role_id'] == 1){
                             echo "<div class='form-group'>";	
-                            echo '<label class="control-label col-md-2" for="franchise">'. __("Associate Franchise").'<span class="text-danger"> *</span></label>';
+                            echo '<label class="control-label col-md-2" for="licensee">'. __("Associate Licensee").'<span class="text-danger"> *</span></label>';
                             echo '<div class="col-md-6">';			
-                            echo @$this->Form->select("associated_franchise",$franchises,["default"=>$data['associated_franchise'],"empty"=>__("Select Franchise"),"class"=>"form-control validate[required]"]);
+                            echo @$this->Form->select("associated_licensee",$licensees,["default"=>$data['associated_licensee'],"empty"=>__("Select Licensee"),"class"=>"form-control validate[required]"]);
                             echo "</div>";	
                             echo '<div class="col-md-2">';
-                            echo "<a href='{$this->request->base}/Franchise/addFranchise' class='btn btn-flat btn-primary'>".__("Add")."</a>";
+                            echo "<a href='{$this->request->base}/Licensee/addLicensee' class='btn btn-flat btn-primary'>".__("Add")."</a>";
                             echo "</div>";	
                             echo "</div>";
                         }else{
-                            echo $this->Form->hidden("",["label"=>false,"name"=>"associated_franchise","class"=>"form-control validate[required]","value"=>( ($edit) ?  $data['associated_franchise'] : $session['id'])]);
+                            echo $this->Form->hidden("",["label"=>false,"name"=>"associated_licensee","class"=>"form-control validate[required]","value"=>( ($edit) ?  $data['associated_licensee'] : $session['id'])]);
                         }
 			
 			echo "<div class='form-group'>";	

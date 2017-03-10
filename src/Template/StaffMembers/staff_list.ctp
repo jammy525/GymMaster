@@ -17,7 +17,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 { ?>
 <script>
 
@@ -38,7 +38,7 @@ $(document).ready(function(){
 				<small><?php echo __("Staff Member");?></small>
 			  </h1>
 			  <?php
-				if($session["role_name"] == "administrator" || $session["role_name"] == "franchise")
+				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 				{ ?>
 			  <ol class="breadcrumb">
 				<a href="<?php echo $this->Gym->createurl("StaffMembers","addStaff");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Staff");?></a>

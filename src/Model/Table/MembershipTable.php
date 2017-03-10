@@ -9,12 +9,10 @@ Class MembershipTable extends Table{
 	{
 		$this->addBehavior('Timestamp');
 		$this->belongsTo("Category");
-		$this->belongsTo("Installment_Plan",[
-											"foreignKey"=>"install_plan_id",
-											"propertyName"=>'duration'
-											]);
+		$this->belongsTo("Installment_Plan",["foreignKey"=>"install_plan_id","propertyName"=>'duration']);
 		$this->belongsTo("Activity");			
-		$this->belongsTo("ClassSchedule");			
+		$this->belongsTo("ClassSchedule");	
+$this->belongsTo("GymClass");		
 		$this->hasMany("Membership_Activity",["foreignKey"=>"membership_id"]);
 		$this->Membership_Activity->belongsTo("Activity");
 		$this->Membership_Activity->belongsTo("Category");

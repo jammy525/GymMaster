@@ -966,23 +966,33 @@ $("body").on("change",".membership_id",function(){
     * @return an error string if validation failed
     */
     function checkWORLD(field, rules, i, options){
+        console.log('field:',field, 'rules:',rules, 'IIII:',i, 'options:',options);
+        //if (field.val() != "HELLO") {
+            // this allows the use of i18 for the error msgs
+            //return options.allrules.validate2fields.alertText;
+        //}
+        var response = false;
+        var code = field.val();
         var baseUrl = window.location.protocol + "//" + window.location.host + "/";
         var dir = '';
-        if(window.location.host == 'localhost'){
+        if(window.location.host == 'localhost')
             dir = 'gym_master/';
-        }
-        var code = field.val();
-        
+            
         $.ajax({
             url: baseUrl + dir + "GymAjax/discountCodeExist",
             type : "POST",
             data: {code:code},
-            success : function(result){	
+            success : function(result){alert(result);	
                 if(result)
-                    return options.allrules.validate2fields.alertText;
+                    response = "This is already in use.";
+                else
+                    response = "This is not already in use.";
             },
-            error : function(e){
-                return options.allrules.validate2fields.alertText;
+            error : function(e){alert('error');
+                response =  "This is not already in uses.";
             }
-	});
+        });
+        
+        return response;
+        
     }

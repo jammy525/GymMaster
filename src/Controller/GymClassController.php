@@ -20,7 +20,7 @@ Class GymClassController extends AppController
                         $data = $this->GymClass->find("all")->contain(['GymMember'])->hydrate(false)->toArray();
                 break;
 
-                CASE "franchise" :
+                CASE "licensee" :
                         $data = $this->GymClass->find("all")->contain(['GymMember'])->where(["GymClass.created_by"=>$session["id"]])->orWhere(['GymClass.role_name' => 'administrator'])->hydrate(false)->toArray();
                 break;
 
@@ -87,7 +87,7 @@ Class GymClassController extends AppController
 		$this->set("data",$row);
 		$this->render("addClasses");
                 /** Edit record checked roles permissions* */
-                 if ($session["role_name"] == "franchise" || $session["role_name"] == "staff_member") {
+                 if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
                     if ($row['created_by'] != $session['id']) {
                         $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                         return $this->redirect(["action" => "classesList"]);
@@ -125,7 +125,7 @@ Class GymClassController extends AppController
 			$row = $this->GymClass->get($id);
                         
                         /** Edit record checked roles permissions* */
-                        if ($session["role_name"] == "franchise" || $session["role_name"] == "staff_member") {
+                        if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
                             if ($row['created_by'] != $session['id']) {
                                 $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
                                 return $this->redirect(["action" => "classesList"]);

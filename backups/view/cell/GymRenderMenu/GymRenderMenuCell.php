@@ -12,10 +12,10 @@ class GymRenderMenuCell extends Cell
 		
 	}
 
-	public function franchiseMenu()
+	public function licenseeMenu()
 	{
 		//$access_tbl = TableRegistry::get("GymAccessright");
-		//$menus = $access_tbl->find("all")->where(["franchise"=>1])->hydrate(false)->toArray();		
+		//$menus = $access_tbl->find("all")->where(["licensee"=>1])->hydrate(false)->toArray();		
 		//$this->set("menus",$menus);
 	}
 	
