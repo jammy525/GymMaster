@@ -4,7 +4,9 @@ use Cake\Event\Event;
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
-
+/*
+ * Chamged by Ashok
+ */
 class UsersController extends AppController
 {
 	// public function beforeFilter(Event $event)
