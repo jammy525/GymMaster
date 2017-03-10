@@ -2197,25 +2197,46 @@ public function addLocation(){
             $member_tbl = TableRegistry::get("GymMember");
             $query = $member_tbl->find()->where(["username"=>$email])->first();
             $count = intval($query->count());
-            if($count == 1){return true;}else{return false;}
+            if($count == 1){
+                $arrayToJs[0] = 'email';
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }else{
+                $arrayToJs[0] = 'email';
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }
         }
         public function usernameExist($username){
             $member_tbl = TableRegistry::get("GymMember");
             $query = $member_tbl->find()->where(["username"=>$username])->first();
             $count = intval($query->count());
-            if($count == 1){return true;}else{return false;}
+            if($count == 1){
+                $arrayToJs[0] = 'username';
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }else{
+                $arrayToJs[0] = 'username';
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }
         }
         public function discountCodeExist(){
-            $code = $this->request->data['code'];
+            $this->request->data = $_REQUEST;
+            $code = $this->request->data['fieldValue'];
             $discount_code_tbl = TableRegistry::get("DiscountCode");
             $query = $discount_code_tbl->find()->where(["code"=>$code])->first();
-           //echo '<pre>';print_r($query);die;
             $count = intval(count($query));
             if($count == 1){
-                echo true;
+                $arrayToJs[0] = 'code';
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
             }else{
-                echo false;
+                $arrayToJs[0] = 'code';
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
             }
+            
         }
         
         /** End here **/

@@ -56,7 +56,7 @@ function validate_multiselect(){
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="code"><?php  echo __("Discount Code");?><span class="text-danger"> *</span></label>
                         <div class="col-md-6">
-                            <input type="text" name="code" id="code" class="form-control validate[required,custom[onlyLetterNumber],funcCall[checkWORLD]]" value="<?php echo (($edit)?$data['code']:'');?>">
+                            <input type="text" name="code" id="code" class="form-control validate[required,custom[onlyLetterNumber],ajax[isDiscountCodeUnique]]" value="<?php echo (($edit)?$data['code']:'');?>">
                         </div>	
                     </div>
                     
@@ -77,7 +77,7 @@ function validate_multiselect(){
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="valid_till"><?php  echo __("Validity");?></label>
                         <div class="col-md-6">
-                            <input type="text" name="valid_till" id="valid_till" class="form-control" value="<?php echo (($edit && isset($data['valid_till']) && $data['valid_till'] != '')?(date('F j, Y',$data['valid_till'])):'');?>" readonly="eadonly">
+                            <input type="text" name="valid_till" id="valid_till" class="form-control" value="<?php echo (($edit && isset($data['valid_till']) && $data['valid_till'] != '1')?(date('F j, Y',$data['valid_till'])):'');?>" readonly="eadonly">
                         </div>	
                     </div>
                     
