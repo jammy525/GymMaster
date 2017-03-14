@@ -398,7 +398,14 @@ Class GYMfunctionComponent extends Component
 		$mem_table = TableRegistry::get("GymMember");
 		$name = $mem_table->get($uid)->toArray();
 		return $name["first_name"] ." ". $name["last_name"];
-	}	
+	}
+        
+        public function get_user_detail($uid)
+	{
+		$mem_table = TableRegistry::get("GymMember");
+		$user = $mem_table->get($uid)->toArray();
+		return $user;
+	}
 
 	function get_currency_symbol( $currency = '' )
 	{			

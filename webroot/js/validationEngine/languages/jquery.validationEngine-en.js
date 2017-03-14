@@ -165,6 +165,27 @@
                     "alertTextOk": "All good!",
                     "alertTextLoad": "* Validating, please wait"
                 },
+                // To check unique email
+                "isEmailUnique": {
+                    "url": baseUrl + "GymAjax/emaillExist",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique email for existing user
+                "isEmailUnique1": {
+                    "url": baseUrl + "GymAjax/emaillExist1",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique username
+                "isUserNameUnique": {
+                    "url": baseUrl + "GymAjax/usernameExist",
+                    "alertText": "* This username is already taken",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
 		"ajaxUserCallPhp": {
                     "url": "phpajax/ajaxValidateFieldUser.php",
                     // you may want to pass extra data on the ajax call

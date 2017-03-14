@@ -30,6 +30,8 @@ class LicenseeController extends AppController
             //$this->set("specialization",$specialization);		
 
             if($this->request->is("post")){
+                
+                $plainPassword = $this->request->data['password'];
                 // Active User
                 $session = $this->request->session()->read("User");
                 
@@ -50,9 +52,47 @@ class LicenseeController extends AppController
                 //$row = $this->Licensee->GymMember->newEntity();	
                 $licensee = $this->Licensee->GymMember->patchEntity($licensee,$this->request->data);
                 
-                if($this->Licensee->GymMember->save($licensee)){
-                    $this->Flash->success(__("Success! Record Successfully Saved."));
-                    return $this->redirect(["action"=>"licenseeList"]);
+                if($saveResult = $this->Licensee->GymMember->save($licensee)){
+                    $mailArrUser = [
+                        "template"=>"registration_user_mail",
+                        "subject"=>"GoTribe : Registration Confirmation",
+                        "emailFormat"=>"html",
+                        "to"=>$saveResult['email'],
+                        "addTo"=>"jameel.ahmad@rnf.tech",
+                        "cc"=>"imran.khan@rnf.tech",
+                        "addCc"=>"jameel.ahmad@rnf.tech",
+                        "bcc"=>"jameel.ahmad@rnf.tech",
+                        "addBcc"=>"jameel.ahmad@rnf.tech",
+                        "viewVars"=>[
+                                'name'=>$saveResult['first_name'] . ' ' . $saveResult['last_name'],
+                                'email'=>$saveResult['email'],
+                                'username'=>$saveResult['username'],
+                                'password'=>$plainPassword
+                            ]
+                    ];
+                    $mailArrAdmin = [
+                        "template"=>"registration_admin_mail",
+                        "subject"=>"GoTribe : User Registered",
+                        "emailFormat"=>"html",
+                        "to"=>$this->GYMFunction->getSettings('email'),
+                        "addTo"=>"jameel.ahmad@rnf.tech",
+                        "cc"=>"imran.khan@rnf.tech",
+                        "addCc"=>"jameel.ahmad@rnf.tech",
+                        "bcc"=>"jameel.ahmad@rnf.tech",
+                        "addBcc"=>"jameel.ahmad@rnf.tech",
+                        "viewVars"=>[
+                                'name'=>$saveResult['first_name'] . ' ' . $saveResult['last_name'],
+                                'email'=>$saveResult['email'],
+                                'username'=>$saveResult['username'],
+                                'password'=>$plainPassword,
+                                'adminName'=>$this->GYMFunction->getSettings('name'),
+                            ]
+                    ];
+                    if($this->GYMFunction->sendEmail($mailArrUser) && $this->GYMFunction->sendEmail($mailArrAdmin)){
+                        $this->Flash->success(__("Success! Record Successfully Saved."));
+                        return $this->redirect(["action"=>"licenseeList"]);
+                    }
+                    
                 }else{				
                     if($licensee->errors()){	
                         foreach($licensee->errors() as $error){

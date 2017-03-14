@@ -15,6 +15,39 @@ Class GymMemberController extends AppController
 		$session = $this->request->session()->read("User");
 		$this->set("session",$session);		
 	}
+        
+        private function crypto_rand_secure($min, $max) {
+            $range = $max - $min;
+            if ($range < 1)
+                return $min; // not so random...
+            $log = ceil(log($range, 2));
+            $bytes = (int) ($log / 8) + 1; // length in bytes
+            $bits = (int) $log + 1; // length in bits
+            $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+            do {
+                $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+                $rnd = $rnd & $filter; // discard irrelevant bits
+            } while ($rnd > $range);
+            return $min + $rnd;
+        }
+
+        private function getToken($length) {
+            $token = "";
+            $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            //$codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+            $codeAlphabet.= "0123456789";
+            $max = strlen($codeAlphabet); // edited
+
+            for ($i = 0; $i < $length; $i++) {
+                $token .= $codeAlphabet[$this->crypto_rand_secure(0, $max - 1)];
+            }
+
+            $referralCode = $this->GymMember->ReferralCode->find()->where(["code"=>$token])->first();
+            if(count($referralCode) > 0){
+                return $this->getToken($length);
+            }
+            return $token;
+        }
 	
 	public function memberList()
 	{
@@ -54,119 +87,161 @@ Class GymMemberController extends AppController
 		$this->set("data",$data);	
 	}
 	
-	public function addMember()
-	{	
-		$this->set("edit",false);
-		$this->set("title",__("Add Member"));
-		
-		$lastid = $this->GymMember->find("all",["fields"=>"id"])->last();
-		$lastid = ($lastid != null) ? $lastid->id + 1 : 01 ;
-		$session = $this->request->session()->read("User");
-		$member = $this->GymMember->newEntity();
-		$m = date("d");
-		$y = date("y");
-		$prefix = "M".$lastid;
-		$member_id = $prefix.$m.$y;
-		
-		$this->set("member_id",$member_id);
-		$staff = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"staff_member"]);
-		$staff = $staff->select(["id","name"=>$staff->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
-		
-                $referrer_by = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_id !="=>"1"]);
-		$referrer_by = $referrer_by->select(["id","name"=>$referrer_by->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
+	public function addMember(){	
+            $this->set("edit",false);
+            $this->set("title",__("Add Member"));
+
+            $lastid = $this->GymMember->find("all",["fields"=>"id"])->last();
+            $lastid = ($lastid != null) ? $lastid->id + 1 : 01 ;
+            $session = $this->request->session()->read("User");
+            $member = $this->GymMember->newEntity();
+            $m = date("d");
+            $y = date("y");
+            $prefix = "M".$lastid;
+            $member_id = $prefix.$m.$y;
+
+            $this->set("member_id",$member_id);
+
+            $staff = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"staff_member"]);
+            $staff = $staff->select(["id","name"=>$staff->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
+            
+            $licensee = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"licensee"]);
+            $licensee = $licensee->select(["id","name"=>$licensee->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
+
+            $referrer_by = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_id !="=>"1"]);
+            $referrer_by = $referrer_by->select(["id","name"=>$referrer_by->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
+
+            $classes = $this->GymMember->GymClass->find("list",["keyField"=>"id","valueField"=>"name"]);
+
+            $groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
+            $interest = $this->GymMember->GymInterestArea->find("list",["keyField"=>"id","valueField"=>"interest"]);
+            $source = $this->GymMember->GymSource->find("list",["keyField"=>"id","valueField"=>"source_name"]);
+            $membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
+
+            $this->set("staff",$staff);
+            $this->set("classes",$classes);
+            $this->set("groups",$groups);
+            $this->set("interest",$interest);
+            $this->set("source",$source);
+            $this->set("membership",$membership);
+            $this->set("referrer_by",$referrer_by);
+            $this->set("licensee",$licensee);
+
+            if($this->request->is("post"))
+            {
+                $plainPassword = $this->request->data['password']; // send into mail
                 
-                $classes = $this->GymMember->GymClass->find("list",["keyField"=>"id","valueField"=>"name"]);
-		
-                $groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
-		$interest = $this->GymMember->GymInterestArea->find("list",["keyField"=>"id","valueField"=>"interest"]);
-		$source = $this->GymMember->GymSource->find("list",["keyField"=>"id","valueField"=>"source_name"]);
-		$membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
-	
-		$this->set("staff",$staff);
-		$this->set("classes",$classes);
-		$this->set("groups",$groups);
-		$this->set("interest",$interest);
-		$this->set("source",$source);
-		$this->set("membership",$membership);
-		$this->set("referrer_by",$referrer_by);
-		
-		if($this->request->is("post"))
-		{
-                    $this->request->data['role_id'] = 4;
-                    $this->request->data['alert_sent'] = 1;
-                    //$this->request->data['assign_staff_mem'] = '';
-                    //$this->request->data['role_id'] = 4;
+                $this->request->data['role_id'] = 4;
+                $this->request->data['alert_sent'] = 1;
+                //$this->request->data['assign_staff_mem'] = '';
+                //$this->request->data['role_id'] = 4;
+
+                $this->request->data['member_id'] = $member_id;
+                $this->request->data['created_by']=$session["id"];  
+                //$this->request->data['assign_group']=0;
+                $image = $this->GYMFunction->uploadImage($this->request->data['image']);
+                $this->request->data['image'] = (!empty($image)) ? $image : "profile-placeholder.png";
+                $this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
+                $this->request->data['inquiry_date'] = date("Y-m-d",strtotime($this->request->data['inquiry_date']));
+                $this->request->data['trial_end_date'] = date("Y-m-d",strtotime($this->request->data['trial_end_date']));
+                if(isset($this->request->data['membership_valid_from'])){
+                    $this->request->data['membership_valid_from'] = date("Y-m-d",strtotime($this->request->data['membership_valid_from']));
+
+                }
+                if(isset($this->request->data['membership_valid_to'])){
+                    $this->request->data['membership_valid_to'] = date("Y-m-d",strtotime($this->request->data['membership_valid_to']));
+                }
+                $this->request->data['first_pay_date'] = date("Y-m-d",strtotime($this->request->data['first_pay_date']));
+                $this->request->data['created_date'] = date("Y-m-d");
+                $this->request->data['assign_group'] = json_encode($this->request->data['assign_group']);
+                switch($this->request->data['member_type']){
+                    CASE "Member":
+                            $this->request->data['membership_status'] = "Continue";
+                    break;
+                    CASE "Prospect":
+                            $this->request->data['membership_status'] = "Not Available";
+                    break;
+                    CASE "Alumni":
+                            $this->request->data['membership_status'] = "Expired";
+                    break;
+
+                }
+                $this->request->data["role_name"]="member";
+                $this->request->data["activated"]= 1;
+                $member = $this->GymMember->patchEntity($member,$this->request->data);
+
+                if($saveResult = $this->GymMember->save($member)){
+                    //echo '<pre>',$saveResult['id'];die;
+                    $this->request->data['member_id'] = $member->id;
+                    $this->GYMFunction->add_membership_history($this->request->data);
+                    // Referral Code Generation 
+                    $referralCode = $this->GymMember->ReferralCode->newEntity();
+                    $referralCodeArray['user_id'] = $saveResult['id'];
+                    $referralCodeArray['code'] = $this->getToken(8);
+                    $referralCode = $this->GymMember->ReferralCode->patchEntity($referralCode,$referralCodeArray);
                     
-			$this->request->data['member_id'] = $member_id;
-                        $this->request->data['created_by']=$session["id"];  
-                      //  $this->request->data['assign_group']=0;
-			$image = $this->GYMFunction->uploadImage($this->request->data['image']);
-			$this->request->data['image'] = (!empty($image)) ? $image : "profile-placeholder.png";
-			$this->request->data['birth_date'] = date("Y-m-d",strtotime($this->request->data['birth_date']));
-			$this->request->data['inquiry_date'] = date("Y-m-d",strtotime($this->request->data['inquiry_date']));
-			$this->request->data['trial_end_date'] = date("Y-m-d",strtotime($this->request->data['trial_end_date']));
-			if(isset($this->request->data['membership_valid_from']))
-			{
-				$this->request->data['membership_valid_from'] = date("Y-m-d",strtotime($this->request->data['membership_valid_from']));
-			
-			}
-			if(isset($this->request->data['membership_valid_to']))
-			{
-				$this->request->data['membership_valid_to'] = date("Y-m-d",strtotime($this->request->data['membership_valid_to']));
-			}
-			$this->request->data['first_pay_date'] = date("Y-m-d",strtotime($this->request->data['first_pay_date']));
-			$this->request->data['created_date'] = date("Y-m-d");
-			$this->request->data['assign_group'] = json_encode($this->request->data['assign_group']);
-			switch($this->request->data['member_type'])
-			{
-				CASE "Member":
-					$this->request->data['membership_status'] = "Continue";
-				break;
-				CASE "Prospect":
-					$this->request->data['membership_status'] = "Not Available";
-				break;
-				CASE "Alumni":
-					$this->request->data['membership_status'] = "Expired";
-				break;
-				
-			}
-			$this->request->data["role_name"]="member";
-			$this->request->data["activated"]= 1;
-			$member = $this->GymMember->patchEntity($member,$this->request->data);
-			
-			if($this->GymMember->save($member))
-			{
-				$this->request->data['member_id'] = $member->id;
-				$this->GYMFunction->add_membership_history($this->request->data);
-				if($this->addPaymentHistory($this->request->data))
-				{
-					$this->Flash->success(__("Success! Record Saved Successfully."));					
-				}
-				
-				//foreach($this->request->data["assign_class"] as $class)
-				//{
-					//$new_row = $this->GymMember->GymMemberClass->newEntity();
-					//$data = array();
-					//$data["member_id"] = $member->id;
-					//$data["assign_class"] = $class;
-					//$new_row = $this->GymMember->GymMemberClass->patchEntity($new_row,$data);
-					//$this->GymMember->GymMemberClass->save($new_row);
-				//}
-			}else
-			{				
-				if($member->errors())
-				{	
-					foreach($member->errors() as $error)
-					{
-						foreach($error as $key=>$value)
-						{
-							$this->Flash->error(__($value));
-						}						
-					}
-				}
-			}	
-			return $this->redirect(["action"=>"memberList"]);
-		}		
+                    if($this->addPaymentHistory($this->request->data) && $this->GymMember->ReferralCode->save($referralCode)){
+                        $mailArrUser = [
+                            "template"=>"registration_user_mail",
+                            "subject"=>"GoTribe : Registration Confirmation",
+                            "emailFormat"=>"html",
+                            "to"=>$saveResult['email'],
+                            "addTo"=>"jameel.ahmad@rnf.tech",
+                            "cc"=>"imran.khan@rnf.tech",
+                            "addCc"=>"jameel.ahmad@rnf.tech",
+                            "bcc"=>"jameel.ahmad@rnf.tech",
+                            "addBcc"=>"jameel.ahmad@rnf.tech",
+                            "viewVars"=>[
+                                    'name'=>$saveResult['first_name'] . ' ' . $saveResult['last_name'],
+                                    'email'=>$saveResult['email'],
+                                    'username'=>$saveResult['username'],
+                                    'password'=>$plainPassword
+                                ]
+                        ];
+                        $associated_licensee = $this->GYMFunction->get_user_detail($saveResult['associated_licensee']);
+                        $mailArrAdmin = [
+                            "template"=>"registration_admin_mail",
+                            "subject"=>"GoTribe : User Registered",
+                            "emailFormat"=>"html",
+                            "to"=>$associated_licensee['email'],
+                            "addTo"=>"jameel.ahmad@rnf.tech",
+                            "cc"=>"imran.khan@rnf.tech",
+                            "addCc"=>"jameel.ahmad@rnf.tech",
+                            "bcc"=>"jameel.ahmad@rnf.tech",
+                            "addBcc"=>"jameel.ahmad@rnf.tech",
+                            "viewVars"=>[
+                                    'name'=>$saveResult['first_name'] . ' ' . $saveResult['last_name'],
+                                    'email'=>$saveResult['email'],
+                                    'username'=>$saveResult['username'],
+                                    'password'=>$plainPassword,
+                                    'adminName'=>$associated_licensee['first_name'] . ' ' . $associated_licensee['last_name'],
+                                ]
+                        ];
+                        if($this->GYMFunction->sendEmail($mailArrUser) && $this->GYMFunction->sendEmail($mailArrAdmin)){
+                            $this->Flash->success(__("Success! Record Saved Successfully."));
+                        }
+                    }
+
+                    //foreach($this->request->data["assign_class"] as $class)
+                    //{
+                            //$new_row = $this->GymMember->GymMemberClass->newEntity();
+                            //$data = array();
+                            //$data["member_id"] = $member->id;
+                            //$data["assign_class"] = $class;
+                            //$new_row = $this->GymMember->GymMemberClass->patchEntity($new_row,$data);
+                            //$this->GymMember->GymMemberClass->save($new_row);
+                    //}
+                }else{				
+                    if($member->errors()){	
+                        foreach($member->errors() as $error){
+                            foreach($error as $key=>$value){
+                                $this->Flash->error(__($value));
+                            }						
+                        }
+                    }
+                }	
+                return $this->redirect(["action"=>"memberList"]);
+            }		
 	}
 	
 	
