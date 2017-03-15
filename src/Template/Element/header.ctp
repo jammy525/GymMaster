@@ -54,6 +54,7 @@
 		<?php } 
 		echo $this->Html->script('jQuery/jQuery-2.1.4.min.js');
 		echo $this->Html->script('bootstrap/js/bootstrap.min.js') ;
+                //echo $this->Html->script('bootstrap/js/bootstrap3-typeahead.js') ;
 		echo $this->Html->script('jquery-ui.min') ;
 		echo $this->Html->script('morris/morris.js');
 		echo $this->Html->script('morris/morris.min.js');

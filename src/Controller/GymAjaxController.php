@@ -2193,7 +2193,7 @@ public function addLocation(){
 		}
 	}
         
-        public function emaillExist(){
+        public function emailExist(){ 
             $this->request->data = $_REQUEST;
             $email = $this->request->data['fieldValue'];
             $fieldId = $this->request->data['fieldId'];
@@ -2210,7 +2210,7 @@ public function addLocation(){
                 echo json_encode($arrayToJs);	
             }
         }
-        public function emaillExist1(){
+        public function emailExist1(){
             $loggedUserId = $this->request->session()->read("User.id");
             $this->request->data = $_REQUEST;
             $email = $this->request->data['fieldValue'];

@@ -46,7 +46,7 @@ $(document).ready(function(){
                             <div class="panel-title"><?php echo __("Account Settings");?> </div>
                         </div>
                         <div class="panel-body">
-                            <form class="form-horizontal" action="#" method="post">
+                            <form class="validateForm form-horizontal" action="#" method="post">
                                 <div class="form-group">
                                     <label class="control-label col-xs-2"></label>
                                     <div class="col-xs-10">	
@@ -68,20 +68,20 @@ $(document).ready(function(){
                                     </div>
                                 </div>
                                                 <div class="form-group">
-                                                        <label for="inputPassword" class="control-label col-sm-2 "><?php echo __("Current Password");?></label>
+                                                        <label for="current_password" class="control-label col-sm-2 "><?php echo __("Current Password");?><span class="text-danger">*</span></label>
                                                         <div class="col-sm-10">
-                                                                <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="current_password">
+                                                                <input type="password" class="form-control validate[required]" id="current_password" placeholder="Password" name="current_password">
                                                         </div>
                                                 </div>
                                 <div class="form-group">
-                                                        <label for="inputPassword" class="control-label col-sm-2"><?php echo __("New Password");?></label>
+                                                        <label for="password" class="control-label col-sm-2"><?php echo __("New Password");?><span class="text-danger">*</span></label>
                                                         <div class="col-sm-10">
-                                                                <input type="password" class="validate[required] form-control" id="inputPassword" placeholder="New Password" name="password">
+                                                                <input type="password" class="validate[required] form-control" id="password" placeholder="New Password" name="password">
                                                         </div>
                                                 </div><div class="form-group">
-                                                        <label for="inputPassword" class="control-label col-sm-2"><?php echo __("Confirm Password");?></label>
+                                                        <label for="confirm_password" class="control-label col-sm-2"><span class="text-danger">*</span><?php echo __("Confirm Password");?></label>
                                                         <div class="col-sm-10">
-                                                                <input type="password" class="validate[required] form-control" id="inputPassword" placeholder="Confirm Password" name="confirm_password">
+                                                                <input type="password" class="validate[required,equals[password]] form-control" id="confirm_password" placeholder="Confirm Password" name="confirm_password">
                                                         </div>
                                                 </div>
 

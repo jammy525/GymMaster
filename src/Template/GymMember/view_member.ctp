@@ -114,8 +114,8 @@ $(".sub-history").dataTable({
 						<td class="txt_color"><?php echo $data['gym_interest_area']['interest'];?></td>
 					</tr>	
 					<tr>
-						<th><i class="fa fa-user"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Staff Member");?></th>
-						<td class="txt_color"><?php echo $this->Gym->get_staff_name($data['assign_staff_mem']);?></td>
+						<th><i class="fa fa-user"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Ass. Licensee");?></th>
+						<td class="txt_color"><?php echo $this->Gym->get_user_name($data['associated_licensee']);?></td>
 					</tr>
 									
 					<tr>

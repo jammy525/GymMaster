@@ -127,7 +127,7 @@ if($is_rtl == "1") { ?>
                         </li>-->	
                     </ul>	
 		</li>
-
+    <?php if($role_id != '4'){?>
     <li class="treeview <?php echo ($this->request->controller == "GymMember" || $this->request->controller == "Licensee" || $this->request->controller == "StaffMembers" || $this->request->controller == "GymAccountant") ? "active" : "";?>">
         <a href="#">
             <i class="fa fa-user"></i> <span><?php echo __('Member Management');?></span></i><i class="fa fa-angle-left <?php echo $pull;?>"></i>
@@ -156,6 +156,7 @@ if($is_rtl == "1") { ?>
 
         </ul>			  
     </li>
+    <?php }?>
     <li class="treeview <?php echo ($this->request->controller == "Activity") ? "active" : "";?>" style="<?php echo (in_array('Activity', $controller) && in_array('activityList', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("Activity","activityList");?>">
             <i class="fa fa-bicycle"></i> <span><?php echo __('Activity');?></span>  
@@ -279,6 +280,11 @@ if($is_rtl == "1") { ?>
             </li>
         </ul> 
 
+    </li>
+    <li class="treeview <?php echo ($this->request->controller == "Refer") ? "active" : "";?>" style="<?php echo (in_array('Refer', $controller) && in_array('referFriend', $action) ) ? 'display:block' : 'display:none';?>">
+        <a href="<?php echo $this->Gym->createurl("Refer","referFriend");?>">
+            <i class="fa fa-users"></i> <span><?php echo __('Refer a Friend');?></span>  
+        </a>			   
     </li>
     <li class="treeview <?php echo ($this->request->controller == "Reports") ? "active" : "";?>" style="<?php echo (in_array('Reports', $controller) && in_array('membershipReport', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("Reports","membershipReport");?>">

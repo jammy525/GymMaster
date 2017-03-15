@@ -167,14 +167,28 @@
                 },
                 // To check unique email
                 "isEmailUnique": {
-                    "url": baseUrl + "GymAjax/emaillExist",
+                    "url": baseUrl + "GymAjax/emailExist",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique email for referred user
+                "isEmailUnique2": {
+                    "url": baseUrl + "MemberRegistration/emailExist",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique username for referred user
+                "isUserNameUnique2": {
+                    "url": baseUrl + "MemberRegistration/usernameExist",
                     "alertText": "* This email is already associated with our ssystem",
                     "alertTextOk": "All good!",
                     "alertTextLoad": "* Validating, please wait"
                 },
                 // To check unique email for existing user
                 "isEmailUnique1": {
-                    "url": baseUrl + "GymAjax/emaillExist1",
+                    "url": baseUrl + "GymAjax/emailExist1",
                     "alertText": "* This email is already associated with our ssystem",
                     "alertTextOk": "All good!",
                     "alertTextLoad": "* Validating, please wait"
