@@ -38,7 +38,7 @@ $(document).ready(function(){
 			echo $this->Form->file("image",["class"=>"form-control"]);
 			echo "</div>";				
 			
-			$url =  (isset($data['image']) && $data['image'] != "") ? $this->request->webroot ."/upload/" . $data['image'] : $this->request->webroot ."/upload/logo.png";
+			$url =  (isset($data['image']) && $data['image'] != "") ? $this->request->webroot ."/upload/" . $data['image'] : $this->request->webroot ."webroot/upload/profile-placeholder.png";
 			echo "<img src='{$url}' class='membership-img'>";
 			echo "<br><br>";
 			

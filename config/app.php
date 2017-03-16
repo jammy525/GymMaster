@@ -230,7 +230,7 @@ return [
             'persistent' => false,
             'host' => 'localhost',
             'username' => 'root',
-            'password' => '123456',
+            'password' => 'rnf@1123',
             'database' => 'gym_master',
             'encoding' => 'utf8',
             'timezone' => 'UTC',

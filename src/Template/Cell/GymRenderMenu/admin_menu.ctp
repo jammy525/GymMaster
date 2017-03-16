@@ -53,19 +53,19 @@ if($is_rtl == "1") { ?>
     <!-- <li class="header">MAIN NAVIGATION</li> -->		 
     <li class= "treeview <?php echo ($this->request->controller == "Dashboard") ? "active" : "";?>" style="<?php echo (in_array('Dashboard', $controller) && in_array('index', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("Dashboard","index");?>">
-            <i class="fa fa-pie-chart"></i> <span><?php echo __('Dashboard');?></span></i> 
+            <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/dashboard.png"></i> <span><?php echo __('Dashboard');?></span></i> 
         </a>             
     </li>
 
     <li class="treeview <?php echo ($this->request->controller == "Membership") ? "active" : "";?>" style="<?php echo (in_array('Membership', $controller) && in_array('membershipList', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("membership","membership_list");?>">
-            <i class="fa fa-users"></i> <span><?php echo __('Membership Type');?></span>  
+            <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/membership-type.png"></i> <span><?php echo __('Membership Type');?></span>  
         </a>			   
     </li>
 
     <li class="treeview <?php echo ($this->request->controller == "GymGroup") ? "active" : "";?>" style="<?php echo (in_array('GymGroup', $controller) && in_array('GroupList', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("GymGroup","GroupList");?>">
-            <i class="fa fa-object-group"></i> <span><?php echo __('Group');?></span> 
+            <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/group.png"></i> <span><?php echo __('Group');?></span> 
         </a>
     </li>			
 
@@ -99,7 +99,7 @@ if($is_rtl == "1") { ?>
     
     <li class="treeview <?php echo ($this->request->controller == "GymNutrition" || $this->request->controller == "ClassSchedule" || $this->request->controller == "ClassType" || $this->request->controller == "GymClass") ? "active" : "";?>" style="<?php echo (in_array('ClassType', $controller) && in_array('classtypeList', $action) ) ? 'display:block' : 'display:none';?>">
                     <a href="#">
-                        <i class="fa fa-calendar"></i> <span><?php echo __("Class & Schedule");?></span><i class="fa fa-angle-left <?php echo $pull;?>"></i>
+                        <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/class-schedule.png"></i> <span><?php echo __("Class & Schedule");?></span><i class="fa fa-angle-left <?php echo $pull;?>"></i>
                     </a>
                     <ul class="treeview-menu">	
                         <li class="<?php echo ($this->request->action == "classtypeList" || $this->request->action == "classtypeList" || $this->request->action == "editclassType"|| $this->request->action == "addclassTYpe") ? "active" : "";?>" style="<?php echo (in_array('ClassType', $controller) && in_array('classtypeList', $action) ) ? 'display:block' : 'display:none';?>">
@@ -130,7 +130,7 @@ if($is_rtl == "1") { ?>
     <?php if($role_id != '4'){?>
     <li class="treeview <?php echo ($this->request->controller == "GymMember" || $this->request->controller == "Licensee" || $this->request->controller == "StaffMembers" || $this->request->controller == "GymAccountant") ? "active" : "";?>">
         <a href="#">
-            <i class="fa fa-user"></i> <span><?php echo __('Member Management');?></span></i><i class="fa fa-angle-left <?php echo $pull;?>"></i>
+            <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/staff-member.png"></i> <span><?php echo __('Member Management');?></span></i><i class="fa fa-angle-left <?php echo $pull;?>"></i>
         </a>
         <ul class="treeview-menu">
 
