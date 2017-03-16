@@ -11,5 +11,6 @@ Class MemberRegistrationTable extends Table{
 		$this->BelongsTo("GymMemberClass");		
 		$this->BelongsTo("MembershipPayment");	
                 $this->BelongsTo("ReferralCode");	
+                $this->BelongsTo("ReferrerReferred");	
 	}
 }

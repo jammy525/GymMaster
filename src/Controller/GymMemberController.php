@@ -31,7 +31,7 @@ Class GymMemberController extends AppController
             return $min + $rnd;
         }
 
-        private function getToken($length) {
+        private function getToken($user_id,$length) {
             $token = "";
             $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             //$codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
@@ -42,11 +42,11 @@ Class GymMemberController extends AppController
                 $token .= $codeAlphabet[$this->crypto_rand_secure(0, $max - 1)];
             }
 
-            $referralCode = $this->GymMember->ReferralCode->find()->where(["code"=>$token])->first();
-            if(count($referralCode) > 0){
-                return $this->getToken($length);
-            }
-            return $token;
+            //$referralCode = $this->GymMember->ReferralCode->find()->where(["code"=>$token])->first();
+            //if(count($referralCode) > 0){
+                //return $this->getToken($length);
+            //}
+            return $user_id.$token;
         }
 	
 	public function memberList()
@@ -177,7 +177,7 @@ Class GymMemberController extends AppController
                     // Referral Code Generation 
                     $referralCode = $this->GymMember->ReferralCode->newEntity();
                     $referralCodeArray['user_id'] = $saveResult['id'];
-                    $referralCodeArray['code'] = $this->getToken(8);
+                    $referralCodeArray['code'] = $this->getToken($saveResult['id'],8);
                     $referralCode = $this->GymMember->ReferralCode->patchEntity($referralCode,$referralCodeArray);
                     
                     if($this->addPaymentHistory($this->request->data) && $this->GymMember->ReferralCode->save($referralCode)){
