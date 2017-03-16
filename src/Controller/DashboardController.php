@@ -16,7 +16,7 @@ class DashboardController extends AppController
 	
 	public function index()
 	{
-		//$session = $this->request->session()->read("User");
+		$session = $this->request->session()->read("User");
 		/*switch($session["role_name"])
 		{
 			CASE "administrator":
@@ -34,7 +34,8 @@ class DashboardController extends AppController
 			default:	
 				return $this->redirect(["action"=>"staffAccDashboard"]);
 		}*/
-                return $this->redirect(["action"=>"adminDashboard"]);
+               
+               return $this->redirect(["action"=>"adminDashboard"]);
 	}
         
         
@@ -164,6 +165,7 @@ class DashboardController extends AppController
 
 	public function licenseeDashboard()
 	{
+            //die('1233');
 		$session = $this->request->session()->read("User");
 		$conn = ConnectionManager::get('default');
 		$this->autoRender = false;
@@ -173,12 +175,44 @@ class DashboardController extends AppController
 		$membership_tbl = TableRegistry::get("Membership");				
 		$notice_tbl = TableRegistry::get("gym_notice");		
 		
-		$members = $mem_table->find("all")->where(["role_name"=>"member"]);
-		$members = $members->count();
-		
-		$staff_members = $mem_table->find("all")->where(["role_name"=>"staff_member"]);
+		$staff_members = $mem_table->find("all")->where(["role_name"=>"staff_member","created_by"=>$session["id"]]);
 		$staff_members = $staff_members->count();
-		
+                
+                $assigned_staff=$mem_table->find("all")->where(["role_name"=>"staff_member","created_by"=>$session["id"]])->hydrate(false)->toArray();
+                $string='';
+                if(!empty($assigned_staff))
+			{
+				foreach($assigned_staff as $astaff)
+				{
+                                   //echo "<pre>"; print_r($astaff);
+					$astaff_list[] = $astaff["id"];
+                                       $string .= $astaff["id"].', ' ;
+				}
+                                $astaff_lists = substr($string, 0, -2);
+                               // print_r( $astaff_lists);
+                                $member_lists=$members = $mem_table->find("all")->where(["role_name"=>"member","created_by"=>$session["id"]])->orWhere(["created_by IN"=>$astaff_list]);
+		                $members = $members->count();
+                                $report_21 ="SELECT count(*) as newcount
+					from `gym_member`  where gym_member.created_date >  ( CURDATE() - INTERVAL 10 DAY ) AND gym_member.role_name = 'member' AND  gym_member.created_by ='".$session["id"]."' OR  gym_member.created_by IN ($astaff_lists)";
+                              
+		               $report_21 = $conn->execute($report_21);
+		               $report_21 = $report_21->fetchAll('assoc');
+                                $newval=(int)($report_21[0]['newcount']);
+                               
+				//$data = $this->Activity->find()->where(["Activity.id IN"=>$acivities_list]);
+				//$data = $data->contain(["GymMember","Category"])->select($this->Activity)->select(["GymMember.first_name","GymMember.last_name","Category.name"])->hydrate(false)->toArray();
+                        }else{
+                           $member_lists= $members = $mem_table->find("all")->where(["role_name"=>"member","created_by"=>$session["id"]]);
+		            $members = $members->count();
+                            $report_21 ="SELECT count(*) as newcount
+					from `gym_member`  where gym_member.created_date >  ( CURDATE() - INTERVAL 10 DAY ) AND gym_member.role_name = 'member' AND  gym_member.created_by ='".$session["id"]."'";
+                              
+		               $report_21 = $conn->execute($report_21);
+		               $report_21 = $report_21->fetchAll('assoc');
+                               $newval=(int)($report_21[0]['newcount']);
+                        }
+                  
+		//print_r($astaff_list);
 		$curr_id = intval($session["id"]);
 		$messages = $message_tbl->find("all")->where(["receiver"=>$curr_id]);
 		$messages = $messages->count();
@@ -193,6 +227,7 @@ class DashboardController extends AppController
 		
 		$this->set("cal_lang",$cal_lang);
 		$this->set("members",$members);
+                $this->set("member_lists",$member_lists);
 		$this->set("staff_members",$staff_members);
 		$this->set("messages",$messages);
 		$this->set("groups",$groups);
@@ -212,7 +247,7 @@ class DashboardController extends AppController
 		$result = $conn->execute($q);
 		$result = $result->fetchAll('assoc');		
 		$chart_array_pay = array();
-		$chart_array_pay[] = array('Month','Fee 	Payment');
+		$chart_array_pay[] = array('Month','Fee Payment');
 		foreach($result as $r)
 		{
 
@@ -246,6 +281,42 @@ class DashboardController extends AppController
 		}
 		$this->set("report_member",$report_2); 
 		$this->set("chart_array_at",$chart_array_at);
+               // $this->set("newval",$newval);
+                
+                 ################ New Members Reports #################
+              
+                 $mem_tbl = TableRegistry::get("GymMember");
+		$chart_array_members = array();
+		$chart_array_members[] = array('Membership','Number Of Member');
+		$chart_array = array();
+					
+		
+                $olds=$members-$newval; 
+                
+                $myarray=array('Old Members'=>$olds,'New Members'=>$newval);
+                
+		if(!empty($newval))
+		{
+			
+				$chart_array_members[1]=array('Old Members',$olds);
+                                $chart_array_members[2]=array('New Members',$newval);
+			
+		}
+                 
+               $this->set("chart_array_members",$chart_array_members); 
+              
+                /* $data = $mem_tbl->find("all")->where(["role_name"=>"member","OR"=>[["membership_status"=>"Expired"],["membership_status"=>"Continue"],["membership_status"=>"Dropped"]]]);
+		$data = $data->select(["membership_status","count"=>$data->func()->count('membership_status')])->group("membership_status")->hydrate(false)->toArray();
+		if(!empty($data))
+		{
+			foreach($data as $row)
+			{
+				$chart_array_members[]=array( $row['membership_status'],$row['count']);
+			}
+		}		
+		*/
+                
+                
 
 		##################STAFF ATTENDANCE REPORT#############################	
 	
@@ -276,8 +347,10 @@ class DashboardController extends AppController
 		// var_dump($report_2);die;
 		$cal_array = $this->getCalendarData();
 		$this->set("cal_array",$cal_array);		
-		
+		//print_r($cal_array); die;
 		$this->render("licensee_dashboard");
+                
+               
 	}
 
 	
