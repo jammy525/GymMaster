@@ -20,6 +20,7 @@
 		<hr>
 		<div class="box-body">
 		<?php
+                print_r($chart_array);
 		 $options = Array(
 					 		'title' => __('Membership by status'),
  							'colors' => array('#22BAA0','#F25656','#12AFCB')
