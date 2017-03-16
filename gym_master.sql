@@ -174,27 +174,6 @@ INSERT INTO `class_type` (`id`, `title`, `description`, `created_by`, `status`, 
 -- Table structure for table `discount_code`
 --
 
-CREATE TABLE `discount_code` (
-  `id` int(11) NOT NULL,
-  `code` varchar(20) NOT NULL,
-  `discount` varchar(20) NOT NULL COMMENT '%discount',
-  `created_by` int(11) NOT NULL,
-  `membership` varchar(100) NOT NULL,
-  `valid_till` varchar(20) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('1','0') NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `discount_code`
---
-
-INSERT INTO `discount_code` (`id`, `code`, `discount`, `created_by`, `membership`, `valid_till`, `created_at`, `status`) VALUES
-(9, 'GTALL25', '15', 1, '["1","2","3"]', '1496188800', '2017-03-09 10:44:18', '1'),
-(10, 'GTPT30', '30', 1, '["1"]', '1', '2017-03-09 10:45:06', '1'),
-(11, 'GTGD25', '25', 1, '["2"]', '1', '2017-03-09 10:45:53', '1'),
-(12, 'GTSL20', '20', 1, '["3"]', '0', '2017-03-09 10:46:25', '1'),
-(13, 'gdg', '30', 1, '["1"]', '1', '2017-03-09 11:00:58', '1');
 
 -- --------------------------------------------------------
 
