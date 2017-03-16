@@ -189,7 +189,7 @@ return [
             // 'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         // ],
 		'default' => [
-                        'host' => 'ssl://smtp.googlemail.com',
+            'host' => 'ssl://smtp.googlemail.com',
 			'port' => 465,
 			'username' => 'barkha.info@gmail.com',
 			'password' => 'ubeuojwtqticrdpx',
@@ -229,7 +229,7 @@ return [
             'persistent' => false,
             'host' => 'localhost',
             'username' => 'root',
-            'password' => 'rnf@1123',
+            'password' => '123456',
             'database' => 'gym_master',
             'encoding' => 'utf8',
             'timezone' => 'UTC',
