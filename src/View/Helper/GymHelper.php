@@ -81,6 +81,10 @@ Class GymHelper extends Helper
 			CASE "sys_language";
 				$value = $row[$key];
 			break;
+                        
+                        CASE "email";
+				$value = $row[$key];
+			break;
 		}
 		return $value;
 	}

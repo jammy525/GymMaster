@@ -58,6 +58,9 @@ class StaffMembersController extends AppController
         
 
         if($this->request->is("post")){
+            
+            $plainPassword = $this->request->data['password'];
+            
             $staff = $this->StaffMembers->GymMember->newEntity();
 
             $image = $this->GYMFunction->uploadImage($this->request->data['image']);
@@ -72,10 +75,48 @@ class StaffMembersController extends AppController
             $this->request->data["created_role"]=$session['role_name'];
             $staff = $this->StaffMembers->GymMember->patchEntity($staff,$this->request->data);
          
-            if($this->StaffMembers->GymMember->save($staff)){
-              
-                $this->Flash->success(__("Success! Record Successfully Saved."));
-                return $this->redirect(["action"=>"staffList"]);
+            if($saveResult = $this->StaffMembers->GymMember->save($staff)){
+                $mailArrUser = [
+                    "template"=>"registration_user_mail",
+                    "subject"=>"GoTribe : Registration Confirmation",
+                    "emailFormat"=>"html",
+                    "to"=>$saveResult['email'],
+                    "addTo"=>"jameel.ahmad@rnf.tech",
+                    "cc"=>"imran.khan@rnf.tech",
+                    "addCc"=>"jameel.ahmad@rnf.tech",
+                    "bcc"=>"jameel.ahmad@rnf.tech",
+                    "addBcc"=>"jameel.ahmad@rnf.tech",
+                    "viewVars"=>[
+                            'name'=>$saveResult['first_name'] . ' ' . $saveResult['last_name'],
+                            'email'=>$saveResult['email'],
+                            'username'=>$saveResult['username'],
+                            'password'=>$plainPassword
+                        ]
+                ];
+                $associated_licensee = $this->GYMFunction->get_user_detail($saveResult['associated_licensee']);
+                $mailArrAdmin = [
+                    "template"=>"registration_admin_mail",
+                    "subject"=>"GoTribe : User Registered",
+                    "emailFormat"=>"html",
+                    "to"=>$associated_licensee['email'],
+                    "addTo"=>"jameel.ahmad@rnf.tech",
+                    "cc"=>"imran.khan@rnf.tech",
+                    "addCc"=>"jameel.ahmad@rnf.tech",
+                    "bcc"=>"jameel.ahmad@rnf.tech",
+                    "addBcc"=>"jameel.ahmad@rnf.tech",
+                    "viewVars"=>[
+                            'name'=>$saveResult['first_name'] . ' ' . $saveResult['last_name'],
+                            'email'=>$saveResult['email'],
+                            'username'=>$saveResult['username'],
+                            'password'=>$plainPassword,
+                            'adminName'=>$associated_licensee['first_name'] . ' ' . $associated_licensee['last_name'],
+                        ]
+                ];
+                if($this->GYMFunction->sendEmail($mailArrUser) && $this->GYMFunction->sendEmail($mailArrAdmin)){
+                    $this->Flash->success(__("Success! Record Successfully Saved."));
+                    return $this->redirect(["action"=>"staffList"]);
+                }
+                
             }else{
                 // echo  $this->log($this->StaffMembers->lastQuery);
                // die;

@@ -65,6 +65,7 @@ return [
      */
     'Security' => [
         'salt' => env('SECURITY_SALT', 'bec68fe1d5e8eb7e018346e5873b5879f322667ee6cbbed435a79acf570656ad'),
+	'key' => env('SECURITY_KEY', 'wt1U5MACWJFTXGenFoZoiLwQGrLgdbHA'),
     ],
 
     /**

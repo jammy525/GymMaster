@@ -1,4 +1,9 @@
 (function($){
+    
+    var baseUrl = window.location.protocol + "//" + window.location.host + "/";
+    if(window.location.host == 'localhost')
+        baseUrl += 'gym_master/';
+    
     $.fn.validationEngineLanguage = function(){
     };
     $.validationEngineLanguage = {
@@ -106,20 +111,20 @@
                 },
                 "date": {                    
                     //	Check if date is valid by leap year
-			"func": function (field) {
-					var pattern = new RegExp(/^(\d{4})[\/\-\.](0?[1-9]|1[012])[\/\-\.](0?[1-9]|[12][0-9]|3[01])$/);
-					var match = pattern.exec(field.val());
-					if (match == null)
-					   return false;
-	
-					var year = match[1];
-					var month = match[2]*1;
-					var day = match[3]*1;					
-					var date = new Date(year, month - 1, day); // because months starts from 0.
-	
-					return (date.getFullYear() == year && date.getMonth() == (month - 1) && date.getDate() == day);
-				},                		
-			 "alertText": "* Invalid date, must be in YYYY-MM-DD format"
+                    "func": function (field) {
+                                var pattern = new RegExp(/^(\d{4})[\/\-\.](0?[1-9]|1[012])[\/\-\.](0?[1-9]|[12][0-9]|3[01])$/);
+                                var match = pattern.exec(field.val());
+                                if (match == null)
+                                   return false;
+
+                                var year = match[1];
+                                var month = match[2]*1;
+                                var day = match[3]*1;					
+                                var date = new Date(year, month - 1, day); // because months starts from 0.
+
+                                return (date.getFullYear() == year && date.getMonth() == (month - 1) && date.getDate() == day);
+                            },                		
+                     "alertText": "* Invalid date, must be in YYYY-MM-DD format"
                 },
                 "ipv4": {
                     "regex": /^((([01]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))[.]){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))$/,
@@ -137,7 +142,7 @@
                     "regex": /^[a-zA-Z\ \u3300-\u9fff\uf900-\ufaff\u00C0-\u00ff\u0500-\u05FF']+$/,
                     "alertText": "* Letters only"
                 },
-				"onlyLetterAccentSp":{
+		"onlyLetterAccentSp":{
                     "regex": /^[a-z\u00C0-\u017F\ ]+$/i,
                     "alertText": "* Letters only (accents allowed)"
                 },
@@ -153,7 +158,49 @@
                     "alertText": "* This user is already taken",
                     "alertTextLoad": "* Validating, please wait"
                 },
-				"ajaxUserCallPhp": {
+                // To check unique discount code
+                "isDiscountCodeUnique": {
+                    "url": baseUrl + "GymAjax/discountCodeExist",
+                    "alertText": "* This code is already in use",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique email
+                "isEmailUnique": {
+                    "url": baseUrl + "GymAjax/emailExist",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique email for referred user
+                "isEmailUnique2": {
+                    "url": baseUrl + "MemberRegistration/emailExist",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique username for referred user
+                "isUserNameUnique2": {
+                    "url": baseUrl + "MemberRegistration/usernameExist",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique email for existing user
+                "isEmailUnique1": {
+                    "url": baseUrl + "GymAjax/emailExist1",
+                    "alertText": "* This email is already associated with our ssystem",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique username
+                "isUserNameUnique": {
+                    "url": baseUrl + "GymAjax/usernameExist",
+                    "alertText": "* This username is already taken",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+		"ajaxUserCallPhp": {
                     "url": "phpajax/ajaxValidateFieldUser.php",
                     // you may want to pass extra data on the ajax call
                     "extraData": "name=eric",
@@ -172,14 +219,14 @@
                     // speaks by itself
                     "alertTextLoad": "* Validating, please wait"
                 },
-				 "ajaxNameCallPhp": {
-	                    // remote json service location
-	                    "url": "phpajax/ajaxValidateFieldName.php",
-	                    // error
-	                    "alertText": "* This name is already taken",
-	                    // speaks by itself
-	                    "alertTextLoad": "* Validating, please wait"
-	                },
+		"ajaxNameCallPhp": {
+                    // remote json service location
+                    "url": "phpajax/ajaxValidateFieldName.php",
+                    // error
+                    "alertText": "* This name is already taken",
+                    // speaks by itself
+                    "alertTextLoad": "* Validating, please wait"
+                },
                 "validate2fields": {
                     "alertText": "* Please input HELLO"
                 },

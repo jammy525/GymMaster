@@ -6,9 +6,12 @@ use Cake\I18n\Time;
 use Cake\View\Helper\UrlHelper;
 use Cake\Datasource\ConnectionManger;
 use Cake\Mailer\Email;
+use Cake\Utility\Security;
+use Cake\Core\Configure;
 
 Class GYMfunctionComponent extends Component
 {	
+
 	public function sanitize_string($str)
 	{
 		$str = urldecode ($str );
@@ -398,7 +401,14 @@ Class GYMfunctionComponent extends Component
 		$mem_table = TableRegistry::get("GymMember");
 		$name = $mem_table->get($uid)->toArray();
 		return $name["first_name"] ." ". $name["last_name"];
-	}	
+	}
+        
+        public function get_user_detail($uid)
+	{
+		$mem_table = TableRegistry::get("GymMember");
+		$user = $mem_table->get($uid)->toArray();
+		return $user;
+	}
 
 	function get_currency_symbol( $currency = '' )
 	{			
@@ -683,4 +693,60 @@ Class GYMfunctionComponent extends Component
             return false;
         }
         
+        /**
+        * Generate a unique hash / referal Url from referal token.
+        * @param Object User
+        * @return Object User
+        */
+        public function __generateReferalUrl($action, $code = null) {
+            $access_tbl = TableRegistry::get("ReferralCode");
+            $session = $this->request->session()->read("User");
+            if($action == 'encrypt'){
+                $row = $access_tbl->find()->where(['user_id'=>$session['id']])->first();		
+                //echo Security::encrypt($row['code'], Configure::read('Security.key'));die;
+                return $this->encrypt_decrypt($action, $row['code']);
+            }
+            
+            return $this->encrypt_decrypt($action, $code);
+        }
+        
+        /**
+        * simple method to encrypt or decrypt a plain text string
+        * initialization vector(IV) has to be the same when encrypting and decrypting
+        * PHP 5.4.9 ( check your PHP version for function definition changes )
+        *
+        * this is a beginners template for simple encryption decryption
+        * before using this in production environments, please read about encryption
+        * use at your own risk
+        *
+        * @param string $action: can be 'encrypt' or 'decrypt'
+        * @param string $string: string to encrypt or decrypt
+        *
+        * @return string
+        */
+        private function encrypt_decrypt($action, $string) {
+            $output = false;
+
+            $encrypt_method = "AES-256-CBC";
+            $secret_key = 'This is my secret key';
+            $secret_iv = 'This is my secret iv';
+
+            // hash
+            $key = hash('sha256', $secret_key);
+
+            // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+            $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+            if( $action == 'encrypt' ) {
+                $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+                $output = base64_encode($output);
+            }
+            else if( $action == 'decrypt' ){
+                $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+            }
+
+            return $output;
+        }
+
+       
 }

@@ -668,7 +668,7 @@ public function addLocation(){
                             $membership_table = TableRegistry::get("Membership");
                             $row = $membership_table->get($membership_id)->toArray();
                             $period = $row["membership_length"];
-                            $end_date = date($format, strtotime($date1 . " + {$period} days"));
+                            $end_date = date('Y-m-d', strtotime($date1 . " + {$period} days"));
                             echo $end_date;
                         }
 
@@ -2193,29 +2193,75 @@ public function addLocation(){
 		}
 	}
         
-        public function emailExist($email){
+        public function emailExist(){ 
+            $this->request->data = $_REQUEST;
+            $email = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
             $member_tbl = TableRegistry::get("GymMember");
-            $query = $member_tbl->find()->where(["username"=>$email])->first();
-            $count = intval($query->count());
-            if($count == 1){return true;}else{return false;}
-        }
-        public function usernameExist($username){
-            $member_tbl = TableRegistry::get("GymMember");
-            $query = $member_tbl->find()->where(["username"=>$username])->first();
-            $count = intval($query->count());
-            if($count == 1){return true;}else{return false;}
-        }
-        public function discountCodeExist(){
-            $code = $this->request->data['code'];
-            $discount_code_tbl = TableRegistry::get("DiscountCode");
-            $query = $discount_code_tbl->find()->where(["code"=>$code])->first();
-           //echo '<pre>';print_r($query);die;
+            $query = $member_tbl->find()->where(["email"=>$email])->first();
             $count = intval(count($query));
             if($count == 1){
-                echo true;
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
             }else{
-                echo false;
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
             }
+        }
+        public function emailExist1(){
+            $loggedUserId = $this->request->session()->read("User.id");
+            $this->request->data = $_REQUEST;
+            $email = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
+            $member_tbl = TableRegistry::get("GymMember");
+            $query = $member_tbl->find()->where(["email"=>$email,"id !="=>$loggedUserId])->first();
+            $count = intval(count($query));
+            if($count == 1){
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }else{
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }
+        }
+        public function usernameExist(){
+            $this->request->data = $_REQUEST;
+            $username = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
+            $member_tbl = TableRegistry::get("GymMember");
+            $query = $member_tbl->find()->where(["username"=>$username])->first();
+            $count = intval(count($query));
+            if($count == 1){
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }else{
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }
+        }
+        public function discountCodeExist(){
+            $this->request->data = $_REQUEST;
+            $code = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
+            $discount_code_tbl = TableRegistry::get("DiscountCode");
+            $query = $discount_code_tbl->find()->where(["code"=>$code])->first();
+            $count = intval(count($query));
+            if($count == 1){
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;		// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }else{
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;			// RETURN TRUE
+                echo json_encode($arrayToJs);	
+            }
+            
         }
         
         /** End here **/
