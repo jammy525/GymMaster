@@ -12,5 +12,6 @@ class CustomerNotesTable extends Table
                 $this->BelongsTo("CreatedBy",['className' => 'GymMember',"foreignKey"=>"created_by","propertyName"=>"CreatedByCN"]);
                 $this->BelongsTo("AssociatedLicensee",['className' => 'GymMember',"foreignKey"=>"associated_licensee","propertyName"=>"AssociatedLicenseeCN"]);
 		$this->belongsTo("GymClass",["foreignKey"=>"associated_licensee"]);
+                $this->belongsTo("GymMember");
 	}
 }

@@ -62,12 +62,11 @@ $(document).ready(function(){
                                         <td>". ucwords($row['CreatedByCN']['first_name'] . " " . $row['CreatedByCN']['last_name']) ."</td>
                                         <td>". ucwords($row['AssociatedLicenseeCN']['first_name'] . " " . $row['AssociatedLicenseeCN']['last_name']) ."</td>
                                         <td>";
-                                        if($session["id"] == $row['CreatedByCN']['id'])
-                                        {
-                                                echo " <a href='".$this->request->base ."/CustomerNotes/editCustomerNotes/{$row['id']}' class='btn btn-flat btn-primary' title='".__('Edit')."'><i class='fa fa-edit'></i></a>
-                                                        <a href='{$this->request->base}/CustomerNotes/deleteCustomerNotes/{$row['id']}' class='btn btn-flat btn-danger' title='".__('Delete')."' onclick=\"return confirm('Are you sure you want to delete this product?')\"><i class='fa fa-trash'></i></a>";
+                                        if($session["id"] == $row['CreatedByCN']['id'] || $session["role_id"] == 1 || $session["role_id"] == 2){
+                                                echo " <a href='".$this->request->base ."/customer-notes/edit-customer-notes/{$row['id']}' class='btn btn-flat btn-primary' title='".__('Edit')."'><i class='fa fa-edit'></i></a>
+                                                        <a href='{$this->request->base}/customer-notes/delete-customer-notes/{$row['id']}' class='btn btn-flat btn-danger' title='".__('Delete')."' onclick=\"return confirm('Are you sure you want to delete this product?')\"><i class='fa fa-trash'></i></a>";
                                         }
-                                        echo  " <a href='javascript:void(0)' id='{$row['id']}' data-url='".$this->request->base ."/GymAjax/view_customer_notes' class='view_notice btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a>";    
+                                        echo  " <a href='javascript:void(0)' id='{$row['id']}' data-url='".$this->request->base ."/GymAjax/view_customer_notes' class='view_jmodal btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a>";    
                                         echo  "</td>";
                                 echo  "</tr>";
 			}
