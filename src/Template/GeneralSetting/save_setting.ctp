@@ -167,11 +167,19 @@ $(document).ready(function(){
 			echo "<div class='col-md-8'>";				
 			// $format = ["yy/mm/dd"=>"yy/mm/dd","dd/mm/yy"=>"dd/mm/yy","mm/dd/yy"=>"mm/dd/yy","yyyy/mm/dd"=>"yyyy/mm/dd","mm/dd/yyyy"=>"mm/dd/yyyy"];
 			// $format = ["Y-m-d"=>"yyyy-m-d","d-m-Y"=>"d-m-yyyy","m-d-y"=>"m-d-yyyy"];
-			$format = [
+			/*/*$format = [
                             "MM dd, yyyy"=>date("F j, Y"),
                             "yyyy-dd-mm"=>date("Y-m-d"),
                             "mm/dd/yyyy"=>date("m/d/Y"),
                             "dd/mm/yyyy"=>date("d/m/Y")
+                        ];*/
+                        //echo $this->Gym->get_js_dateformat("M j, Y");die;
+                        $format = [
+                            "F j, Y"=>date("F j, Y"),
+                            "M j, Y"=>date("M j, Y"),
+                            "Y-m-d"=>date("Y-m-d"),
+                            "mm/dd/yyyy"=>date("m/d/Y"),
+                            "m/d/Y"=>date("d/m/Y")
                         ];
 			
 			$default = ($edit && !empty($data['date_format'])) ? [$data['date_format']] : ['yy/mm/dd'];

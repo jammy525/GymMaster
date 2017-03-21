@@ -106,14 +106,19 @@
 	
 	<script>
 		$(document).ready(function(){
-			$(".validateForm").validationEngine(); /* {binded:false} */
-			$('.textarea').wysihtml5();
-			$(".dataTable").dataTable({
-				/* "language": {
-                "url": "dataTables.german.lang"
-				} */			
-            });
-			$(".hasDatepicker,.datepick,.date,.mem_valid_from,.sell-date,.dob,.hasdatepicker,.datepicker-days").datepicker({ language: "<?php echo $dtp_lang;?>"});	
+                    $(".validateForm").validationEngine(); /* {binded:false} */
+                    $('.textarea').wysihtml5();
+                    $(".dataTable").dataTable({
+                            /* "language": {
+                        "url": "dataTables.german.lang"
+                                        } */			
+                    });
+                    $(".hasDatepicker,.datepick,.mem_valid_from,.date,.mem_valid_from,.sell-date,.dob,.hasdatepicker,.datepicker-days").datepicker({
+                        language: "<?php echo $dtp_lang;?>",
+                        format: "<?php echo $this->Gym->get_js_dateformat($this->Gym->getSettings("date_format")); ?>",
+                        forceParse: false
+
+                    });	
 		
 		});		
 	</script>

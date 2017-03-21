@@ -73,7 +73,11 @@ Class MemberRegistrationController extends AppController {
         $groups = $this->MemberRegistration->GymMember->GymGroup->find("list", ["keyField" => "id", "valueField" => "name"]);
         $interest = $this->MemberRegistration->GymMember->GymInterestArea->find("list", ["keyField" => "id", "valueField" => "interest"]);
         $source = $this->MemberRegistration->GymMember->GymSource->find("list", ["keyField" => "id", "valueField" => "source_name"]);
-        $membership = $this->MemberRegistration->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"]);
+        //$membership = $this->MemberRegistration->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"]);
+        $memCats = $this->MemberRegistration->GymMember->Category->find('all')->hydrate(false)->toArray();
+        foreach($memCats as $memCat){
+            $membership[$memCat['name']] = $this->MemberRegistration->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"])->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
+        }
         $licensee = $this->MemberRegistration->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"licensee"]);
         $licensee = $licensee->select(["id","name"=>$licensee->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
 
@@ -207,7 +211,11 @@ Class MemberRegistrationController extends AppController {
             $groups = $this->MemberRegistration->GymMember->GymGroup->find("list", ["keyField" => "id", "valueField" => "name"]);
             $interest = $this->MemberRegistration->GymMember->GymInterestArea->find("list", ["keyField" => "id", "valueField" => "interest"]);
             $source = $this->MemberRegistration->GymMember->GymSource->find("list", ["keyField" => "id", "valueField" => "source_name"]);
-            $membership = $this->MemberRegistration->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"]);
+            //$membership = $this->MemberRegistration->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"]);
+            $memCats = $this->MemberRegistration->GymMember->Category->find('all')->hydrate(false)->toArray();
+            foreach($memCats as $memCat){
+                $membership[$memCat['name']] = $this->MemberRegistration->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"])->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
+            }
             $licensee = $this->MemberRegistration->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"licensee"]);
             $licensee = $licensee->select(["id","name"=>$licensee->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
 

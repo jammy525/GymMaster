@@ -665,11 +665,11 @@ Class GymAjaxController extends AppController {
         $date = $this->request->data["date"];
         $date = str_replace("/", "-", $date);
         $membership_id = $this->request->data["membership"];
-        $date1 = date("Y-m-d", strtotime($date));
+        $date1 = date($format, strtotime($date));
         $membership_table = TableRegistry::get("Membership");
         $row = $membership_table->get($membership_id)->toArray();
         $period = $row["membership_length"];
-        $end_date = date('Y-m-d', strtotime($date1 . " + {$period} days"));
+        $end_date = date($format, strtotime($date1 . " + {$period} days"));
         echo $end_date;
     }
 
@@ -1641,12 +1641,12 @@ Class GymAjaxController extends AppController {
                         <div class="form-group">
                             <label for="notice_title" class="col-sm-3">
             <?php echo __("Start Date"); ?>    : </label>
-                            <div class="col-sm-9"> <?php echo $row["start_date"]; ?></div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"),strtotime($row["start_date"])); ?></div>
                         </div>
                         <div class="form-group">
                             <label for="notice_title" class="col-sm-3">
             <?php echo __("End Date "); ?>   : </label>
-                            <div class="col-sm-9"> <?php echo $row["end_date"]; ?> </div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"),strtotime($row["end_date"])); ?> </div>
                         </div>
                     </div>
                 </div>
@@ -1693,7 +1693,7 @@ Class GymAjaxController extends AppController {
                         <div class="form-group">
                             <label for="created_date" class="col-sm-3">
             <?php echo __("Created Date "); ?>   : </label>
-                            <div class="col-sm-9"> <?php echo $row["created_date"]; ?> </div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"),strtotime($row["created_date"])); ?> </div>
                         </div>
                     </div>
                 </div>
@@ -1833,7 +1833,7 @@ Class GymAjaxController extends AppController {
                         <div class="form-group">
                             <label for="created_date" class="col-sm-3">
             <?php echo __("Created Date"); ?>    : </label>
-                            <div class="col-sm-9"> <?php echo date('F d, Y', strtotime($row["created_date"])); ?></div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"), strtotime($row["created_date"])); ?></div>
                         </div>
 
                     </div>
@@ -2028,7 +2028,7 @@ Class GymAjaxController extends AppController {
                         <div class="form-group">
                             <label for="created_date" class="col-sm-3">
             <?php echo __("Created Date"); ?>    : </label>
-                            <div class="col-sm-9"> <?php echo date('F d, Y', strtotime($row["created_date"])); ?></div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"), strtotime($row["created_date"])); ?></div>
                         </div>
 
                     </div>
@@ -2168,7 +2168,7 @@ Class GymAjaxController extends AppController {
                         <legend><?php echo __("Schedule Information"); ?></legend>
                         <div class="form-group">
                             <label for="start_date" class="col-sm-3"><?php echo __("Start Date"); ?> : </label>
-                            <div class="col-sm-9"> <?php echo date('M d,Y', strtotime($row['start_date'])); ?> </div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"), strtotime($row['start_date'])); ?> </div>
                         </div>
                         <!--<div class="form-group">
                               <label for="start_time" class="col-sm-3"><?php echo __("Start Time"); ?> : </label>
@@ -2177,7 +2177,7 @@ Class GymAjaxController extends AppController {
 
                         <div class="form-group">
                             <label for="end_date" class="col-sm-3"><?php echo __("End Date"); ?> : </label>
-                            <div class="col-sm-9"> <?php echo date('M d,Y', strtotime($row['end_date'])); ?> </div>
+                            <div class="col-sm-9"> <?php echo date($this->GYMFunction->getSettings("date_format"), strtotime($row['end_date'])); ?> </div>
                         </div>
                         <!-- <div class="form-group">
                                <label for="end_time" class="col-sm-3"><?php echo __("End Time"); ?> : </label>
@@ -2308,12 +2308,17 @@ Class GymAjaxController extends AppController {
         }
 
         public function emailExist1() {
-            $loggedUserId = $this->request->session()->read("User.id");
+            //$loggedUserId = $this->request->session()->read("User.id");
             $this->request->data = $_REQUEST;
             $email = $this->request->data['fieldValue'];
             $fieldId = $this->request->data['fieldId'];
+            $itsId = $this->request->data['itsId'];
             $member_tbl = TableRegistry::get("GymMember");
-            $query = $member_tbl->find()->where(["email" => $email, "id !=" => $loggedUserId])->first();
+            if(isset($itsId) && $itsId != ''){
+                $query = $member_tbl->find()->where(["email" => $email, "id !=" => $itsId])->first();
+            }else{
+                $query = $member_tbl->find()->where(["email" => $email])->first(); 
+            }
             $count = intval(count($query));
             if ($count == 1) {
                 $arrayToJs[0] = $fieldId;
@@ -2343,6 +2348,30 @@ Class GymAjaxController extends AppController {
                 echo json_encode($arrayToJs);
             }
         }
+        
+        public function usernameExist1() {
+            //$loggedUserId = $this->request->session()->read("User.id");
+            $this->request->data = $_REQUEST;
+            $username = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
+            $itsId = $this->request->data['itsId'];
+            $member_tbl = TableRegistry::get("GymMember");
+            if(isset($itsId) && $itsId != ''){
+                $query = $member_tbl->find()->where(["username" => $username, "id !=" => $itsId])->first();
+            }else{
+                $query = $member_tbl->find()->where(["username" => $username])->first();
+            }
+            $count = intval(count($query));
+            if ($count == 1) {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;  // RETURN TRUE
+                echo json_encode($arrayToJs);
+            } else {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;   // RETURN TRUE
+                echo json_encode($arrayToJs);
+            }
+        }
 
         public function discountCodeExist() {
             $this->request->data = $_REQUEST;
@@ -2350,6 +2379,29 @@ Class GymAjaxController extends AppController {
             $fieldId = $this->request->data['fieldId'];
             $discount_code_tbl = TableRegistry::get("DiscountCode");
             $query = $discount_code_tbl->find()->where(["code" => $code])->first();
+            $count = intval(count($query));
+            if ($count == 1) {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;  // RETURN TRUE
+                echo json_encode($arrayToJs);
+            } else {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;   // RETURN TRUE
+                echo json_encode($arrayToJs);
+            }
+        }
+        
+        public function discountCodeExist1() {
+            $this->request->data = $_REQUEST;
+            $code = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
+            $itsId = $this->request->data['itsId'];
+            $discount_code_tbl = TableRegistry::get("DiscountCode");
+            if(isset($itsId) && $itsId != ''){
+                $query = $discount_code_tbl->find()->where(["code" => $code, "id !="=>$itsId])->first();
+            }else{
+                $query = $discount_code_tbl->find()->where(["code" => $code])->first();
+            }
             $count = intval(count($query));
             if ($count == 1) {
                 $arrayToJs[0] = $fieldId;

@@ -52,7 +52,7 @@ $(document).ready(function(){
 				echo "<td>{$row['title']}</td>
 					 <td>{$row['gym_member']['first_name']}</td>
 					  <td>".(($row['status']) ? '<span class="label label-success">Active</span>' :'<span class="label label-warning">Inactive</span>')."</td>
-                                          <td>".date('M d,Y H:i A',time($row['created_date'])) ."</td>
+                                          <td>".date($this->Gym->getSettings("date_format"),time($row['created_date'])) ."</td>
 					  <td>";
 				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 				{

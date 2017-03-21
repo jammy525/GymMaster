@@ -1,9 +1,5 @@
 <?php $session = $this->request->session()->read("User");?>
-<script>
-$(document).ready(function(){
-	$(".hasDatepicker").datepicker(/* { language: "th"} */);	
-});
-</script>
+
 <section class="content">
 	<br>
 	<div class="col-md-12 box box-default">		
@@ -29,7 +25,7 @@ $(document).ready(function(){
 			  <input type="hidden" name="class_id" value="0">
 			  <div class="form-group col-md-3">
 				<label class="control-label" for="curr_date"><?php echo __("Date");?></label>				
-					<input id="curr_date" class="form-control hasDatepicker" type="text" value="<?php echo (isset($_POST['curr_date'])) ? $_POST["curr_date"]:"";?>" name="curr_date">
+					<input id="curr_date" class="form-control hasDatepicker" type="text" value="<?php echo (isset($_POST['curr_date'])) ? date($this->Gym->getSettings("date_format"),strtotime($_POST["curr_date"])):"";?>" name="curr_date">
 			 </div>
 			<div class="form-group col-md-3">
 				<label for="class_id"><?php echo __("Select Class");?></label>			
@@ -59,7 +55,7 @@ $(document).ready(function(){
 			 <div class="panel-heading">
 				<h4 class="panel-title">
 				<?php echo __("Class");?> : <?php echo $this->Gym->get_classes_by_id($class_id);?> , 
-				<?php echo __("Date");?> : <?php echo (isset($_POST['curr_date'])) ? date('F j,Y',strtotime($_POST["curr_date"])):"";?></h4>
+				<?php echo __("Date");?> : <?php echo (isset($_POST['curr_date'])) ? date($this->Gym->getSettings("date_format"),strtotime($_POST["curr_date"])):"";?></h4>
 			 </div>
 			 <br><br>
 				<div class="clearfix"> </div>

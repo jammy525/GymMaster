@@ -2,11 +2,6 @@
 echo $this->Html->css('select2.css');
 echo $this->Html->script('select2.min');
 ?>
-<script>
-$(document).ready(function(){
-	$(".hasdatepicker").datepicker({format:"yyyy-mm-dd"});	
-});
-</script>
 <section class="content">
 	<br>
 	<div class="col-md-12 box box-default">		
@@ -56,14 +51,14 @@ $(document).ready(function(){
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="start_date"><?php  echo __("Start Date");?><span class="text-danger"> *</span></label>
                         <div class="col-md-6">
-                                <input type="text" name="start_date" class="hasdatepicker form-control validate[required]" value="<?php echo ($edit)?date("Y-m-d",strtotime($data["start_date"])): "";?>">
+                                <input type="text" name="start_date" class="hasdatepicker form-control validate[required]" value="<?php echo ($edit)?date($this->Gym->getSettings("date_format"),strtotime($data["start_date"])): "";?>">
                         </div>	
                     </div>
 		
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="end_date"><?php  echo __("End Date");?><span class="text-danger"> *</span></label>
                         <div class="col-md-6">
-                            <input type="text" name="end_date" class="hasdatepicker form-control validate[required]" value="<?php echo ($edit)?date("Y-m-d",strtotime($data["end_date"])) : "";?>">
+                            <input type="text" name="end_date" class="hasdatepicker form-control validate[required]" value="<?php echo ($edit)?date($this->Gym->getSettings("date_format"),strtotime($data["end_date"])) : "";?>">
                         </div>	
                     </div>
 		

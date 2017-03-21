@@ -219,7 +219,8 @@ if($is_rtl == "1") { ?>
     </li>			
     <li class="treeview <?php echo ($this->request->controller == "MembershipPayment") ? "active" : "";?>" style="<?php echo (in_array('MembershipPayment', $controller) && in_array('paymentList', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("MembershipPayment","paymentList");?>">
-            <i class="fa fa-money"></i> <span><?php echo __("Payment");?></span><i class="fa fa-angle-left <?php echo $pull;?>"></i>
+            <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/payment.png"></i> 
+            <span><?php echo __("Subscription Management");?></span><i class="fa fa-angle-left <?php echo $pull;?>"></i>
         </a>
         <ul class="treeview-menu">
             <li class="<?php echo ($this->request->action == "paymentList" || $this->request->action == "generatePaymentInvoice" || $this->request->action == "membershipEdit") ? "active" : "";?>" style="<?php echo (in_array('MembershipPayment', $controller) && in_array('paymentList', $action) ) ? 'display:block' : 'display:none';?>">
@@ -267,8 +268,12 @@ if($is_rtl == "1") { ?>
             <i class="fa fa-map-marker"></i> <span><?php echo __("Location");?></span>  
         </a>
     </li>
-    
-    <li class="treeview <?php echo ( ($this->request->controller == "DiscountCode") || ($this->request->controller == "ReferralUrl") ) ? "active" : "";?>" style="<?php echo (in_array('DiscountCode', $controller) && in_array('discountCodeList', $action) ) ? 'display:block' : 'display:none';?>">
+    <li class="treeview <?php echo (($this->request->controller == "DiscountCode")) ? "active" : "";?>" style="<?php echo (in_array('DiscountCode', $controller) && in_array('discountCodeList', $action) ) ? 'display:block' : 'display:none';?>">
+        <a href="<?php echo $this->Gym->createurl("DiscountCode","discountCodeList");?>">
+            <i class="fa fa-cart-arrow-down"></i> <span><?php echo __('Discount Codes');?></span>
+        </a>
+    </li>
+    <!--<li class="treeview <?php echo ( ($this->request->controller == "DiscountCode") || ($this->request->controller == "ReferralUrl") ) ? "active" : "";?>" style="<?php echo (in_array('DiscountCode', $controller) && in_array('discountCodeList', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="#">
             <i class="fa fa-cart-arrow-down"></i> <span><?php echo __("Discount & Referral");?></span>
             <i class="fa fa-angle-left <?php echo $pull;?>"></i>
@@ -286,7 +291,7 @@ if($is_rtl == "1") { ?>
             </li>
         </ul> 
 
-    </li>
+    </li>-->
     <li class="treeview <?php echo ($this->request->controller == "Refer") ? "active" : "";?>" style="<?php echo (in_array('Refer', $controller) && in_array('referFriend', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("Refer","referFriend");?>">
             <i class="fa fa-users"></i> <span><?php echo __('Refer a Friend');?></span>  
@@ -315,7 +320,7 @@ if($is_rtl == "1") { ?>
 
     <li class="treeview <?php echo ($this->request->controller == "GymAccessright") ? "active" : "";?>" style="<?php echo (in_array('GymAccessright', $controller) && in_array('accessRight', $action) ) ? 'display:block' : 'display:none';?>">
         <a href="<?php echo $this->Gym->createurl("GymAccessright","accessRight");?>">
-            <i class="fa fa-key"></i> <span><?php echo __("Access Right");?></span>
+            <i class="icone"><img src="<?php echo $this->request->base;?>/webroot/img/icon/access-Rights.png"></i> <span><?php echo __("Access Right");?></span>
         </a>
     </li>
 

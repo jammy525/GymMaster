@@ -17,8 +17,8 @@ $(document).ready(function() {
 		includeSelectAllOption: true		
 	});
 	
-	$(".datepick").datepicker({format: 'yyyy-mm-dd'});
-	$(".mem_valid_from").datepicker({format: 'yyyy-mm-dd'}).on("changeDate",function(ev){
+	//$(".datepick").datepicker({format: 'yyyy-mm-dd'});
+	$(".mem_valid_from").datepicker().on("changeDate",function(ev){
 				// var ajaxurl = document.location + "/GymAjax/get_membership_end_date";
 				var ajaxurl = $("#mem_date_check_path").val();
 				var date = ev.target.value;	
@@ -78,7 +78,12 @@ function validate_multiselect()
 		<div class="box-body">
 		<?php				
 			echo $this->Form->create("addgroup",["type"=>"file","class"=>"validateForm form-horizontal","role"=>"form"]);
-			echo "<fieldset><legend>". __('Personal Information')."</legend>";
+			
+                        ?>
+                    <input type="hidden" id="itsId" value="<?php echo ($edit) ? $data['id'] : '';?>">
+                    <?php
+                        
+                        echo "<fieldset><legend>". __('Personal Information')."</legend>";
 						
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="member_id">'. __("Member ID").'</label>';
@@ -123,7 +128,7 @@ function validate_multiselect()
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="birth_date">'. __("Date of birth").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"birth_date","id"=>"birth_date","class"=>"form-control dob validate[required] datepick","value"=>(($edit)?date("Y-m-d",strtotime($data['birth_date'])):'')]);
+			echo $this->Form->input("",["label"=>false,"name"=>"birth_date","id"=>"birth_date","class"=>"form-control dob validate[required] datepick","value"=>(($edit)?date($this->Gym->getSettings("date_format"),strtotime($data['birth_date'])):'')]);
 			echo "</div>";	
 			echo "</div>";
 			
@@ -198,7 +203,7 @@ function validate_multiselect()
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("Email").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"email","id"=>"email","class"=>"form-control validate[required,custom[email],ajax[isEmailUnique]]","value"=>(($edit)?$data['email']:'')]);
+			echo $this->Form->input("",["label"=>false,"name"=>"email","id"=>"email","class"=>"form-control validate[required,custom[email],ajax[isEmailUnique1]]","value"=>(($edit)?$data['email']:'')]);
 			echo "</div>";	
 			echo "</div>";			
 			echo "</fieldset>";
@@ -259,7 +264,7 @@ function validate_multiselect()
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="username">'. __("Username").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"username","id"=>"username","class"=>"form-control validate[required,ajax[isUserNameUnique]]","value"=>(($edit)?$data['username']:''),"readonly"=> (($edit)?true:false)]);
+			echo $this->Form->input("",["label"=>false,"name"=>"username","id"=>"username","class"=>"form-control validate[required,ajax[isUserNameUnique1]]","value"=>(($edit)?$data['username']:''),"readonly"=> (($edit)?true:false)]);
 			echo "</div>";	
 			echo "</div>";
 			
@@ -384,7 +389,7 @@ function validate_multiselect()
                         }
                         
 			echo "<div class='form-group class-member'  $styles>";	
-			echo '<label class="control-label col-md-2" for="email">'. __("Membership").'<span class="text-danger"> *</span></label>';
+			echo '<label class="control-label col-md-2" for="selected_membership">'. __("Membership").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';			
 			echo @$this->Form->select("selected_membership",$membership,["default"=>$data['selected_membership'],"empty"=>__("Select Membership"),"class"=>"form-control validate[required] membership_id"]);
 			echo "</div>";	
@@ -427,20 +432,20 @@ function validate_multiselect()
 			echo "<div class='form-group class-member'  $styles >";	
 			echo '<label class="control-label col-md-2" for="membership_valid_from">'. __("Membership Valid From").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-2">';
-			echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_from","id"=>"membership_valid_from","class"=>"form-control validate[required] mem_valid_from","value"=>(($edit && $data['membership_valid_from']!="")?date("Y-m-d",strtotime($data['membership_valid_from'])):'')]);
+			echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_from","id"=>"membership_valid_from","class"=>"form-control validate[required] mem_valid_from","value"=>(($edit && $data['membership_valid_from']!="")?date($this->Gym->getSettings("date_format"),strtotime($data['membership_valid_from'])):'')]);
 			echo "</div>";
 			echo '<div class="col-md-1 no-padding text-center">';
 			echo "To";
 			echo "</div>";
 			echo '<div class="col-md-2">';
-			echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_to","class"=>"form-control validate[required] valid_to","value"=>(($edit && $data['membership_valid_to']!="")?date("Y-m-d",strtotime($data['membership_valid_to'])):''),"readonly"=>true]);
+			echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_to","class"=>"form-control validate[required] valid_to","value"=>(($edit && $data['membership_valid_to']!="")?date($this->Gym->getSettings("date_format"),strtotime($data['membership_valid_to'])):''),"readonly"=>true]);
 			echo "</div>";
 			echo "</div>";
 			
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="first_pay_date">'. __("First Payment Date").'</label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"first_pay_date","id"=>"first_pay_date","class"=>"form-control datepick","value"=>(($edit)?date("Y-m-d",strtotime($data['first_pay_date'])):'')]);
+			echo $this->Form->input("",["label"=>false,"name"=>"first_pay_date","id"=>"first_pay_date","class"=>"form-control datepick","value"=>(($edit)?date($this->Gym->getSettings("date_format"),strtotime($data['first_pay_date'])):'')]);
 			echo "</div>";	
 			echo "</div>";
 			echo "</fieldset>";
