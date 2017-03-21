@@ -72,6 +72,10 @@ $(".sub-history").dataTable({
 						<th><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Mobile No");?></th>
 						<td class="txt_color"><?php echo $data['mobile'];?></td>
 					</tr>
+                                        <tr>
+						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Joining Date");?></th>
+						<td class="txt_color"><?php echo date($this->Gym->getSettings("date_format"),strtotime($data['created_date']));?></td>
+					</tr>
 					<tr>
 						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Date Of Birth");?></th>
 						<td class="txt_color"><?php echo date($this->Gym->getSettings("date_format"),strtotime($data['birth_date']));?></td>
@@ -99,11 +103,15 @@ $(".sub-history").dataTable({
 					<table class="table table-margin">
 					<tr>
 						<th><i class="fa fa-users"></i>&nbsp;&nbsp;&nbsp;<?php echo __("MemberShip");?></th>
-						<td class="txt_color"><?php echo $data['membership']['membership_label'];?></td>
+						<td class="txt_color"><?php echo ($data['selected_membership']) ? $data['membership']['membership_label'] : 'None';?></td>
+					</tr>
+                                        <tr>
+						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Joining Date");?></th>
+						<td class="txt_color"><?php echo ($data['selected_membership']) ? date($this->Gym->getSettings("date_format"),strtotime($data['created_date'])): 'None';?></td>
 					</tr>
 					<tr>
 						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;<?php echo __("Expiry Date");?></th>
-						<td class="txt_color"><?php echo date($this->Gym->getSettings("date_format"),strtotime($data['membership_valid_to']));?></td>
+						<td class="txt_color"><?php echo ($data['selected_membership']) ? date($this->Gym->getSettings("date_format"),strtotime($data['membership_valid_to'])) : 'None';?></td>
 					</tr>
 					<tr>
 						<th><i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;<?php echo __("Classes");?></th>
@@ -111,7 +119,7 @@ $(".sub-history").dataTable({
 					</tr>
 					<tr>
 						<th><i class="fa fa-heart"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Interest Area");?></th>
-						<td class="txt_color"><?php echo $data['gym_interest_area']['interest'];?></td>
+						<td class="txt_color"><?php echo ($data['gym_interest_area']['interest']) ? $data['gym_interest_area']['interest'] : 'None';?></td>
 					</tr>	
 					<tr>
 						<th><i class="fa fa-user"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Ass. Licensee");?></th>

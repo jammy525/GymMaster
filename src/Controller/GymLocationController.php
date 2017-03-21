@@ -61,6 +61,7 @@ class GymLocationController extends AppController
                 /*SANITIZATION*/
                 //$this->request->data["comment"] = $this->GYMFunction->sanitize_string($this->request->data["comment"]);
                 /*SANITIZATION*/
+                $this->request->data['created_by'] = $session['id'];
 
                 $row = $this->GymLocation->patchEntity($row,$this->request->data);
                 if($this->GymLocation->save($row)){				
@@ -83,7 +84,7 @@ class GymLocationController extends AppController
              /** Edit record checked roles permissions* */
             if ($session["role_name"] == "licensee") {
                 if ($row['created_by'] != $session['id']) {
-                    $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
+                    $this->Flash->error(__("Success! You Don't Have Sufficient Permissions to Edit This Record."));
                     return $this->redirect(["action" => "locationList"]);
                 }
             }

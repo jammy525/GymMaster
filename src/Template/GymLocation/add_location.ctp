@@ -21,9 +21,9 @@ echo $this->Html->script('select2.min');
 		<div class="box-body">					
 		<form class="validateForm form-horizontal" method="post" role="form">		
                     
-                    <!-- hidden field for created by input -->
-                    <input type="hidden" name="created_by" id="created_by" class="form-control validate[required]" value="<?php echo $this->request->session()->read("User.id");?>">
-            
+                    <!-- hidden field for created by input 
+                    <input type="hidden" name="created_by" id="created_by" class="form-control validate[required]" value="<?php //echo $this->request->session()->read("User.id");?>">
+                    -->
                     
                     <div class='form-group'>	
                         <label class="control-label col-md-2" for="title"><?php  echo __("Location Title");?><span class="text-danger"> *</span></label>
