@@ -45,7 +45,7 @@ echo $this->Html->script('fullcalendar.min');
 <section class="content">
 <div id="main-wrapper">		
 		<div class="row"><!-- Start Row2 -->
-		<div class="row left_section col-md-8 col-sm-8">
+		<?Php /* ?><div class="row left_section col-md-8 col-sm-8">
 			<div class="col-lg-3 col-md-3 col-xs-6 col-sm-6">
 			<a href="<?php echo $this->request->base ."/GymMember/memberList";?>">
 				<div class="panel info-box panel-white">
@@ -141,8 +141,8 @@ echo $this->Html->script('fullcalendar.min');
 				</div>
 			</div>
 			
-		</div>	<!-- End row2 -->
-		<div class="row inline"><!-- Start Row3 -->
+		</div><?php */ ?>	<!-- End row2 -->
+		<?php /* ?><div class="row inline"><!-- Start Row3 -->
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="panel panel-white">
 					<div class="panel-heading">
@@ -310,9 +310,227 @@ echo $this->Html->script('fullcalendar.min');
 					</div>
 				</div>
 			</div>
-		</div><!-- End Row3 -->
+		</div> <?php */ ?><!-- End Row3 -->
+		       <div class="col-md-6 col-sm-6 col-xs-12">
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <h3 class="panel-title"><?php echo __("Membership Plan"); ?></h3>						
+                                     </div>
+                                     <?php //print_r($membership);
+                                     if(!empty($membership[0]))
+                                     {
+                                     ?>
+                                     <div class="panel panel-default workout-block" >				
+				  <div class="panel-heading">  <br>
+                                      <i class="fa fa-calendar"></i> Start From <span class="work_date"><?php echo date('F j, Y', strtotime($membership_info['start_date']));?></span> TO <span class="work_date"><?php echo date('F j, Y', strtotime($membership_info['end_date']));?></span>					
+                                    </div>
+				  <br>
+				  <div class="work_out_datalist_header">
+					<div class="col-md-3 col-sm-3">  
+						<strong>Plan Name</strong>
+					</div>
+					<div class="col-md-9 col-sm-12 hidden-xs">
+						<span class="col-md-4">Total Amount</span>
+						<span class="col-md-4">Paid Amount</span>
+						<span class="col-md-4">Status</span>
+						
+					</div>
+				    </div>				
+					      <div class="work_out_datalist">
+						<div class="col-md-3 day_name"><?php echo $membership[0]['membership_label']?></div>
+						<div class="col-md-9 col-xs-12">
+						<div class="col-md-12">
+							<span class="col-md-4 col-sm-4 col-xs-4">$<?php echo number_format($membership_info['membership_amount'],2);?></span>   
+							<span class="col-md-4 col-sm-4 col-xs-4">$<?php echo number_format($membership_info['paid_amount'],2);?></span>
+							<span class="col-md-4 col-sm-4 col-xs-4"><?php echo $membership_info['membership_status']?></span>
+							
+						</div>
+						</div>
+					    </div>
+									
+				</div>
+                                     <?php } else { echo "Sorry ! You have not take any membership plan.";}?>
+                                     
+                                     
+                                 </div>
+                             </div>
+                </div>
+                <!-- -->
+                
+                       <div class="col-md-6 col-sm-6 col-xs-12">
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <h3 class="panel-title"><?php echo __("Class Schedule"); ?></h3>						
+                                     </div>
+                                     
+                                     <!--<div class="work_out_datalist_header">
+					<div class="col-md-3 col-sm-3">  
+						<strong>Days</strong>
+					</div>
+					<div class="col-md-9 col-sm-12 hidden-xs">
+						<span class="col-md-4">Class Name</span>
+						<span class="col-md-4">Start Time</span>
+						<span class="col-md-4">End Time</span>
+						
+					</div>
+				    </div>-->
+                                     
+                                     <?php 
+                                     if(!empty($member_class_schedule)){
+                                         
+                                         foreach($member_class_schedule as $mclass){
+                                            // print_r($mclass);
+                                             ?>
+                                             
+                                       <div class="panel panel-default workout-block" >				
+                                                 <div class="panel-heading">  <br>
+                                                     <i class="fa fa-calendar"></i> Days <span class="work_date"><?php echo implode(",",json_decode($mclass["days"])); ?></span>					
+                                                 </div>
+                                                 <br>
+                                                 <div class="work_out_datalist_header">
+                                                     <div class="col-md-4 col-sm-4">  
+                                                         <strong>Class Name</strong>
+                                                     </div>
+                                                     <div class="col-md-8 col-sm-12 hidden-xs">
+                                                        <span class="col-md-6">Start Time</span>
+                                                         <span class="col-md-6">End Time</span>
+
+                                                     </div>
+                                                 </div>				
+                                                 <div class="work_out_datalist">
+                                                     <div class="col-md-4 day_name"><?php  echo $this->Gym->get_classes_by_id($mclass['assign_class']); ?></div>
+                                                     <div class="col-md-8 col-xs-12">
+                                                         <div class="col-md-12">
+                                                            <span class="col-md-6 col-sm-6 col-xs-6"><?php echo $mclass['start_time'] ?></span>
+                                                             <span class="col-md-6 col-sm-6 col-xs-6"><?php echo $mclass['end_time'] ?></span>
+
+                                                         </div>
+                                                     </div>
+                                                 </div>
+
+                                             </div>
+                                     
+                                        <?php }
+                                     }else{
+                                         
+                                         echo "<div style='text-align:center'>Not assign schedule</div>";
+                                     }
+                                     ?>
+                                     
+                                     
+                                 </div>
+                             </div>
+                </div>
+                
+                <!-- -->
+                <div class="col-md-6 col-sm-6 col-xs-12">
+			<?php
+                        
+			$options12 = Array(
+			//'title' => __('Staff Attendance Report'),
+                         
+			'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
+			'legend' =>Array('position' => 'bottom',
+						'textStyle'=> Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans')),
+			
+						'hAxis' => Array(
+								'title' =>  __('Schedule Time'),
+										'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
+								'textStyle' => Array('color' => '#66707e','fontSize' => 10),
+								'maxAlternation' => 2
 			
 			
-	</div>
+								),
+								'vAxis' => Array(
+										'title' =>  __('Number of days'),
+					'minValue' => 0,
+				        'maxValue' => 100,
+					'format' => '#',
+					'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
+					'textStyle' => Array('color' => '#66707e','fontSize' => 12)
+								),
+										'colors' => array('#22BAA0','#f25656')
+										);
+			$GoogleCharts = new GoogleCharts;
+			$chart_staff = $GoogleCharts->load( 'column' , 'member_att_report' )->get( $chart_array_member , $options12 );
+			// var_dump($chart_staff);die;
+			?>
+				<div class="panel panel-white">
+					<div class="panel-heading">
+						<h3 class="panel-title"><?php echo __('Attendance Report');?></h3>						
+					</div>
+					<div class="panel-body">
+						<div id="member_att_report" style="width: 100%; height: 300px;">
+						<?php
+						if(empty($report_member))
+						echo __('There is not enough data to generate report');?>
+						</div>
+								
+			  <!-- Javascript --> 
+			  <script type="text/javascript" src="https://www.google.com/jsapi"></script> 
+			  <script type="text/javascript">
+						<?php 
+						if(!empty($report_member))
+						{echo $chart_staff;}?>
+			</script>
+								</div>
+			</div>
+                    </div>
+                <!---->
+                 <div class="col-md-6 col-sm-6 col-xs-12">
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <h3 class="panel-title"><?php echo __("Payment History"); ?></h3>						
+                                     </div>
+                                     
+                                     <?php 
+                                     if(!empty($payment_history)){
+                                         
+                                         foreach($payment_history as $payment){
+                                             //print_r($payment);
+                                             ?>
+                                             
+                                       <div class="panel panel-default workout-block" >				
+                                                 
+                                                 <br>
+                                                 <div class="work_out_datalist_header">
+                                                     <div class="col-md-4 col-sm-4">  
+                                                         <strong>Payment Method</strong>
+                                                     </div>
+                                                     <div class="col-md-8 col-sm-12 hidden-xs">
+                                                        <span class="col-md-6">Amount</span>
+                                                         <span class="col-md-6">Date</span>
+
+                                                     </div>
+                                                 </div>				
+                                                 <div class="work_out_datalist">
+                                                     <div class="col-md-4 day_name"><?php  echo $payment['payment_method']; ?></div>
+                                                     <div class="col-md-8 col-xs-12">
+                                                         <div class="col-md-12">
+                                                            <span class="col-md-6 col-sm-6 col-xs-6">$<?php echo $payment['amount'] ?></span>
+                                                             <span class="col-md-6 col-sm-6 col-xs-6"><?php echo $payment['paid_by_date'] ?></span>
+
+                                                         </div>
+                                                     </div>
+                                                 </div>
+
+                                             </div>
+                                     
+                                        <?php }
+                                     }else{
+                                         
+                                         echo "Sorry! not found";
+                                     }
+                                     ?>
+                                     
+                                 </div>
+                             </div>
+                 </div>
+                <!-- -->
+			
+	
  </div>
 </section>
