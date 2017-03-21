@@ -73,8 +73,8 @@ $(document).ready(function(){
 				echo "<tr>
                                                 <td>".$this->Gym->get_classes_by_id($row["class_name"])."</td>
 						<td>{$row['gym_member']['first_name']} {$row['gym_member']['last_name']}</td>						
-						<td>".date('M d,Y',strtotime($row['start_date']))."</td>
-						<td>".date('M d,Y',strtotime($row['end_date']))."</td>
+						<td>".date($this->Gym->getSettings("date_format"),strtotime($row['start_date']))."</td>
+						<td>".date($this->Gym->getSettings("date_format"),strtotime($row['end_date']))."</td>
 						
 						<td>
 							<a href='{$this->request->base}/ClassSchedule/editClass/{$row['id']}' title='Edit' class='btn btn-flat btn-primary'><i class='fa fa-edit'></i></a>

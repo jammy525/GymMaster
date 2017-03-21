@@ -49,7 +49,7 @@ $(".mem_valid_from").datepicker({format: 'yyyy-mm-dd'}).on("changeDate",function
 		<hr>
 		<div class="box-body">		
 		<form name="payment_form" action="" method="post" class="form-horizontal validateForm" id="payment_form">
-        <input type="hidden" name="action" value="insert">
+                    <input type="hidden" name="action" value="insert">
 		<input type="hidden" name="mp_id" value="0">
 		<input type="hidden" name="created_by" value="1">
 		<div class="form-group">
@@ -64,12 +64,22 @@ $(".mem_valid_from").datepicker({format: 'yyyy-mm-dd'}).on("changeDate",function
 				?>
 			</div>
 		</div>
-		<div class="form-group">
+		<!--<div class="form-group">
 			<label class="col-sm-2 control-label" for="membership"><?php echo __("Membership");?><span class="text-danger">*</span></label>
 			<div class="col-sm-8">
-				<?php echo $this->Form->select("membership_id",$membership,["default"=>($edit)?$data["membership_id"]:"","empty"=>__("Select Membership"),"class"=>"form-control gen_membership_id","data-url"=>$this->request->base . "/GymAjax/get_amount_by_memberships"]);?>		
+				<?php //echo $this->Form->select("membership_id",$membership,["default"=>($edit)?$data["membership_id"]:"","empty"=>__("Select Membership"),"class"=>"form-control gen_membership_id","data-url"=>$this->request->base . "/GymAjax/get_amount_by_memberships"]);?>		
 			</div>
-		</div>
+                -->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="membership"><?php echo __("Membership");?> <span class="text-danger">*</span></label>
+                    <div class="col-sm-8">
+                        <?php
+                        echo $this->Form->select("membership_id",$membership,["default"=>($edit)?$data["membership_id"]:"","empty"=>__("Select Membership"),"class"=>"form-control input-text gen_membership_id validate[required]","data-url"=>$this->request->base . "/GymAjax/get_amount_by_memberships"]);
+                        ?>
+
+                    </div>	
+                </div>
+		
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="total_amount"><?php echo __("Total Amount");?><span class="text-danger">*</span></label>
 			<div class="col-sm-8">
@@ -94,7 +104,7 @@ $(".mem_valid_from").datepicker({format: 'yyyy-mm-dd'}).on("changeDate",function
         	<input type="submit" value="Save" name="<?php echo __("save_membership_payment");?>" class="btn btn-flat btn-success">
         </div>
 		</form>
-			
+		
 		<input type="hidden" value="<?php echo $this->request->base;?>/GymAjax/get_membership_end_date" id="mem_date_check_path">
 		
 		

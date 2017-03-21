@@ -15,6 +15,7 @@ class MembershipPaymentTable extends Table
 		$this->belongsTo("MembershipPaymentHistory");
 		$this->belongsTo("MembershipHistory");
 		$this->belongsTo("GymIncomeExpense");
+                $this->belongsTo("Category");
 		$this->belongsTo("GymMember",["foreignKey"=>"member_id"]);
 	}
 }

@@ -116,8 +116,11 @@ Class GymMemberController extends AppController
             $groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
             $interest = $this->GymMember->GymInterestArea->find("list",["keyField"=>"id","valueField"=>"interest"]);
             $source = $this->GymMember->GymSource->find("list",["keyField"=>"id","valueField"=>"source_name"]);
-            $membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
-
+            //$membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
+            $memCats = $this->GymMember->Category->find('all')->hydrate(false)->toArray();
+            foreach($memCats as $memCat){
+                $membership[$memCat['name']] = $this->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"])->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
+            }
             $this->set("staff",$staff);
             $this->set("classes",$classes);
             $this->set("groups",$groups);
@@ -316,8 +319,11 @@ Class GymMemberController extends AppController
 		$groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
 		$interest = $this->GymMember->GymInterestArea->find("list",["keyField"=>"id","valueField"=>"interest"]);
 		$source = $this->GymMember->GymSource->find("list",["keyField"=>"id","valueField"=>"source_name"]);
-		$membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
-		
+		//$membership = $this->GymMember->Membership->find("list",["keyField"=>"id","valueField"=>"membership_label"]);
+                $memCats = $this->GymMember->Category->find('all')->hydrate(false)->toArray();
+                foreach($memCats as $memCat){
+                    $membership[$memCat['name']] = $this->GymMember->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"])->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
+                }
 		$this->set("staff",$staff);
 		$this->set("classes",$classes);
 		$this->set("groups",$groups);

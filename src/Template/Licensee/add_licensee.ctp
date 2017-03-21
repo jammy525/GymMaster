@@ -7,8 +7,8 @@ $(document).ready(function() {
 	$('#specialization').multiselect({
 		includeSelectAllOption: true	
 	});
-	// $(".dob").datepicker({format: '<?php echo $this->Gym->getSettings("date_format"); ?>'});
-	$(".dob").datepicker({format:"yyyy-mm-dd"});
+	// $(".dob").datepicker({format: '<?php //echo $this->Gym->getSettings("date_format"); ?>'});
+	//$(".dob").datepicker({format:"yyyy-mm-dd"});
 	var box_height = $(".box").height();
 	var box_height = box_height + 500 ;
 	$(".content-wrapper").css("height",box_height+"px");
@@ -45,7 +45,12 @@ function validate_multiselect()
 		<div class="box-body">			
 			<?php				
 			echo $this->Form->create("addgroup",["type"=>"file","class"=>"validateForm form-horizontal","role"=>"form"]);
-			echo "<fieldset><legend>". __('Licensee Information')."</legend>";
+			
+                        ?>
+                    <input type="hidden" id="itsId" value="<?php echo ($edit) ? $data['id'] : '';?>">
+                    <?php
+                        
+                        echo "<fieldset><legend>". __('Licensee Information')."</legend>";
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="first_name">'. __("Licensee Name").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
@@ -70,7 +75,7 @@ function validate_multiselect()
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="birth_date">'. __("Date of joining").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"birth_date","id"=>"birth_date","class"=>"form-control dob validate[required]","value"=>(($edit)?$data['birth_date']->format('d-m-Y'):'')]);
+			echo $this->Form->input("",["label"=>false,"name"=>"birth_date","id"=>"birth_date","class"=>"form-control dob validate[required]","value"=>(($edit)? date($this->Gym->getSettings("date_format"), strtotime($data['birth_date'])):'')]);
 			echo "</div>";	
 			echo "</div>";	
 			
@@ -152,7 +157,7 @@ function validate_multiselect()
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="email">'. __("Email").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"email","class"=>"form-control validate[required,custom[email],ajax[isEmailUnique]]","value"=>(($edit)?$data['email']:'')]);
+			echo $this->Form->input("",["label"=>false,"name"=>"email","class"=>"form-control validate[required,custom[email],ajax[isEmailUnique1]]","value"=>(($edit)?$data['email']:'')]);
 			echo "</div>";	
 			echo "</div>";			
 			echo "</fieldset>";
@@ -161,7 +166,7 @@ function validate_multiselect()
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="username">'. __("Username").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"name"=>"username","id"=>"username","class"=>"form-control validate[required,ajax[isUserNameUnique]]","value"=>(($edit)?$data['username']:''),"readonly"=> (($edit)?true:false)]);
+			echo $this->Form->input("",["label"=>false,"name"=>"username","id"=>"username","class"=>"form-control validate[required,ajax[isUserNameUnique1]]","value"=>(($edit)?$data['username']:''),"readonly"=> (($edit)?true:false)]);
 			echo "</div>";	
 			echo "</div>";
 			

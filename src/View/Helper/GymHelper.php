@@ -103,7 +103,7 @@ Class GymHelper extends Helper
 	}
 	
 	function get_js_dateformat($php_format)
-{
+        {
     $SYMBOLS_MATCHING = array(
         // Day
         'd' => 'dd',

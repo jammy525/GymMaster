@@ -65,13 +65,13 @@ $(document).ready(function(){
                                 $membershipList .= '<span class="badge">'.$membership['membership_label'].'</span>';
                             }
                             
-                            $expires_on = (isset($row['valid_till']) && $row['valid_till'] == 1) ? '<span class="label label-warning">No Exipry</span>' : (date('M j, Y',($row['valid_till'])));
+                            $expires_on = (isset($row['valid_till']) && $row['valid_till'] == 1) ? '<span class="label label-warning">No Exipry</span>' : (date($this->Gym->getSettings("date_format"),($row['valid_till'])));
 				echo "<tr>";
 				echo "<td>{$row['code']}</td>
                                     <td>{$row['discount']}%</td>
                                     <td>".$membershipList."</td>
                                     <td>".$this->Gym->get_user_name($row['gym_member']['id'])."</td>
-                                    <td>".date('M j, Y',strtotime($row['created_at']))." </td>
+                                    <td>".date($this->Gym->getSettings("date_format"),strtotime($row['created_at']))." </td>
                                     <td>".$expires_on." </td>
                                     <td>".(($row['status']) ? '<span class="label label-success">Active</span>' :'<span class="label label-warning">Inactive</span>')."</td>
                                     <td>";

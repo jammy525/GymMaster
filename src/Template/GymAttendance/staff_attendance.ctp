@@ -1,8 +1,3 @@
-<script>
-$(document).ready(function(){
-	$(".hasDatepicker").datepicker();	
-});
-</script>
 <section class="content">
 	<br>
 	<div class="col-md-12 box box-default">		
@@ -25,7 +20,7 @@ $(document).ready(function(){
 			  <input type="hidden" name="class_id" value="0">
 			  <div class="form-group col-md-3">
 				<label class="control-label" for="curr_date"><?php echo __("Date");?></label>				
-					<input id="curr_date" class="form-control hasDatepicker validate[required]" type="text" value="<?php echo (isset($_POST['curr_date'])) ? $_POST["curr_date"]:"";?>" name="curr_date">
+					<input id="curr_date" class="form-control hasDatepicker validate[required]" type="text" value="<?php echo (isset($_POST['curr_date'])) ? date($this->Gym->getSettings("date_format"),strtotime($_POST["curr_date"])):"";?>" name="curr_date">
 			 </div>		
 			<div class="form-group col-md-3 button-possition">
 				<label for="subject_id">&nbsp;</label>

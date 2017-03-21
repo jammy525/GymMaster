@@ -159,6 +159,14 @@
                     "alertTextLoad": "* Validating, please wait"
                 },
                 // To check unique discount code
+                "isDiscountCodeUnique1": {
+                    "url": baseUrl + "GymAjax/discountCodeExist1",
+                    "extraDataDynamic": ["#itsId"],
+                    "alertText": "* This code is already in use",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique discount code
                 "isDiscountCodeUnique": {
                     "url": baseUrl + "GymAjax/discountCodeExist",
                     "alertText": "* This code is already in use",
@@ -189,13 +197,23 @@
                 // To check unique email for existing user
                 "isEmailUnique1": {
                     "url": baseUrl + "GymAjax/emailExist1",
+                    "extraDataDynamic": ["#itsId"],
                     "alertText": "* This email is already associated with our ssystem",
                     "alertTextOk": "All good!",
                     "alertTextLoad": "* Validating, please wait"
                 },
+                
                 // To check unique username
                 "isUserNameUnique": {
                     "url": baseUrl + "GymAjax/usernameExist",
+                    "alertText": "* This username is already taken",
+                    "alertTextOk": "All good!",
+                    "alertTextLoad": "* Validating, please wait"
+                },
+                // To check unique username for existing user
+                "isUserNameUnique1": {
+                    "url": baseUrl + "GymAjax/usernameExist1",
+                    "extraDataDynamic": ["#itsId"],
                     "alertText": "* This username is already taken",
                     "alertTextOk": "All good!",
                     "alertTextLoad": "* Validating, please wait"

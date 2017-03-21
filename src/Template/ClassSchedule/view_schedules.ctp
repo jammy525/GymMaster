@@ -1,9 +1,12 @@
 <?php $session = $this->request->session()->read("User");?>
 <script type="text/javascript">
 $(document).ready(function() {
-	$(".date").datepicker({format:'<?php echo $this->Gym->getSettings("date_format"); ?>'});
+	$(".date").datepicker({
+            forceParse: true
+        })
 });
 </script>
+<?php //echo $this->Gym->get_js_dateformat($this->Gym->getSettings("date_format"));die; ?>
 <section class="content">
 	<br>
 	<div class="col-md-12 box box-default">		
@@ -25,7 +28,7 @@ $(document).ready(function() {
                     <table class="table table-bordered">
                        
                         <tr>
-                            <td width="15%">Search by date: </td><td><?php echo $this->Form->input("",["label"=>false,"placeholder" =>"Search Date","name"=>"search_date","class"=>"date validate[required] form-control","value"=>date('Y-m-d',strtotime($search_date))]);?></td>
+                            <td width="15%">Search by date: </td><td><?php echo $this->Form->input("",["label"=>false,"placeholder" =>"Search Date","name"=>"search_date","class"=>"date validate[required] form-control","value"=>date($this->Gym->getSettings("date_format"),strtotime($search_date))]);?></td>
                             <td>Search by class name</td><td><?php echo @$this->Form->select("class_name",$class_list,["default"=>$class_name,"empty"=>__("Select Class Name"),"class"=>"form-control"]);?></td>
                             <td><?php echo $this->Form->button(__("Search"),['class'=>"btn btn-flat btn-success col-md-offset-2","name"=>"search"]);?></td>
                         </tr>
@@ -39,7 +42,7 @@ $(document).ready(function() {
 				<tr>
 					<th><?php
                                         $originalDate = $search_date;
-                                        echo $newDate = date("D M j, Y", strtotime($originalDate));
+                                        echo $newDate = date($this->Gym->getSettings("date_format"), strtotime($originalDate));
                                         $day=date("l", strtotime($originalDate));
                                         ?>
                                         </th>

@@ -68,7 +68,7 @@ $(document).ready(function(){
                                       
                                   }
                                     
-                                         echo "<td>".date('M d,Y H:i A',time($row['created_date'])) ."</td>
+                                         echo "<td>".date($this->Gym->getSettings("date_format"),time($row['created_date'])) ."</td>
 					<td>";			
 				if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member" || $session["role_name"] == "licensee" ||$session["role_name"] == "accountant")
 				{ 

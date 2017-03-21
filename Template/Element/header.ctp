@@ -112,7 +112,9 @@
                 "url": "dataTables.german.lang"
 				} */			
             });
-			$(".hasDatepicker,.datepick,.date,.mem_valid_from,.sell-date,.dob,.hasdatepicker,.datepicker-days").datepicker({ language: "<?php echo $dtp_lang;?>"});	
+			$(".hasDatepicker,.datepick,.date,.mem_valid_from,.sell-date,.dob,.hasdatepicker,.datepicker-days").datepicker({ 
+                            language: "<?php echo $dtp_lang;?>"
+                        });	
 		
 		});		
 	</script>

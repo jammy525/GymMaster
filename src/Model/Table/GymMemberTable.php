@@ -28,6 +28,7 @@ Class GymMemberTable extends Table{
                 $this->BelongsTo("GymLocation",["foreignKey"=>"location_id"]); //for licensee
                 $this->BelongsTo("GymClass"); 
                 $this->BelongsTo("ReferralCode"); 
+                $this->BelongsTo("Category"); 
                 $this->BelongsTo("ClassScheduleList"); 
 		$this->BelongsTo("Specialization",["foreignKey"=>"s_specialization","propertyName"=>"specialization"]); //for staffmember
 		/* 

@@ -7,9 +7,6 @@ $(document).ready(function() {
 	$('.day_list').multiselect({
 		includeSelectAllOption: true	
 	});
-	// $(".dob").datepicker({format: '<?php echo $this->Gym->getSettings("date_format"); ?>'});
-	$(".dob").datepicker({format: '<?php echo $this->Gym->getSettings("date_format"); ?>'});
-        $(".date").datepicker({format:'<?php echo $this->Gym->getSettings("date_format"); ?>'});
 });
 </script>
 <section class="content">
@@ -42,7 +39,7 @@ $(document).ready(function() {
 			echo "<div class='form-group'>";
                         echo '<label class="control-label col-md-2" for="start_date">'. __("Start Date").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"placeholder" =>"Enter Start Date","name"=>"start_date","class"=>"date validate[required] form-control","value"=>(($edit)?date('Y-m-d',strtotime($data['start_date'])):'')]);
+			echo $this->Form->input("",["label"=>false,"placeholder" =>"Enter Start Date","name"=>"start_date","class"=>"date validate[required] form-control","value"=>(($edit)?date($this->Gym->getSettings("date_format"),strtotime($data['start_date'])):'')]);
 			echo "</div>";	
 			echo "</div>";
 			
@@ -111,7 +108,7 @@ $(document).ready(function() {
 			echo "<div class='form-group'>";	
 			echo '<label class="control-label col-md-2" for="end_date">'. __("End Date").'<span class="text-danger"> *</span></label>';
 			echo '<div class="col-md-6">';
-			echo $this->Form->input("",["label"=>false,"placeholder" =>"Enter End Date","name"=>"end_date","class"=>"date validate[required] form-control","value"=>(($edit)?date('Y-m-d',strtotime($data['end_date'])):'')]);
+			echo $this->Form->input("",["label"=>false,"placeholder" =>"Enter End Date","name"=>"end_date","class"=>"date validate[required] form-control","value"=>(($edit)?date($this->Gym->getSettings("date_format"),strtotime($data['end_date'])):'')]);
 			echo "</div>";	
 			echo "</div>";
                          echo "<fieldset><legend>". __('Staff Information')."</legend>";
