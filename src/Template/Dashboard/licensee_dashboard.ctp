@@ -100,7 +100,7 @@ echo $this->Html->script('lang-all');
 				</a>
 			</div>
 			</div>
-			<div class="col-md-4 membership-list <?php echo $pull;?> col-sm-4 col-xs-12">
+			<!--<div class="col-md-4 membership-list <?php echo $pull;?> col-sm-4 col-xs-12">
 				<div class="panel panel-white">
 					<div class="panel-heading">
 						<h3 class="panel-title"><?php echo __("Latest Members");?></h3>						
@@ -136,12 +136,12 @@ echo $this->Html->script('lang-all');
 						} ?>
 					</div>
 				</div>
-		   </div>
+		   </div>-->
                     
                    
                     
                     
-			<div class="col-md-8 col-sm-8 col-xs-12">
+			<!--<div class="col-md-8 col-sm-8 col-xs-12">
 				<div class="panel panel-white">
 					<div class="panel-body">
 						<div id="calendar">
@@ -149,43 +149,88 @@ echo $this->Html->script('lang-all');
 				</div>
 			</div>
 			
-		</div>	
+		</div>-->	
                      <!-- Display Graph -->
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="col-xs-6 col-sm-6">
-                        <div class="panel panel-white">
-                            <div class="panel-body">
-                                <?php
-                              $options1 = Array(
-					 		'title' => __('Member Reports'),
- 							'colors' => array('#22BAA0','#F25656')
-					 		);
-                              $GoogleChartss = new GoogleCharts;
-                             // print_r($chart_array_members);
-		              $charts = $GoogleChartss->load( 'PieChart' , 'chart_div_member' )->get( $chart_array_members , $options1 );	
-                              ?>
-                                <?php 
-		 if(isset($data) && empty($data)) {?>
-		  
-		  <div class="clear col-md-12">
-		  <i>
-		  <?php echo __("There is not enough data to generate report.");?>
-		  </i>
-		  </div>
-               <?php } ?>
-                                <div id="chart_div_member" style="width: 100%; height: 500px;"></div>		  
-		<!-- Javascript --> 
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script> 
-		<script type="text/javascript">
-			<?php if(!empty($chart_array_members))
-						{echo $charts;}?>
-		</script>
-                
-                            </div> 
-                        </div> 
-                        </div> 
-                       
-                    </div>
+                     <div class="">
+                         <div class="col-md-6 col-sm-6 col-xs-12">
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <h3 class="panel-title"><?php echo __("Members Report"); ?></h3>						
+                                     </div>
+                                     <?php
+                                     $options1 = Array(
+                                         'title' => __('Total Members : '.$members),
+                                          'legend' => 'bottom',
+                                         'colors' => array('#22BAA0', '#F25656'),
+                                         'pieHole' => 0.5
+                                     );
+                                     $GoogleChartss = new GoogleCharts;
+                                     // print_r($chart_array_members);
+                                     $charts = $GoogleChartss->load('PieChart', 'chart_div_member')->get($chart_array_members, $options1);
+                                     ?>
+                                     <?php if (isset($data) && empty($data)) { ?>
+
+                                         <div class="clear col-md-12">
+                                             <i>
+                                                 <?php echo __("There is not enough data to generate report."); ?>
+                                             </i>
+                                         </div>
+                                     <?php } ?>
+                                     <div id="chart_div_member" style="width: 100%; height: 300px;"></div>		  
+                                     <!-- Javascript --> 
+                                     <script type="text/javascript" src="https://www.google.com/jsapi"></script> 
+                                     <script type="text/javascript">
+                                        <?php if (!empty($chart_array_members)) {
+                                            echo $charts;
+                                        }
+                                        ?>
+                                     </script>
+
+                                 </div> 
+                             </div> 
+                         </div> 
+                          <!-- Secound Section start here -->
+                           <div class="col-md-6 col-sm-6 col-xs-12">
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <h3 class="panel-title"><?php echo __("Sales Report"); ?></h3>						
+                                     </div>
+                                     <?php
+                                     $options_sales = Array(
+                                         'title' => __('Total Sales : $'.number_format($total_sales,2)),
+                                         'legend' => 'bottom',
+                                         'colors' => array('#22BAA0', '#F25656'),
+                                         'pieHole' => 0.5
+                                     );
+                                     $GoogleChartSales = new GoogleCharts;
+                                     // print_r($chart_array_members);
+                                     $chartsales = $GoogleChartSales->load('PieChart', 'chart_div_sales')->get($chart_array_sales, $options_sales);
+                                     ?>
+                                     <?php if (isset($report_22) && empty($report_22)) { ?>
+
+                                         <div class="clear col-md-12">
+                                             <i>
+                                                 <?php echo __("There is not enough data to generate report."); ?>
+                                             </i>
+                                         </div>
+                                     <?php } ?>
+                                     <div id="chart_div_sales" style="width: 100%; height: 300px;"></div>		  
+                                     <!-- Javascript --> 
+                                     <script type="text/javascript" src="https://www.google.com/jsapi"></script> 
+                                     <script type="text/javascript">
+                                        <?php if (!empty($chart_array_sales)) {
+                                            echo $chartsales;
+                                        }
+                                        ?>
+                                     </script>
+
+                                 </div> 
+                             </div> 
+                         </div> 
+                          <!-- -->
+                     </div>
                     <!-- -->
                     
                     <!-- End row2 -->
@@ -201,6 +246,7 @@ echo $this->Html->script('lang-all');
 								
 								//'bar'  => Array('groupWidth' => '70%'),
 								//'lagend' => Array('position' => 'none'),
+                                                                'legend' => 'bottom',
 								'hAxis' => Array(
 									'title' => __('Month'),
 									'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
@@ -228,7 +274,7 @@ echo $this->Html->script('lang-all');
 						<h3 class="panel-title"><?php echo __('Payment');?></h3>						
 					</div>
 					<div class="panel-body">
-						<div id="chart_div1" style="width: 100%; height: 500px;">
+						<div id="chart_div1" style="width: 100%; height: 300px;">
 						<?php
 						if(empty($result_pay))
 							echo __('There is not enough data to generate report');?>
@@ -247,59 +293,45 @@ echo $this->Html->script('lang-all');
 			</div>			
 			<div class="col-md-6 col-sm-6 col-xs-12">
 			<?php
-			$options = Array(
-			'title' => __('Member Attendance Report'),
-			'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
-			'legend' =>Array('position' => 'right',
-						'textStyle'=> Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans')),
-			
-						'hAxis' => Array(
-								'title' =>  __('Class'),
-										'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
-								'textStyle' => Array('color' => '#66707e','fontSize' => 10),
-								'maxAlternation' => 2
-			
-			
-								),
-								'vAxis' => Array(
-										'title' =>  __('No of Member'),
-					'minValue' => 0,
-					'maxValue' => 5,
-					'format' => '#',
-					'titleTextStyle' => Array('color' => '#66707e','fontSize' => 14,'bold'=>true,'italic'=>false,'fontName' =>'open sans'),
-					'textStyle' => Array('color' => '#66707e','fontSize' => 12)
-								),
-										'colors' => array('#22BAA0','#f25656')
-										);
+			 $options_book = Array(
+                                         'title' => __('Total Booking : '.($total_booking)),
+                                         'legend' => 'bottom',
+                                          'pieSliceText' => 'value',
+                                         'colors' => array('#F25656'),
+                                         //'is3D' => true,
+                                         'pieSliceTextStyle' => array('color'=> 'black'),
+                                         'pieHole' => 0.5
+                                     );
+
 			
 		
 			
-			$GoogleCharts = new GoogleCharts;
-			$chart = $GoogleCharts->load( 'column' , 'attendance_report' )->get( $chart_array_at , $options );
+			$GoogleChart_book= new GoogleCharts;
+			$chart_book = $GoogleChart_book->load( 'PieChart' , 'booking_report' )->get( $chart_array_booking , $options_book );
 			?>
 			<div class="panel panel-white">
 				<div class="panel-heading">
-					<h3 class="panel-title"><?php echo __('Member Attendance Report');?></h3>						
+					<h3 class="panel-title"><?php echo __('Booking Report');?></h3>						
 				</div>
 				<div class="panel-body">
-					<div id="attendance_report" style="width: 100%; height: 500px;">
+					<div id="booking_report" style="width: 100%; height: 300px;">
 						<?php
 						
-						if(empty($report_member))
+						if(empty($chart_array_booking))
 							echo __('There is not enough data to generate report');?>
 					</div>  
 					  <!-- Javascript --> 
 					  <script type="text/javascript" src="https://www.google.com/jsapi"></script> 
 					  <script type="text/javascript">
 						<?php
-						if(!empty($report_member))
-							echo $chart;?>
+						if(!empty($chart_array_booking))
+							echo $chart_book;?>
 						</script>
 				</div>
 			</div>
 			</div>
 			<div class="clear"></div>
-			<div class="col-md-6 col-sm-6 col-xs-12">
+			<?Php /* ?><div class="col-md-6 col-sm-6 col-xs-12">
 			<?php
 			$options12 = Array(
 			'title' => __('Staff Attendance Report'),
@@ -349,7 +381,7 @@ echo $this->Html->script('lang-all');
 			</script>
 								</div>
 							</div>
-						</div>
+						</div><?php */ ?>
 			</div><!-- End Row3 -->
 			
 			
