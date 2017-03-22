@@ -660,5 +660,6 @@ public function get_total_group_members($gid)
 		$count = intval($query->count());
 		if($count == 1){return true;}else{return false;}
 	}
+        
 
 }
