@@ -10,10 +10,10 @@ Class MembershipController extends AppController
 	public function initialize()
     {
         parent::initialize();		
-		// var_dump($this->request);die;
-		$this->loadComponent('Csrf');
-        $this->loadComponent('RequestHandler');		
-		$this->loadComponent("GYMFunction");
+            // var_dump($this->request);die;
+            $this->loadComponent('Csrf');
+            $this->loadComponent('RequestHandler');		
+            $this->loadComponent("GYMFunction");
     }
 	
 	public function add()

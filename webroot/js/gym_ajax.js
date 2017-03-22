@@ -836,7 +836,11 @@ $("body").on("click",".amt_pay",function(){
 		type : "POST",
 		success : function(result){			
 			$('.gym-modal').modal('show');			
-			$(".gym-modal .modal-content").html(result);			
+			$(".gym-modal .modal-content").html(result);
+                        $("#gymPayFrm").validationEngine('attach', {
+                            promptPosition : "bottomRight", 
+                            scroll: false
+                        });
 		}
 	});	
 });

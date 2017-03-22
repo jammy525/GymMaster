@@ -17,11 +17,13 @@ class MembershipPaymentController extends AppController {
     public function paymentList() {
         $new_session = $this->request->session();
         $session = $this->request->session()->read("User");
-        
-        if ($session["role_name"] == "member") {
-            $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->where(["GymMember.id" => $session["id"]])->hydrate(false)->toArray();
-        } else {
+        $loggedUser = $this->GYMFunction->get_user_detail($session['id']);
+        if ($session["role_name"] == "administrator") {
             $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->hydrate(false)->toArray();
+        } else if($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
+            $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->where(["GymMember.associated_licensee" => $loggedUser["associated_licensee"]])->hydrate(false)->toArray();
+        }else{
+            $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->where(["GymMember.id" => $session["id"]])->hydrate(false)->toArray();
         }
         $this->set("data", $data);
 

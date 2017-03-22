@@ -16,7 +16,7 @@
                                         <table cellpadding="0" cellspacing="0" style="width:80%;text-align:center;padding: 25px 0;color: #fff;margin:auto;" align="center">
                                             <tbody><tr>
                                                     <td>
-                                                        <a href="" target="_blank"><img style="display: inline-block; width: 200px;" src="54.219.175.76/img/Thumbnail-img2.png" alt="GoTribe"></a>
+                                                        <a href="" target="_blank"><img style="display: inline-block; width: 200px;" src="<?php echo $_SERVER['HTTP_HOST'];?>/img/Thumbnail-img2.png" alt="GoTribe"></a>
                                                     </td>
                                                 </tr>
                                             </tbody></table>
@@ -32,9 +32,9 @@
                                             <p><strong>Username:</strong> <?php echo $username;?></p>
                                             <p><strong>Password:</strong> <?php echo $password;?></p>
                                             <p>Click below button to login into <strong>GoTribe</strong> portal.</p>
-                                            <p style=" text-align:center;"><a href="http://gotribe.rnf.tech/" target="_blank" style="color: #444;">Login</a></p>
+                                            <p style=" text-align:center;"><a href="<?php echo $_SERVER['HTTP_HOST'];?>" target="_blank" style="color: #444;">Login</a></p>
                                             <p>If you're having trouble clicking the login button, copy and paste the following link into your web browser.</p>
-                                            <p><a href="http://gotribe.rnf.tech/" target="_blank" style="color: #444;">http://gotribe.rnf.tech/</a></p>
+                                            <p><a href="<?php echo $_SERVER['HTTP_HOST'];?>" target="_blank" style="color: #444;"><?php echo $_SERVER['HTTP_HOST'];?></a></p>
                                             
                                             <p>&nbsp;</p>
                                             <p>&nbsp;</p>
@@ -67,27 +67,27 @@
                                                 <tr>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="Facebook" src="54.219.175.76/webroot/img/email/footer_facebook.png" style="margin:5px 0">
+                                                            <img alt="Facebook" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/footer_facebook.png" style="margin:5px 0">
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="LinkedIn" src="54.219.175.76/webroot/img/email/footer_linkedin.png" style="margin:5px 0;">
+                                                            <img alt="LinkedIn" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/footer_linkedin.png" style="margin:5px 0;">
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="Twitter" src="54.219.175.76/webroot/img/email/footer_twitter.png" style="margin:5px 0;">
+                                                            <img alt="Twitter" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/footer_twitter.png" style="margin:5px 0;">
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="google+" src="54.219.175.76/webroot/img/email/google.png" style="margin:5px 0">
+                                                            <img alt="google+" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/google.png" style="margin:5px 0">
                                                         </a>    
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="pinterest" src="54.219.175.76/webroot/img/email/pinterest.png" style="margin:5px 0">
+                                                            <img alt="pinterest" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/pinterest.png" style="margin:5px 0">
                                                         </a>
                                                     </td> 
                                                 </tr>

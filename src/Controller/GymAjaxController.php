@@ -1185,22 +1185,28 @@ Class GymAjaxController extends AppController {
     public function gymPay($mp_id) {
         $this->loadComponent("GYMFunction");
         $session = $this->request->session()->read("User");
+        $mp_table = TableRegistry::get("MembershipPayment");
+	$memshipPaymentDetails = $mp_table->get($mp_id)->toArray();
+        //echo '<pre>';print_r($memshipPaymentDetails);
+        $due = ($memshipPaymentDetails['membership_amount'] - $memshipPaymentDetails['paid_amount']);
+        $due = 200;
         ?>
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="gridSystemModalLabel"><?php echo __("Add Payment"); ?></h4>
         </div>
         <div class="modal-body">		
-            <form name="expense_form" action="" method="post" class="form-horizontal validateForm">
+            <form name="expense_form" id="gymPayFrm" action="" method="post" class="form-horizontal validateForm">
                 <input type="hidden" name="action" value="gmgt_member_add_payment">
                 <input type="hidden" name="mp_id" value="<?php echo $mp_id; ?>">
                 <input type="hidden" name="created_by" value="<?php echo $session["id"]; ?>">
+                <input type="hidden" id="minValues" value="100">
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="amount"><?php echo __("Paid Amount"); ?><span class="text-danger">*</span></label>
                     <div class="col-sm-8">
                         <div class='input-group'>
                             <span class='input-group-addon'><?php echo $this->GYMFunction->get_currency_symbol(); ?></span>
-                            <input id="amount" class="form-control validate[required] text-input" type="text" value="" name="amount">
+                            <input id="amount" class="form-control validate[required,custom[number],max[#minValues]] text-input" type="text" value="" name="amount">
                         </div>
                     </div>
                 </div>
@@ -1271,7 +1277,7 @@ Class GymAjaxController extends AppController {
                             </td>
                             <td align="right" width="24%">
                                 <h5><?php
-                                    $issue_date = $data[0]['created_date']->format("Y-m-d");
+                                    $issue_date = $data[0]['created_date']->format($sys_data[0]['date_format']);
                                     $issue_date = date($sys_data[0]['date_format'], strtotime($issue_date));
                                     echo __('Issue Date') . " : " . $issue_date;
                                     ?></h5>
@@ -1373,7 +1379,7 @@ Class GymAjaxController extends AppController {
                             foreach ($history_data as $retrive_date) {
                                 ?>
                                 <tr>
-                                    <td class="text-center"><?php echo $retrive_date["paid_by_date"]; ?></td>
+                                    <td class="text-center"><?php echo date($sys_data[0]['date_format'], strtotime($retrive_date["paid_by_date"])); ?></td>
                                     <td class="text-center"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $retrive_date["amount"]; ?></td>
                                     <td class="text-center"><?php echo $retrive_date["payment_method"]; ?></td>
                                 </tr>

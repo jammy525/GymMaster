@@ -5,7 +5,7 @@ echo $this->Html->script('select2.min');
 <script>
 $(document).ready(function(){
 $(".mem_list").select2();
-$(".mem_valid_from").datepicker({format: 'yyyy-mm-dd'}).on("changeDate",function(ev){
+$(".mem_valid_from").datepicker().on("changeDate",function(ev){
 				
 				var ajaxurl = $("#mem_date_check_path").val();
 				var date = ev.target.value;	
@@ -92,11 +92,11 @@ $(".mem_valid_from").datepicker({format: 'yyyy-mm-dd'}).on("changeDate",function
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="begin_date"><?php echo __("Membership Valid From");?><span class="text-danger">*</span></label>
 			<div class="col-sm-3">
-				<?php echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_from","class"=>"form-control validate[required] mem_valid_from","value"=>($edit)?date("Y-m-d",strtotime($data["start_date"])):""]); ?>				
+				<?php echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_from","class"=>"form-control validate[required] mem_valid_from","value"=>($edit)?date($this->Gym->getSettings("date_format"),strtotime($data["start_date"])):""]); ?>				
 			</div>
 			<div class="col-sm-1 text-center">	<?php echo __("To");?>			</div>
 			<div class="col-sm-4">
-				<?php echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_to","class"=>"form-control validate[required] valid_to","value"=>(($edit)?date("Y-m-d",strtotime($data['end_date'])):''),"readonly"=>true]);
+				<?php echo $this->Form->input("",["label"=>false,"name"=>"membership_valid_to","class"=>"form-control validate[required] valid_to","value"=>(($edit)?date($this->Gym->getSettings("date_format"),strtotime($data['end_date'])):''),"readonly"=>true]);
 				?>
 			</div>
 		</div>		

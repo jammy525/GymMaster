@@ -7,7 +7,7 @@
         jQuery(".expense_form").validationEngine();
         jQuery('#payment_list').DataTable({
             "responsive": true,
-            "order": [[0, "asc"]],
+            "order": [[1, "asc"]],
             "aoColumns": [
                 {"bSortable": true},
                 {"bSortable": true},
@@ -76,7 +76,7 @@
 								<td>
 								<a href='javascript:void(0)' class='btn btn-flat btn-default amt_pay' data-url='" . $this->request->base . "/GymAjax/gymPay/{$row['mp_id']}'>" . __('Pay') . "</a>
 								<a href='javascript:void(0)' class='btn btn-flat btn-info view_invoice' data-url='" . $this->request->base . "/GymAjax/viewInvoice/{$row['mp_id']}'><i class='fa fa-eye'></i></a>";
-                            if ($session["role_name"] == "administrator") {
+                            if ($session["role_name"] == "administrator" || $session["role_name"] == "licensee") {
                                 echo " <a href='" . $this->request->base . "/MembershipPayment/MembershipEdit/{$row['mp_id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
 									<a href='" . $this->request->base . "/MembershipPayment/deletePayment/{$row['mp_id']}' class='btn btn-flat btn-danger' onclick=\"return confirm('Are you sure,You want to delete this record?')\"><i class='fa fa-trash'></i></a>";
                             }

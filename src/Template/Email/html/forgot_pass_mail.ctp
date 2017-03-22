@@ -16,7 +16,7 @@
                                         <table cellpadding="0" cellspacing="0" style="width:80%;text-align:center;padding: 25px 0;color: #fff;margin:auto;" align="center">
                                             <tbody><tr>
                                                     <td>
-                                                        <a href="" target="_blank"><img style="display: inline-block; width: 200px;" src="54.219.175.76/img/Thumbnail-img2.png" alt="GoTribe"></a>
+                                                        <a href="" target="_blank"><img style="display: inline-block; width: 200px;" src="<?php echo $_SERVER['HTTP_HOST'];?>/img/Thumbnail-img2.png" alt="GoTribe"></a>
                                                     </td>
                                                 </tr>
                                             </tbody></table>
@@ -29,9 +29,9 @@
                                                 <tr style="background:#fff; text-align:left;">
                                             <p>Hi <strong><?php echo $name;?>,</strong></p>
                                             <p>You recently requested to reset your password for your <strong>GoTribe</strong> account. Click below button to reset it.</p>
-                                            <p style=" text-align:center;"><a href="54.219.175.76/reset-password/reset_password_token/<?php echo $link;?>" target="_blank" style="color: #444;">Reset Your Password</a></p>
+                                            <p style=" text-align:center;"><a href="<?php echo $_SERVER['HTTP_HOST'];?>/reset-password/reset_password_token/<?php echo $link;?>" target="_blank" style="color: #444;">Reset Your Password</a></p>
                                             <p>If you're having trouble clicking the password reset button, copy and paste the following link into your web browser.</p>
-                                            <p><a href="54.219.175.76/reset-password/reset_password_token/<?php echo $link;?>" target="_blank" style="color: #444;">54.219.175.76/reset-password/reset_password_token/<?php echo $link;?></a></p>
+                                            <p><a href="<?php echo $_SERVER['HTTP_HOST'];?>/reset-password/reset_password_token/<?php echo $link;?>" target="_blank" style="color: #444;"><?php echo $_SERVER['HTTP_HOST'];?>/reset-password/reset_password_token/<?php echo $link;?></a></p>
                                             <p>If you did not request a password reset, please ignore this email or reply to let us know. This password reset is only valid for next 24 hours.</p>
                                             <p>&nbsp;</p>
                                             <p>&nbsp;</p>
@@ -64,27 +64,27 @@
                                                 <tr>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="Facebook" src="54.219.175.76/webroot/img/email/footer_facebook.png" style="margin:5px 0">
+                                                            <img alt="Facebook" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/footer_facebook.png" style="margin:5px 0">
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="LinkedIn" src="54.219.175.76/webroot/img/email/footer_linkedin.png" style="margin:5px 0;">
+                                                            <img alt="LinkedIn" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/footer_linkedin.png" style="margin:5px 0;">
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="Twitter" src="54.219.175.76/webroot/img/email/footer_twitter.png" style="margin:5px 0;">
+                                                            <img alt="Twitter" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/footer_twitter.png" style="margin:5px 0;">
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="google+" src="54.219.175.76/webroot/img/email/google.png" style="margin:5px 0">
+                                                            <img alt="google+" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/google.png" style="margin:5px 0">
                                                         </a>    
                                                     </td>
                                                     <td>
                                                         <a target="_blank" href="#" style="width: 30px; text-decoration:none; padding: 0px 5px;">
-                                                            <img alt="pinterest" src="54.219.175.76/webroot/img/email/pinterest.png" style="margin:5px 0">
+                                                            <img alt="pinterest" src="<?php echo $_SERVER['HTTP_HOST'];?>/webroot/img/email/pinterest.png" style="margin:5px 0">
                                                         </a>
                                                     </td> 
                                                 </tr>
