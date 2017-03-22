@@ -92,8 +92,10 @@ class ClassScheduleController extends AppController
             if($this->request->is("post")){
                 
                 $time_list = $this->request->data["time_list"];			
-
+              
                 $class = $this->ClassSchedule->newEntity();
+                $this->request->data["start_date"] = date("Y-m-d",strtotime($this->request->data["start_date"]));
+                $this->request->data["end_date"] = date("Y-m-d",strtotime($this->request->data["end_date"]));
                 $this->request->data['days'] = json_encode($this->request->data['days']);
                 $this->request->data['start_time'] = $this->request->data['start_hrs'].":".$this->request->data['start_min'].":".$this->request->data['start_ampm'];
                 $this->request->data['end_time'] = $this->request->data['end_hrs'].":".$this->request->data['end_min'].":".$this->request->data['end_ampm'];
@@ -188,6 +190,8 @@ class ClassScheduleController extends AppController
                $time_list = $this->request->data["time_list"];
                 $class = $this->ClassSchedule->get($id);
                 $this->request->data['days'] = json_encode($this->request->data['days']);
+                $this->request->data["start_date"] = date("Y-m-d",strtotime($this->request->data["start_date"]));
+                $this->request->data["end_date"] = date("Y-m-d",strtotime($this->request->data["end_date"]));
                 $this->request->data['start_time'] = $this->request->data['start_hrs'].":".$this->request->data['start_min'].":".$this->request->data['start_ampm'];
                 $this->request->data['end_time'] = $this->request->data['end_hrs'].":".$this->request->data['end_min'].":".$this->request->data['end_ampm'];
                 $this->request->data["updated_date"] = date("Y-m-d H:i:s");
