@@ -1189,7 +1189,7 @@ Class GymAjaxController extends AppController {
 	$memshipPaymentDetails = $mp_table->get($mp_id)->toArray();
         //echo '<pre>';print_r($memshipPaymentDetails);
         $due = ($memshipPaymentDetails['membership_amount'] - $memshipPaymentDetails['paid_amount']);
-        $due = 200;
+        
         ?>
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -1198,15 +1198,14 @@ Class GymAjaxController extends AppController {
         <div class="modal-body">		
             <form name="expense_form" id="gymPayFrm" action="" method="post" class="form-horizontal validateForm">
                 <input type="hidden" name="action" value="gmgt_member_add_payment">
-                <input type="hidden" name="mp_id" value="<?php echo $mp_id; ?>">
+                <input type="hidden" name="mp_id" id="mp_id" value="<?php echo $mp_id; ?>">
                 <input type="hidden" name="created_by" value="<?php echo $session["id"]; ?>">
-                <input type="hidden" id="minValues" value="100">
                 <div class="form-group">
                     <label class="col-sm-3 control-label" for="amount"><?php echo __("Paid Amount"); ?><span class="text-danger">*</span></label>
                     <div class="col-sm-8">
                         <div class='input-group'>
                             <span class='input-group-addon'><?php echo $this->GYMFunction->get_currency_symbol(); ?></span>
-                            <input id="amount" class="form-control validate[required,custom[number],max[#minValues]] text-input" type="text" value="" name="amount">
+                            <input id="amount" class="form-control validate[required,custom[number],ajax[maxDueAmount]] text-input" type="text" value="<?php echo $due;?>" name="amount" min="0">
                         </div>
                     </div>
                 </div>
@@ -1335,30 +1334,30 @@ Class GymAjaxController extends AppController {
                             <th class="text-center"> <?php echo __('Membership Type'); ?></th>
                             <!--<th class="text-center"> <?php echo __('Sign Up Fee'); ?></th> -->
                             <th class="text-center"> <?php echo __('Membership Fee'); ?></th>
-                            <th><?php echo __('Total'); ?> </th>
+                            <th class="text-center"><?php echo __('Total'); ?> </th>
                         </tr>
                     </thead>
                     <tbody>
-                    <td>1</td>
+                    <td class="text-center">1</td>
                     <td class="text-center"><?php echo $data[0]["membership"]["membership_label"]; ?></td>
             <!-- <td class="text-center"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $data[0]["membership"]["signup_fee"]; ?></td> -->
-                    <td class="text-center"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $data[0]["membership"]["membership_amount"]; ?></td>
-                    <td class="text-center"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $subtotal = intval($data[0]["membership"]["membership_amount"]) /* + intval($data[0]["membership"]["signup_fee"]); */ ?></td>
+                    <td class="text-center"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo number_format((float)($data[0]["membership"]["membership_amount"]), 2, '.', ''); ?></td>
+                    <td class="text-center"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $subtotal = number_format((float)($data[0]["membership"]["membership_amount"]), 2, '.', '') /* + intval($data[0]["membership"]["signup_fee"]); */ ?></td>
                     </tbody>
                 </table>
                 <table width="100%" border="0">
                     <tbody>
                         <tr>
                             <td width="80%" align="<?php echo $float_r; ?>"><?php echo __('Subtotal :'); ?></td>
-                            <td align="<?php echo $float_r; ?>"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $subtotal; ?></td>
+                            <td align="<?php echo $float_r; ?>"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo number_format((float)($subtotal), 2, '.', ''); ?></td>
                         </tr>
                         <tr>
                             <td width="80%" align="<?php echo $float_r; ?>"><?php echo __('Payment Made :'); ?></td>
-                            <td align="<?php echo $float_r; ?>"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $data[0]["paid_amount"]; ?></td>
+                            <td align="<?php echo $float_r; ?>"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo number_format((float)($data[0]["paid_amount"]), 2, '.', ''); ?></td>
                         </tr>
                         <tr>
                             <td width="80%" align="<?php echo $float_r; ?>"><?php echo __('Due Amount  :'); ?></td>
-                            <td align="<?php echo $float_r; ?>"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo $subtotal - $data[0]["paid_amount"]; ?></td>
+                            <td align="<?php echo $float_r; ?>"><?php echo $this->GYMFunction->get_currency_symbol(); ?> <?php echo number_format((float)($subtotal - $data[0]["paid_amount"]), 2, '.', '');  ?></td>
                         </tr>
                     </tbody>			
                 </table>
@@ -2417,6 +2416,35 @@ Class GymAjaxController extends AppController {
                 $arrayToJs[0] = $fieldId;
                 $arrayToJs[1] = true;   // RETURN TRUE
                 echo json_encode($arrayToJs);
+            }
+        }
+        
+        public function maxDueAmount(){
+            $this->request->data = $_REQUEST;
+            $reques = $this->request->data['fieldValue'];
+            $fieldId = $this->request->data['fieldId'];
+            $mp_id = $this->request->data['mp_id'];
+            if ($reques <= 0) {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;  // RETURN FALSE
+                echo json_encode($arrayToJs);
+                die;
+            }
+            $mp_table = TableRegistry::get("MembershipPayment");
+            $memshipPaymentDetails = $mp_table->get($mp_id)->toArray();
+            //echo '<pre>';print_r($memshipPaymentDetails);
+            $due = ($memshipPaymentDetails['membership_amount'] - $memshipPaymentDetails['paid_amount']);
+            
+            if ($due == $reques) {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = true;  // RETURN FALSE
+                echo json_encode($arrayToJs);
+                die;
+            } else {
+                $arrayToJs[0] = $fieldId;
+                $arrayToJs[1] = false;   // RETURN TRUE
+                echo json_encode($arrayToJs);
+                die;
             }
         }
 

@@ -51,17 +51,17 @@ $(".mem_valid_from").datepicker().on("changeDate",function(ev){
 		<form name="payment_form" action="" method="post" class="form-horizontal validateForm" id="payment_form">
                     <input type="hidden" name="action" value="insert">
 		<input type="hidden" name="mp_id" value="0">
-		<input type="hidden" name="created_by" value="1">
+		<!--<input type="hidden" name="created_by" value="1">-->
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="day"><?php echo __("Member");?><span class="text-danger">*</span></label>	
 			<div class="col-sm-8">
 				<?php
-				if($edit)
-				{
-					echo $this->Form->input("",["type"=>"hidden","name"=>"user_id","label"=>false,"class"=>"form-control","value"=>$data["member_id"]]);
+				
+				echo @$this->Form->select("user_id",$members,["default"=>($edit)?$data['member_id']:'',"empty"=>__("Select Member"),"class"=>"form-control validate[required]",($edit)?"disabled":""]);
+                                if($edit){
+                                    echo $this->Form->input("",["type"=>"hidden","name"=>"user_id","label"=>false,"class"=>"form-control","value"=>$data["member_id"]]);
 				}
-				echo $this->Form->select("user_id",$members,["default"=>($edit)?$data["member_id"]:"","empty"=>__("Select Member"),"class"=>"mem_list","required"=>"true",($edit)?"disabled":""]);
-				?>
+                                ?>
 			</div>
 		</div>
 		<!--<div class="form-group">

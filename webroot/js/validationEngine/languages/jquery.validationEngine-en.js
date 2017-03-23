@@ -158,6 +158,13 @@
                     "alertText": "* This user is already taken",
                     "alertTextLoad": "* Validating, please wait"
                 },
+                // To check max due pay
+                "maxDueAmount": {
+                    "url": baseUrl + "GymAjax/maxDueAmount",
+                    "extraDataDynamic": ["#mp_id"],
+                    "alertText": "* Amount must be equal to due amount",
+                    "alertTextLoad": "* Checking due amount, please wait"
+                },
                 // To check unique discount code
                 "isDiscountCodeUnique1": {
                     "url": baseUrl + "GymAjax/discountCodeExist1",

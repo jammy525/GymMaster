@@ -16,6 +16,7 @@
                 {"bSortable": true, "sWidth": "5px"},
                 {"bSortable": true, "sWidth": "5px"},
                 {"bSortable": true, "sWidth": "5px"},
+                {"bSortable": true, "sWidth": "5px"},
                 {"bSortable": true},
                 {"bSortable": false}],
             "language": {<?php echo $this->Gym->data_table_lang(); ?>}
@@ -33,7 +34,7 @@
                     <small><?php echo __("Workout Daily"); ?></small>
                 </h1>
                 <?php
-                if ($session["role_name"] == "administrator") {
+                if ($session["role_name"] == "administrator" || $session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
                     ?>
                     <ol class="breadcrumb">
                         <a href="<?php echo $this->Gym->createurl("MembershipPayment", "generatePaymentInvoice"); ?>" class="btn btn-flat btn-custom"><i class="fa fa-bars"></i> <?php echo __("Generate Payment Invoice"); ?></a>
@@ -54,6 +55,7 @@
                         <th><?php echo __('Membership Start Date', 'gym_mgt'); ?></th>
                         <th><?php echo __('Membership End Date', 'gym_mgt'); ?></th>
                         <th><?php echo __('Payment Status', 'gym_mgt'); ?></th>
+                        <th><?php echo __('Plan Status', 'gym_mgt'); ?></th>
                         <th><?php echo __('Action', 'gym_mgt'); ?></th>
                     </tr>
                 </thead>
@@ -61,9 +63,24 @@
                     <?php
                     if (!empty($data)) {
                         foreach ($data as $row) {
+                            
+                            if($row['mem_plan_status'] && $row['mem_plan_status'] == 1){
+                                $plan_status = "<span class='label label-success'>Current</span>";
+                            }else if ($row['mem_plan_status'] && $row['mem_plan_status'] == 2) {
+                                $plan_status = "<span class='label label-warning'>Upgrade</span>";
+                            }else{
+                                $plan_status = "<span class='label label-default'>Pending</span>";
+                            }
+                            
+                            if( __($this->Gym->get_membership_paymentstatus($row['mp_id'])) == 'Fully Paid'){
+                                $pay_status = "<span class='label label-success'>".__($this->Gym->get_membership_paymentstatus($row['mp_id']))."</span>";
+                            }else if(__($this->Gym->get_membership_paymentstatus($row['mp_id'])) == 'Not Paid'){
+                                $pay_status = "<span class='label label-default'>".__($this->Gym->get_membership_paymentstatus($row['mp_id']))."</span>";
+                            }else if(__($this->Gym->get_membership_paymentstatus($row['mp_id'])) == 'Partially Paid'){
+                                $pay_status = "<span class='label label-warning'>".__($this->Gym->get_membership_paymentstatus($row['mp_id']))."</span>";
+                            }
                             // $due = ($row['membership_amount']- $row['paid_amount'])+($row['membership']['signup_fee']);
                             $due = ($row['membership_amount'] - $row['paid_amount']);
-
                             echo "<tr>
 								<td>{$row['membership']['membership_label']}</td>
 								<td>{$row['gym_member']['first_name']} {$row['gym_member']['last_name']}</td>
@@ -72,13 +89,18 @@
 								<td>" . $this->Gym->get_currency_symbol() . " {$due}</td>
 								<td>" . date($this->Gym->getSettings("date_format"), strtotime($row["start_date"])) . "</td>
 								<td>" . date($this->Gym->getSettings("date_format"), strtotime($row["end_date"])) . "</td>
-								<td><span class='bg-primary pay_status'>" . __($this->Gym->get_membership_paymentstatus($row['mp_id'])) . "<span></td>
-								<td>
-								<a href='javascript:void(0)' class='btn btn-flat btn-default amt_pay' data-url='" . $this->request->base . "/GymAjax/gymPay/{$row['mp_id']}'>" . __('Pay') . "</a>
-								<a href='javascript:void(0)' class='btn btn-flat btn-info view_invoice' data-url='" . $this->request->base . "/GymAjax/viewInvoice/{$row['mp_id']}'><i class='fa fa-eye'></i></a>";
+								<td>".$pay_status ."</td>
+                                                                <td>".$plan_status."</td>
+								<td>";
+                                                                if($due <= 0){
+                                                                    echo "<a href='javascript:void(0)' class='btn btn-flat btn-default' onclick=\"alert('No Dues')\">" . __('Pay') . "</a>";
+                                                                }else{
+                                                                    echo "<a href='javascript:void(0)' class='btn btn-flat btn-default amt_pay' data-url='" . $this->request->base . "/GymAjax/gymPay/{$row['mp_id']}'>" . __('Pay') . "</a>";
+                                                                }
+								echo "<a href='javascript:void(0)' class='btn btn-flat btn-info view_invoice' data-url='" . $this->request->base . "/GymAjax/viewInvoice/{$row['mp_id']}'><i class='fa fa-eye'></i></a>
+                                                                <a href='" . $this->request->base . "/MembershipPayment/MembershipEdit/{$row['mp_id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>";
                             if ($session["role_name"] == "administrator" || $session["role_name"] == "licensee") {
-                                echo " <a href='" . $this->request->base . "/MembershipPayment/MembershipEdit/{$row['mp_id']}' class='btn btn-flat btn-primary' title='Edit'><i class='fa fa-edit'></i></a>
-									<a href='" . $this->request->base . "/MembershipPayment/deletePayment/{$row['mp_id']}' class='btn btn-flat btn-danger' onclick=\"return confirm('Are you sure,You want to delete this record?')\"><i class='fa fa-trash'></i></a>";
+                                echo "<a href='" . $this->request->base . "/MembershipPayment/deletePayment/{$row['mp_id']}' class='btn btn-flat btn-danger' onclick=\"return confirm('Are you sure,You want to delete this record?')\"><i class='fa fa-trash'></i></a>";
                             }
                             echo "</td>
 						</tr>";
@@ -96,6 +118,7 @@
                         <th><?php echo __('Membership Start Date', 'gym_mgt'); ?></th>
                         <th><?php echo __('Membership End Date', 'gym_mgt'); ?></th>
                         <th><?php echo __('Payment Status', 'gym_mgt'); ?></th>
+                        <th><?php echo __('Plan Status', 'gym_mgt'); ?></th>
                         <th><?php echo __('Action', 'gym_mgt'); ?></th>
                     </tr>
                 </tfoot>

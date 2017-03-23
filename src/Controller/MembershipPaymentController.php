@@ -19,34 +19,59 @@ class MembershipPaymentController extends AppController {
         $session = $this->request->session()->read("User");
         $loggedUser = $this->GYMFunction->get_user_detail($session['id']);
         if ($session["role_name"] == "administrator") {
-            $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->hydrate(false)->toArray();
+            $data = $this->MembershipPayment->find("all")
+                    ->where(['MembershipPayment.mem_plan_status' => 1])
+                    ->orWhere(['MembershipPayment.mem_plan_status' => 2])
+                    ->orWhere(['MembershipPayment.mem_plan_status' => 0])
+                    ->contain(["Membership", "GymMember"])
+                    ->hydrate(false)->toArray();
         } else if($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
-            $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->where(["GymMember.associated_licensee" => $loggedUser["associated_licensee"]])->hydrate(false)->toArray();
+            $data = $this->MembershipPayment->find("all")
+                    ->contain(["Membership", "GymMember"])
+                    ->where(['MembershipPayment.mem_plan_status' => 1])
+                    ->orWhere(['MembershipPayment.mem_plan_status' => 2])
+                    ->orWhere(['MembershipPayment.mem_plan_status' => 0])
+                    ->hydrate(false)->toArray();
         }else{
-            $data = $this->MembershipPayment->find("all")->contain(["Membership", "GymMember"])->where(["GymMember.id" => $session["id"]])->hydrate(false)->toArray();
+            $data = $this->MembershipPayment->find("all")
+                    ->contain(["Membership", "GymMember"])
+                    ->where([
+                        "GymMember.id" => $session["id"],
+                        'OR' => [
+                            ['MembershipPayment.mem_plan_status' => 1],
+                            ['MembershipPayment.mem_plan_status' => 2],
+                            ['MembershipPayment.mem_plan_status' => 0],
+                        ],
+                        
+                    ])
+                    ->hydrate(false)->toArray();
         }
         $this->set("data", $data);
 
         if ($this->request->is("post")) {
+            $session = $this->request->session()->read("User");
             $mp_id = $this->request->data["mp_id"];
-            $row = $this->MembershipPayment->get($mp_id);
+            $row = $this->MembershipPayment->findByMpId($mp_id)->contain(['Membership'])->first();
+            $user_id = $row['member_id'];
+            $membership_id = $row['membership_id'];
+            
+            $user_info = $this->MembershipPayment->GymMember->get($user_id);
+            //Online Payment by customers themselves
             if ($this->request->data["payment_method"] == "Paypal" && $session["role_name"] == "member") {
-                // var_dump($row->member_id);die;
-                $mp_id = $this->request->data["mp_id"];
-                $user_id = $row->member_id;
-                $membership_id = $row->membership_id;
-                $custom_var = $mp_id;
-                $user_info = $this->MembershipPayment->GymMember->get($user_id);
-
                 $new_session->write("Payment.mp_id", $mp_id);
                 $new_session->write("Payment.amount", $this->request->data["amount"]);
-
-                // var_dump($user_info);die;
                 require_once(ROOT . DS . 'vendor' . DS . 'paypal' . DS . 'paypal_process.php');
             } else {
-                $row->paid_amount = $row->paid_amount + $this->request->data["amount"];
+                
+                $row['paid_amount'] = $row['paid_amount'] + $this->request->data["amount"];
+                $row['paid_by'] = $session['id'];
+                $row['payment_status'] = 1;
+                $row['mem_plan_status'] = 1;
                 $this->MembershipPayment->save($row);
-
+                
+                //if record exist and payment not made, start date less than this record then disable that one and enable this one.
+                //if record exist and payment made and end date less or equal to start date of this record then
+                
                 $hrow = $this->MembershipPayment->MembershipPaymentHistory->newEntity();
                 $data['mp_id'] = $mp_id;
                 $data['amount'] = $this->request->data["amount"];
@@ -56,23 +81,83 @@ class MembershipPaymentController extends AppController {
                 $data['transaction_id'] = "";
 
                 $hrow = $this->MembershipPayment->MembershipPaymentHistory->patchEntity($hrow, $data);
-                if ($this->MembershipPayment->MembershipPaymentHistory->save($hrow)) {
-                    $this->Flash->success(__("Success! Payment Added Successfully."));
-                }
+                $saveResult = $this->MembershipPayment->MembershipPaymentHistory->save($hrow);
+                    
+            }
+            $mailArrUser = [
+                "template"=>"payment_user_mail",
+                "subject"=>"GoTribe : Payment Successfull",
+                "emailFormat"=>"html",
+                "to"=>$user_info->email,
+                "addTo"=>"jameel.ahmad@rnf.tech",
+                "cc"=>"imran.khan@rnf.tech",
+                "addCc"=>"jameel.ahmad@rnf.tech",
+                "bcc"=>"jameel.ahmad@rnf.tech",
+                "addBcc"=>"jameel.ahmad@rnf.tech",
+                "viewVars"=>[
+                        'name'=>$user_info->first_name . ' ' . $user_info->last_name,
+                        'membership'=>$row['membership']['membership_label'],
+                        'amount'=>$this->request->data["amount"],
+                        'method'=>$this->request->data["payment_method"],
+                        'payment_method'=>$this->request->data["payment_method"],
+                        'transaction_id'=>$data['transaction_id'],
+                        'payment_made_by'=>$this->GYMFunction->get_user_name($session['id'])
+                    ]
+            ];
+            $associated_licensee = $this->GYMFunction->get_user_detail($user_info->associated_licensee);
+            $mailArrAdmin = [
+                "template"=>"payment_admin_mail",
+                "subject"=>"GoTribe : Payment successfull",
+                "emailFormat"=>"html",
+                "to"=>$associated_licensee['email'],
+                "addTo"=>"jameel.ahmad@rnf.tech",
+                "cc"=>"imran.khan@rnf.tech",
+                "addCc"=>"jameel.ahmad@rnf.tech",
+                "bcc"=>"jameel.ahmad@rnf.tech",
+                "addBcc"=>"jameel.ahmad@rnf.tech",
+                "viewVars"=>[
+                        'name'=>$user_info->first_name . ' ' . $user_info->last_name,
+                        'email'=>$user_info->email,
+                        'username'=>$user_info->username,
+                        'membership'=>$row['membership']['membership_label'],
+                        'adminName'=>$associated_licensee['first_name'] . ' ' . $associated_licensee['last_name'],
+                        'amount'=>$this->request->data["amount"],
+                        'method'=>$this->request->data["payment_method"],
+                        'transaction_id'=>$data['transaction_id'],
+                        'payment_made_by'=>$this->GYMFunction->get_user_name($session['id'])
+                    ]
+            ];
+            if($this->GYMFunction->sendEmail($mailArrUser) && $this->GYMFunction->sendEmail($mailArrAdmin)){
+                $this->Flash->success(__("Success! Payment Added Successfully."));
             }
             return $this->redirect(["action" => "paymentList"]);
         }
     }
 
     public function generatePaymentInvoice() {
+        $session = $this->request->session()->read("User");
         $this->set("edit", false);
-        $members = $this->MembershipPayment->GymMember->find("list", ["keyField" => "id", "valueField" => "name"])->where(["role_name" => "member"]);
-        $members = $members->select(["id", "name" => $members->func()->concat(["first_name" => "literal", " ", "last_name" => "literal"])])->hydrate(false)->toArray();
-        $this->set("members", $members);
+        $existingMembers = $this->MembershipPayment->find('all')
+                ->select(['MembershipPayment.member_id'])
+                ->where(['MembershipPayment.mem_plan_status !=' => 3])
+                ->toArray();
+        $existingMembersIdsArr = array("0");
+        if(count($existingMembers) > 0){
+            foreach($existingMembers as $existingMembersIds)
+                $existingMembersIdsArr[] = $existingMembersIds['member_id'];
+        }
         
+        $members = $this->MembershipPayment->GymMember->find("list", ["keyField" => "id", "valueField" => "name"])
+                ->where(["role_name" => "member", "activated"=>1, "GymMember.id NOT IN"=>$existingMembersIdsArr]);
+        $members = $members->select(["id", "name" => $members->func()
+                ->concat(["first_name" => "literal", " ", "last_name" => "literal"])])->hydrate(false)->toArray();
+        $this->set("members", $members);
+        //echo $this->GYMFunction->pre($members);
         $memCats = $this->MembershipPayment->Category->find('all')->hydrate(false)->toArray();
         foreach($memCats as $memCat){
-            $membership[$memCat['name']] = $this->MembershipPayment->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"])->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
+            $membership[$memCat['name']] = $this->MembershipPayment->Membership
+                    ->find("list", ["keyField" => "id", "valueField" => "membership_label"])
+                    ->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
         }
         //$membership = $this->MembershipPayment->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"])->contain(['Category']);
         
@@ -80,25 +165,41 @@ class MembershipPaymentController extends AppController {
 
         if ($this->request->is('post')) {
             $mid = $this->request->data["user_id"];
+            
+            $exist_member = $this->MembershipPayment->findByMemberId($mid)
+                    ->where(['mem_plan_status !=' =>3])
+                    ->first();
+            if(count($exist_member) > 0){
+                $this->Flash->error(__("Error! Member already subscribed a plan."));
+                return $this->redirect(["action" => "paymentList"]);
+            }
+            
+            $user_info = $this->MembershipPayment->GymMember->get($mid);
+            
             $start_date = date("Y-m-d", strtotime($this->request->data["membership_valid_from"]));
             $end_date = date("Y-m-d", strtotime($this->request->data["membership_valid_to"]));
             $row = $this->MembershipPayment->newEntity();
             $pdata["member_id"] = $mid;
+            $pdata["created_by"] = $session['id'];
             $pdata["membership_id"] = $this->request->data["membership_id"];
             $pdata["membership_amount"] = $this->request->data["membership_amount"];
             $pdata["paid_amount"] = 0;
             $pdata["start_date"] = $start_date;
             $pdata["end_date"] = $end_date;
             $pdata["membership_status"] = "Continue";
+            $pdata["mem_plan_status"] = 0;
+            /**
+             * We will change the status at the time of recurring payment schedule 
+             */
             $pdata["payment_status"] = 0;
-            $pdata["created_date"] = date("Y-m-d");
             $row = $this->MembershipPayment->patchEntity($row, $pdata);
             $this->MembershipPayment->save($row);
             ################## MEMBER's Current Membership Change ##################
             $member_data = $this->MembershipPayment->GymMember->get($mid);
-            $member_data->selected_membership = $this->request->data["membership_id"];
-            $member_data->membership_valid_from = $start_date;
-            $member_data->membership_valid_to = $end_date;
+            $member_data_update['selected_membership'] = $this->request->data["membership_id"];
+            $member_data_update['membership_valid_from'] = $start_date;
+            $member_data_update['membership_valid_to'] = $end_date;
+            $member_data = $this->MembershipPayment->GymMember->patchEntity($member_data, $member_data_update);
             $this->MembershipPayment->GymMember->save($member_data);
             #####################Add Membership History #############################
             $mem_histoty = $this->MembershipPayment->MembershipHistory->newEntity();
@@ -106,51 +207,182 @@ class MembershipPaymentController extends AppController {
             $hdata["selected_membership"] = $this->request->data["membership_id"];
             $hdata["membership_valid_from"] = $start_date;
             $hdata["membership_valid_to"] = $end_date;
-            $hdata["created_date"] = date("Y-m-d");
+            //$hdata["created_date"] = date("Y-m-d");
             $hdata = $this->MembershipPayment->MembershipHistory->patchEntity($mem_histoty, $hdata);
             if ($this->MembershipPayment->MembershipHistory->save($mem_histoty)) {
-                $this->Flash->success(__("Success! Payment Added Successfully."));
-                return $this->redirect(["action" => "paymentList"]);
+                
+                //Membership plan info
+                
+                $membership_info = $this->MembershipPayment->Membership->findById($this->request->data["membership_id"])->first();
+                
+                $mailArrUser = [
+                "template"=>"subscribe_membership_user_mail",
+                "subject"=>"GoTribe : Subscribed Membership Successfull",
+                "emailFormat"=>"html",
+                "to"=>$user_info->email,
+                "addTo"=>"jameel.ahmad@rnf.tech",
+                "cc"=>"imran.khan@rnf.tech",
+                "addCc"=>"jameel.ahmad@rnf.tech",
+                "bcc"=>"jameel.ahmad@rnf.tech",
+                "addBcc"=>"jameel.ahmad@rnf.tech",
+                "viewVars"=>[
+                        'name'=>$user_info->first_name . ' ' . $user_info->last_name,
+                        'membership'=>$membership_info['membership_label'],
+                        'amount'=>$membership_info["membership_amount"],
+                        'validity'=>date($this->GYMFunction->getSettings('date_format'),strtotime($start_date)). " To ". date($this->GYMFunction->getSettings('date_format'),strtotime($end_date))
+                    ]
+                ];
+                $associated_licensee = $this->GYMFunction->get_user_detail($user_info->associated_licensee);
+                $mailArrAdmin = [
+                    "template"=>"subscribe_membership_admin_mail",
+                    "subject"=>"GoTribe : Subscribed Membership Successfull",
+                    "emailFormat"=>"html",
+                    "to"=>$associated_licensee['email'],
+                    "addTo"=>"jameel.ahmad@rnf.tech",
+                    "cc"=>"imran.khan@rnf.tech",
+                    "addCc"=>"jameel.ahmad@rnf.tech",
+                    "bcc"=>"jameel.ahmad@rnf.tech",
+                    "addBcc"=>"jameel.ahmad@rnf.tech",
+                    "viewVars"=>[
+                            'name'=>$user_info->first_name . ' ' . $user_info->last_name,
+                            'email'=>$user_info->email,
+                            'username'=>$user_info->username,
+                            'membership'=>$membership_info['membership_label'],
+                            'adminName'=>$associated_licensee['first_name'] . ' ' . $associated_licensee['last_name'],
+                            'amount'=>$membership_info["membership_amount"],
+                            'validity'=>date($this->GYMFunction->getSettings('date_format'),strtotime($start_date)). " To ". date($this->GYMFunction->getSettings('date_format'),strtotime($end_date))
+                        ]
+                ];
+                if($this->GYMFunction->sendEmail($mailArrUser) && $this->GYMFunction->sendEmail($mailArrAdmin)){
+                    $this->Flash->success(__("Success! Subscribed Membership Successfully."));
+                    return $this->redirect(["action" => "paymentList"]);
+                }
+                
+                
             }
         }
     }
 
     public function membershipEdit($eid) {
+        $session = $this->request->session()->read("User");
         $this->set("edit", true);
-        $members = $this->MembershipPayment->GymMember->find("list", ["keyField" => "id", "valueField" => "name"])->where(["role_name" => "member"]);
-        $members = $members->select(["id", "name" => $members->func()->concat(["first_name" => "literal", " ", "last_name" => "literal"])])->hydrate(false)->toArray();
+        $members = $this->MembershipPayment->GymMember->find("list", ["keyField" => "id", "valueField" => "name"])
+                ->where(["role_name" => "member", "activated"=>1]);
+        $members = $members->select(["id", "name" => $members->func()
+                ->concat(["first_name" => "literal", " ", "last_name" => "literal"])])->hydrate(false)->toArray();
         $this->set("members", $members);
-
-        $membership = $this->MembershipPayment->Membership->find("list", ["keyField" => "id", "valueField" => "membership_label"]);
+        $memCats = $this->MembershipPayment->Category->find('all')->hydrate(false)->toArray();
+        foreach($memCats as $memCat){
+            $membership[$memCat['name']] = $this->MembershipPayment->Membership
+                    ->find("list", ["keyField" => "id", "valueField" => "membership_label"])
+                    ->where(['membership_cat_id'=>$memCat['id']])->hydrate(false)->toArray();
+        }
         $this->set("membership", $membership);
 
         $data = $this->MembershipPayment->get($eid);
-        $this->set("data", $data->toArray());
-        // var_dump($data->toArray());die;
-
-        if ($this->request->is("post")) {
+        $this_record = $data->toArray();
+        $this->set("data", $this_record);
+        
+        if ($this->request->is('post')) {
+            
             $mid = $this->request->data["user_id"];
             $start_date = date("Y-m-d", strtotime($this->request->data["membership_valid_from"]));
             $end_date = date("Y-m-d", strtotime($this->request->data["membership_valid_to"]));
-
-            $row = $this->MembershipPayment->get($eid);
-            $row->member_id = $mid;
-            $row->membership_id = $this->request->data["membership_id"];
-            $row->membership_amount = $this->request->data["membership_amount"];
-            $row->paid_amount = 0;
-            $row->start_date = $start_date;
-            $row->end_date = $end_date;
-            $row->membership_status = "Continue";
+            $user_info = $this->MembershipPayment->GymMember->get($mid);
+            
+            // Add new record
+            if($this_record['mem_plan_status'] == 1){
+                $pdata["mem_plan_status"] = 2;
+            }
+            
+            if($this_record['mem_plan_status'] == 0){
+                $this->MembershipPayment->delete($data);
+                $pdata["mem_plan_status"] = 0;
+            }
+            
+            $row = $this->MembershipPayment->newEntity();
+            $pdata["member_id"] = $mid;
+            $pdata["created_by"] = $session['id'];
+            $pdata["membership_id"] = $this->request->data["membership_id"];
+            $pdata["membership_amount"] = $this->request->data["membership_amount"];
+            $pdata["paid_amount"] = 0;
+            $pdata["start_date"] = $start_date;
+            $pdata["end_date"] = $end_date;
+            $pdata["membership_status"] = "Upgrade";
+            $pdata["payment_status"] = 0;
+            /**
+             * At the time of payment schedule we will check if there is record exist with mem_plan_status  = 2
+             * If yes, we will update records like 
+             * record with mem_plan_status  = 1 TO mem_plan_status  = 0 // unsubscribe old record
+             * and record with mem_plan_status  = 2 To mem_plan_status  = 1 // subscribe new record
+             * Also we will overwrite records no new entry on edit subscription repeatedly.
+             */
+            $row = $this->MembershipPayment->patchEntity($row, $pdata);
             $this->MembershipPayment->save($row);
-            ###############################################################
+            ################## MEMBER's Current Membership Change ##################
             $member_data = $this->MembershipPayment->GymMember->get($mid);
-            $member_data->selected_membership = $this->request->data["membership_id"];
-            $member_data->membership_valid_from = $start_date;
-            $member_data->membership_valid_to = $end_date;
+            $member_data_update['selected_membership'] = $this->request->data["membership_id"];
+            $member_data_update['membership_valid_from'] = $start_date;
+            $member_data_update['membership_valid_to'] = $end_date;
+            $member_data = $this->MembershipPayment->GymMember->patchEntity($member_data, $member_data_update);
             $this->MembershipPayment->GymMember->save($member_data);
-            ###########################################################
-            $this->Flash->success(__("Success! Record Updated Successfully."));
-            return $this->redirect(["action" => "paymentList"]);
+            #####################Add Membership History #############################
+            $mem_histoty = $this->MembershipPayment->MembershipHistory->newEntity();
+            $hdata["member_id"] = $mid;
+            $hdata["selected_membership"] = $this->request->data["membership_id"];
+            $hdata["membership_valid_from"] = $start_date;
+            $hdata["membership_valid_to"] = $end_date;
+            $hdata = $this->MembershipPayment->MembershipHistory->patchEntity($mem_histoty, $hdata);
+
+            if ($this->MembershipPayment->MembershipHistory->save($mem_histoty)) {
+
+                //Membership plan info
+
+                $membership_info = $this->MembershipPayment->Membership->findById($this->request->data["membership_id"])->first();
+
+                $mailArrUser = [
+                "template"=>"subscribe_membership_user_mail",
+                "subject"=>"GoTribe : Subscribed Membership Successfull",
+                "emailFormat"=>"html",
+                "to"=>$user_info->email,
+                "addTo"=>"jameel.ahmad@rnf.tech",
+                "cc"=>"imran.khan@rnf.tech",
+                "addCc"=>"jameel.ahmad@rnf.tech",
+                "bcc"=>"jameel.ahmad@rnf.tech",
+                "addBcc"=>"jameel.ahmad@rnf.tech",
+                "viewVars"=>[
+                        'name'=>$user_info->first_name . ' ' . $user_info->last_name,
+                        'membership'=>$membership_info['membership_label'],
+                        'amount'=>$membership_info["membership_amount"],
+                        'validity'=>date($this->GYMFunction->getSettings('date_format'),strtotime($start_date)). " To ". date($this->GYMFunction->getSettings('date_format'),strtotime($end_date))
+                    ]
+                ];
+                $associated_licensee = $this->GYMFunction->get_user_detail($user_info->associated_licensee);
+                $mailArrAdmin = [
+                    "template"=>"subscribe_membership_admin_mail",
+                    "subject"=>"GoTribe : Subscribed Membership Successfull",
+                    "emailFormat"=>"html",
+                    "to"=>$associated_licensee['email'],
+                    "addTo"=>"jameel.ahmad@rnf.tech",
+                    "cc"=>"imran.khan@rnf.tech",
+                    "addCc"=>"jameel.ahmad@rnf.tech",
+                    "bcc"=>"jameel.ahmad@rnf.tech",
+                    "addBcc"=>"jameel.ahmad@rnf.tech",
+                    "viewVars"=>[
+                            'name'=>$user_info->first_name . ' ' . $user_info->last_name,
+                            'email'=>$user_info->email,
+                            'username'=>$user_info->username,
+                            'membership'=>$membership_info['membership_label'],
+                            'adminName'=>$associated_licensee['first_name'] . ' ' . $associated_licensee['last_name'],
+                            'amount'=>$membership_info["membership_amount"],
+                            'validity'=>date($this->GYMFunction->getSettings('date_format'),strtotime($start_date)). " To ". date($this->GYMFunction->getSettings('date_format'),strtotime($end_date))
+                        ]
+                ];
+                if($this->GYMFunction->sendEmail($mailArrUser) && $this->GYMFunction->sendEmail($mailArrAdmin)){
+                    $this->Flash->success(__("Success! Subscribed Membership Successfully."));
+                    return $this->redirect(["action" => "paymentList"]);
+                }
+            }
         }
         $this->render("generatePaymentInvoice");
     }
@@ -413,5 +645,8 @@ class MembershipPaymentController extends AppController {
         }
         return parent::isAuthorized($user);
     }
+    //public function isAuthorized($user){
+        //return parent::isAuthorizedCustom($user);
+    //}
 
 }
