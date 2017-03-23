@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 use App\Controller\AppController;
+use Cake\Datasource\ConnectionManager;
 
 class ClassTypeController extends AppController
 {
@@ -114,15 +115,26 @@ class ClassTypeController extends AppController
             $row = $this->ClassType->get($did);
                 
         /** Edit record checked roles permissions* */
-      if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
-            if ($row['created_by'] != $session['id']) {
-                $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
-                return $this->redirect(["action" => "classtypeList"]);
-            }
-        }
-
+        if ($session["role_name"] == "licensee" || $session["role_name"] == "staff_member") {
+              if ($row['created_by'] != $session['id']) {
+                  $this->Flash->error(__("Success! You Do Not Have Sufficient Permissions to Edit This Record."));
+                  return $this->redirect(["action" => "classtypeList"]);
+              }
+          }
+          
         /** End here * */
-        if($this->ClassType->delete($row))
+             $conn = ConnectionManager::get('default');
+             $report_21 ="SELECT count(*) as newcount from `gym_class` where class_type_id=$did"; 
+             $report_21 = $conn->execute($report_21);
+             $report_21 = $report_21->fetchAll('assoc');
+            
+            if($report_21[0]['newcount']>0)
+            {
+                 $this->Flash->error(__("Sorry! This class type already used in class."));
+                 return $this->redirect(["action" => "classtypeList"]);
+            }
+       
+         if($this->ClassType->delete($row))
 		{
 			$this->Flash->success(__("Success! Record Deleted Successfully Updated."));
 			return $this->redirect(["action"=>"classtypeList"]); 

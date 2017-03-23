@@ -90,8 +90,8 @@ $(document).ready(function() {
                         <div class="btn-group m-b-sm">
                         <button class="btn btn-flat dropdown-toggle" aria-expanded="false" data-toggle="dropdown"><i class="fa fa-cog" aria-hidden="true"></i></button>
                         <ul role="menu" class="dropdown-menu" style="right: 0px;">
-                         <li><a href="<?php echo "{$this->request->base}/ClassSchedule/editClass/".$row['id'];?>"><i class="fa fa-pencil" aria-hidden="true"></i><?php echo __("Edit class setup");?></a></li>
-                         <li><a href="<?php echo "{$this->request->base}/ClassSchedule/deleteSchedule/".$schedule_list['id'];?>"  onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-ban" aria-hidden="true"></i><?php echo __("Cancel or delete class");?></a></li>
+                         <li><a href="<?php echo "{$this->request->base}/ClassSchedule/editSchedule/".$schedule_list['id'];?>"><i class="fa fa-pencil" aria-hidden="true"></i><?php echo __("Edit class setup");?></a></li>
+                         <li><a href="<?php echo "{$this->request->base}/ClassSchedule/deleteSchedule/".$schedule_list['id'];?>"  onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-ban" aria-hidden="true"></i><?php echo __("delete class schedule");?></a></li>
                          <li><a href="<?php echo "{$this->request->base}/ClassSchedule/editClass/".$row['id'];?>"><i class="fa fa-user" aria-hidden="true"></i><?php echo __("Change instrucor");?></a></li>
                          <!--<li><a href="<?php echo "{$this->request->base}/ClassSchedule/editClass/";?>"><?php echo __("Assign Location");?></a></li>-->
                          <!-- <li><a href="<?php echo "{$this->request->base}/ClassSchedule/deleteClass/{$class['id']}";?>" onClick="return confirm('Are you sure you want to delete this record?');"><?php echo __("Delete");?></a></li> -->

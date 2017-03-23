@@ -311,13 +311,136 @@ echo $this->Html->script('fullcalendar.min');
 				</div>
 			</div>
 		</div> <?php */ ?><!-- End Row3 -->
+                
+                <!--- Upcoming Appointment Module -->
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <h3 class="panel-title"><?php echo __("All Appomiment "); ?></h3>						
+                                     </div>
+                                   <div class="panel panel-default workout-block" >
+                                        <div class="panel-heading"> 
+                                             
+                                        <div class="col-md-3 col-sm-3"> <strong>Class Name</strong></div>
+                                        <?php
+                                        $date=$appoint_date;
+                                        $date1=strtotime($date);
+                                        $day1= date("l", $date1);
+                                        $date2 = strtotime("+1 days", strtotime($date));
+                                        $day2= date("l", $date2);
+                                        $date3 = strtotime("+2 days", strtotime($date));
+                                        $day3= date("l", $date3);
+                                        $date4 = strtotime("+3 days", strtotime($date));
+                                        $day4= date("l", $date4);
+                                        $next_date=strtotime("+4 days", strtotime($date));
+                                        $prev_date=strtotime("-4 days", strtotime($date));
+                                        for($i=0;$i<=3;$i++)
+                                        {
+                                              $date1 = strtotime("+".$i." days", strtotime($date));
+                                              $day = date("l", $date1);
+                                              $mdate = date("M j",$date1); 
+                                              ?>
+                                         <div class="col-md-2 col-sm-2">
+                                           <div class="dayc"><?php echo $mdate?></div>
+                                         
+                                           <div class="datec"><strong><?php echo $day;?></strong></div>   
+                                       </div>
+                                        
+                                       <?php  }?>
+                                        <div class="col-md-1 col-sm-1"><a href="<?php echo $this->Gym->createurl("Dashboard","memberDashboard/".$next_date);?>">Next >></a> <br> <a href="<?php echo $this->Gym->createurl("Dashboard","memberDashboard/".$prev_date);?>"><< Prev</a></div>
+                                        </div>
+                                       <div class="col-md-12 col-sm-12">&nbsp;</div>
+                                        <?php
+                                         foreach($all_appoint as $appont)
+                                         {
+                                             $start_date=$appont['appointment_date'];
+                                             $end_date=$appont['appointment_end_date'];
+                                             $date11=date('Y-m-d',$date1);
+                                             $date12=date('Y-m-d',$date2);
+                                             $date13=date('Y-m-d',$date3);
+                                             $date14=date('Y-m-d',$date4);
+                                             $days=json_decode($appont['days']);
+                                             $style1=$style2=$style3=$style4="";
+                                             if ($date11 >= $start_date && $date11 <= $end_date) { 
+                                                  if(in_array($day1,$days)){
+                                                       $section1= $appont['start_time'].'-'.$appont['end_time'];
+                                                       if($appont['status']==1){
+                                                              $style1='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                          }else{
+                                                              $style1='style="background:#f25656;padding:5px;color:#fff"';
+                                                          }
+                                                  }else{
+                                                      $section1='--';
+                                                  }
+                                              }else{
+                                                   $section1='--';
+                                              }
+                                              if ($date12 >= $start_date && $date12 <= $end_date) { 
+                                                   if(in_array($day2,$days)){
+                                                         $section2= $appont['start_time'].'-'.$appont['end_time'];
+                                                         if($appont['status']==1){
+                                                              $style2='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                          }else{
+                                                              $style2='style="background:#f25656;padding:5px;color:#fff"';
+                                                          }
+                                                   }else{
+                                                       $section2='--';
+                                                   }
+                                              }else{
+                                                   $section2='--';
+                                              }
+                                              if ($date13 >= $start_date && $date13 <= $end_date) { 
+                                                   if(in_array($day3,$days)){
+                                                        $section3= $appont['start_time'].'-'.$appont['end_time'];
+                                                        if($appont['status']==1){
+                                                              $style3='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                          }else{
+                                                              $style3='style="background:#f25656;padding:5px;color:#fff"';
+                                                          }
+                                                   }else{
+                                                       $section3='--';
+                                                   }
+                                              }else{
+                                                   $section3='--';
+                                              }
+                                              if ($date14 >= $start_date && $date14 <= $end_date) { 
+                                                   if(in_array($day4,$days)){
+                                                        $section4= $appont['start_time'].'-'.$appont['end_time'];
+                                                          if($appont['status']==1){
+                                                              $style4='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                          }else{
+                                                              $style4='style="background:#f25656;padding:5px;color:#fff"';
+                                                          }
+                                                   }else{
+                                                       $section4='--';
+                                                   }
+                                              }else{
+                                                   $section4='--';
+                                              }
+                                            
+                                         ?>
+                                           <div class="col-md-3 col-sm-3"> <strong><?php echo $appont['name']?></strong></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style1?>><?php echo $section1;?></span></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style2?>><?php echo $section2?></span></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style3?>><?php echo $section3?></span></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style4?>><?php echo $section4?></span></div>
+                                         <?php  } ?>
+                                       </div> 
+                                     
+                                     
+                                     </div>
+                                
+                             </div>
+                </div>
+                <!-- -->
 		       <div class="col-md-6 col-sm-6 col-xs-12">
                              <div class="panel panel-white">
                                  <div class="panel-body">
                                      <div class="panel-heading">
                                          <h3 class="panel-title"><?php echo __("Membership Plan"); ?></h3>						
                                      </div>
-                                     <?php //print_r($membership);
+                                     <?php //print_r($membership_info);
                                      if(!empty($membership[0]))
                                      {
                                      ?>
@@ -343,7 +466,7 @@ echo $this->Html->script('fullcalendar.min');
 						<div class="col-md-12">
 							<span class="col-md-4 col-sm-4 col-xs-4">$<?php echo number_format($membership_info['membership_amount'],2);?></span>   
 							<span class="col-md-4 col-sm-4 col-xs-4">$<?php echo number_format($membership_info['paid_amount'],2);?></span>
-							<span class="col-md-4 col-sm-4 col-xs-4"><?php echo $membership_info['membership_status']?></span>
+                                                        <span class="col-md-4 col-sm-4 col-xs-4"><?php if($membership_info['mem_plan_status']==1 && $membership_info['payment_status']==1){echo "Continue";}else{echo "--";}?></span>
 							
 						</div>
 						</div>
