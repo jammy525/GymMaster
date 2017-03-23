@@ -10,6 +10,7 @@ Class GymAjaxController extends AppController {
 
     public function initialize() {
         parent::initialize();
+         $this->loadComponent("GYMFunction");
         $this->autoRender = false;
     }
 
@@ -2418,6 +2419,7 @@ Class GymAjaxController extends AppController {
                 echo json_encode($arrayToJs);
             }
         }
+
         
         public function maxDueAmount(){
             $this->request->data = $_REQUEST;
@@ -2448,6 +2450,143 @@ Class GymAjaxController extends AppController {
             }
         }
 
+        ############# Schedule Delete ajax start ##########
+            public function deleteSchedule() {
+            
+             $id = $this->request->data["schid"];
+             $msch_table = TableRegistry::get("ClassScheduleList");
+             $row = $msch_table->get($id);
+             //$row = $this->ClassSchedule->ClassScheduleList->get($id);
+              
+             $conn = ConnectionManager::get('default');
+             $report_21 ="SELECT count(*) as newcount from gym_member_class where assign_schedule=$id";  
+             $report_21 = $conn->execute($report_21);
+             $report_21 = $report_21->fetchAll('assoc');
+
+
+             if($report_21[0]['newcount']>0)
+             {
+                  $date=date('Y-m-d');
+                  $report_22 ="SELECT count(*) as newcount from class_schedule as cs INNER JOIN class_schedule_list csl on cs.id=csl.class_id where cs.end_date>= '$date' And csl.id=$id"; 
+                  $report_22 = $conn->execute($report_22);
+                  $report_22 = $report_22->fetchAll('assoc');
+                  if($report_22[0]['newcount']>0)
+                  {
+                    $status=0;
+                     echo $status;
+                     die;
+                  }else{
+                      $report_23 ="delete from gym_member_class where assign_schedule=$id";  
+                      $report_23 = $conn->execute($report_23);
+                  }
+             }
+                $schedule_data=$row->toArray();
+                $chedule_id=$schedule_data['class_id'];
+                
+            /****/
+                $plan = TableRegistry::get("ClassScheduleList");
+                $rowss = $plan->get($id);
+               if ($plan->delete($rowss)) {
+                   $status=1;
+             //if($this->ClassSchedule->ClassScheduleList->delete($row)){
+                 $report_24 ="SELECT count(*) as newcount from class_schedule_list where class_id=$chedule_id";  
+                 $report_24 = $conn->execute($report_24);
+                 $report_24 = $report_24->fetchAll('assoc');
+                 $count=$report_24[0]['newcount'];
+                 if($count==0)
+                 {
+                      //$report ="delete from class_schedule where id=$chedule_id";  
+                     // $report = $conn->execute($report);
+                      //$status=2;
+                 }
+                
+                echo $status;
+                     die;
+             }
+             
+            }
+        ############# View MemberShip ###################
+         public function viewMembership() {
+             
+           if ($this->request->is("ajax")) {
+            $id = $this->request->data["id"];
+            $member_tbl = TableRegistry::get("Membership");
+            $row = $member_tbl->find()->contain(["Category"])->where(["Membership.id" => $id])->hydrate(false)->toArray();
+            //$member_tbl = TableRegistry::get("GymMember");
+            //$row = $member_tbl->GymMember->get($id)->contain(['GymLocation'])->where(["GymMember.role_name"=>"licensee","GymMember.role_id"=>2])->toArray();
+           // echo '<pre>'; print_r($row); //die;
+             $row = $row[0];
+             $conn = ConnectionManager::get('default');
+              $mlistval="";
+             $class_lists=json_decode($row["membership_class"]);
+             if(!empty($class_lists))
+             {
+             foreach($class_lists as $listclass)
+             {
+                $report_21 ="SELECT *, count(*) as newcount from gym_class where id=$listclass";  
+                $report_21 = $conn->execute($report_21);
+                $report_21 = $report_21->fetchAll('assoc');
+                //print_r($report_21);
+                if($report_21[0]['newcount']>0)
+                {
+                  $mlistval .= $report_21[0]["name"].', ' ;
+                }
+                
+            }
+             $amem_lists = substr($mlistval, 0, -2);
+             }else{
+                 
+                $amem_lists='--'; 
+             }
+             
+            // echo "<pre>"; print_r($schedule_list); echo "</pre>";
+            ?>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="gridSystemModalLabel"><?php echo __("Membership Detail"); ?></h3>
+                </div>
+                <div class="modal-body">		
+                    <div class="panel panel-white form-horizontal">
+
+                        <div class="form-group">
+                            <label class="col-sm-3"><?php echo __("Mambership Name"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['membership_label']; ?> </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="start_date" class="col-sm-3"><?php echo __("Membership Category"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['category']["name"]; ?> </div>
+                        </div>
+                       <div class="form-group">
+                            <label for="start_date" class="col-sm-3"><?php echo __("Membership Period"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['membership_length']; ?> Days</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date" class="col-sm-3"><?php echo __("Amount"); ?> : </label>
+                            <div class="col-sm-9"> $<?php echo $row['membership_amount']; ?> </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Assign Class"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $amem_lists; ?> </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Class Limit"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['membership_class_limit']; ?> </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Description"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row["membership_description"]; ?> </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo __("Close"); ?></button>				
+                </div>	
+                <?php
+            }
+         }
+      
+        ############ End Here ###################
         /** End here * */
     }
     

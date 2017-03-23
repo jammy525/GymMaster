@@ -69,8 +69,17 @@ Class MembershipController extends AppController
 	
 	public function membershipList()
 	{
-		$membership_data = $this->Membership->find("all")->toArray();   
-		// $membership_data = $this->Membership->find("all",array('contain'=>array('Installment_Plan')))->toArray();
+		$membership_data = $this->Membership->find("all")->toArray(); 
+                $session = $this->request->session()->read("User");
+                if($session["role_name"]=='member')
+                {
+                   //$session['id']=22;
+                   $member= $this->Membership->MembershipPayment->find()->where(["member_id"=>$session['id'],"payment_status"=>1,'mem_plan_status'=>1])->toArray(); 
+                   $this->set("member",$member);
+                }
+               
+		
+                // $membership_data = $this->Membership->find("all",array('contain'=>array('Installment_Plan')))->toArray();
 		// $membership_data = $this->Membership->find()->contain([
 				// 'Installment_Plan'=>function($q){
 					// return $q
@@ -194,6 +203,16 @@ Class MembershipController extends AppController
 		if($this->Membership->Membership_Activity->delete($row))
 		{
 			$this->Flash->Success(__("Success! Activity Unassigned Successfully."));
+			return $this->redirect($this->referer());
+		}
+	}
+        public function deleteMemberships($id)
+	{       
+		$row = $this->Membership->get($id);
+               // print_r($row); die;
+		if($this->Membership->delete($row))
+		{
+			$this->Flash->Success(__("Success! Record Deleted Successfully Updated."));
 			return $this->redirect($this->referer());
 		}
 	}

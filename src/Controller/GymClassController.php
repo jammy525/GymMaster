@@ -2,6 +2,7 @@
 namespace App\Controller;
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
+use Cake\Datasource\ConnectionManager;
 
 Class GymClassController extends AppController
 {
@@ -133,6 +134,19 @@ Class GymClassController extends AppController
                         }
 
                         /** End here * */
+                        
+                        $conn = ConnectionManager::get('default');
+                        $report_21 ="SELECT count(*) as newcount from `class_schedule` where class_name=$id";  
+                        $report_21 = $conn->execute($report_21);
+                        $report_21 = $report_21->fetchAll('assoc');
+                        
+                        if($report_21[0]['newcount']>0)
+                        {
+                            $this->Flash->error(__("Sorry! This class already have schedule."));
+                            return $this->redirect(["action" => "classesList"]);
+                        }
+                        /****/
+                      
         
 			if($this->GymClass->delete($row))
 			{

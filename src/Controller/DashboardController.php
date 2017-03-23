@@ -494,7 +494,7 @@ class DashboardController extends AppController
 	}
 
 	
-	public function memberDashboard()
+	public function memberDashboard($dt=null)
 	{
 		$session = $this->request->session()->read("User");
 		$uid = intval($session["id"]);
@@ -553,7 +553,7 @@ class DashboardController extends AppController
                            ///
                             $class_schedule_list_table = TableRegistry::get("ClassScheduleList");
                             $datass = $class_schedule_list_table->find('all')->where(["id"=> $schedule_id])->toArray();
-                           $time_schedule=$datass[0]["start_time"]." - ".$datass[0]["end_time"]; 
+                           $time_schedule=@$datass[0]["start_time"]." - ".@$datass[0]["end_time"]; 
                            //
                            
                             $chart_array_member[] = array(" $time_schedule",(int)$result["Present"],(int)$result["Absent"]);
@@ -570,6 +570,21 @@ class DashboardController extends AppController
 		
 		$payment_history = $conn->execute($payment_history);
 		$payment_history = $payment_history->fetchAll('assoc');
+                
+                ##################### Member Appointment List #########################
+                if(empty($dt))
+                {
+                $date=date('Y-m-d');    
+                }else{
+                   $date=date('Y-m-d',$dt);   
+                }
+                
+                $sql ="SELECT *,gym_appointment.id as appoint_id,gym_class.id as gym_class_id from gym_class LEFT JOIN gym_appointment on gym_class.id=gym_appointment.class_id where gym_appointment.appointment_end_date >='$date'";
+		$sql = $conn->execute($sql);
+		$sql = $sql->fetchAll('assoc');
+                $this->set("all_appoint",$sql);
+                $this->set("appoint_date",$date);
+               // echo $this->GYMFunction->pre($sql);
                 
                 #########################################################################
                 
@@ -589,9 +604,9 @@ class DashboardController extends AppController
 		$this->set("messages",$messages);
 		$this->set("groups",$groups);
 		$this->set("membership",$membership);
-                $this->set("membership_info",$membership_info[0]);
+                $this->set("membership_info",@$membership_info[0]);
                 $this->set("member_class_schedule",$member_class_schedule);
-                  $this->set("payment_history",$payment_history);
+                $this->set("payment_history",$payment_history);
 		$this->set("groups_data",$groups_data);
 	
 		$weight_data["data"] = $this->GYMFunction->generate_chart("Weight",$uid);

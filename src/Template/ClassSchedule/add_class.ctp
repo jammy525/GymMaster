@@ -84,20 +84,23 @@ $(document).ready(function() {
 			echo "<br><br>";
 			echo "<div class='time_list col-md-10 col-md-offset-2'>";?>
 			<table class="table">
+                            <tr><td colspan="4" class="msg"></td></tr>
 				<tr><th><?php echo __("Days");?></th><th><?php echo __("Start Time");?></th><th><?php echo __("End Time");?></th><th><?php echo __("Action");?></th></tr>
 				<tbody class="time_table">
 					<?php
 					if($edit)
 					{
 						foreach($schedule_list as $schedule)
-						{?>
+						{
+                                                    //print_r($schedule);
+                                                 ?>
 							<tr>
 								<td><?php echo implode(",",json_decode($schedule["days"]));?></td>
 								<td><?php echo $schedule["start_time"];?></td>
 								<td><?php echo $schedule["end_time"];?>
 								<input type="hidden" name="time_list[]" value='[<?php echo $schedule["days"].",&quot;".$schedule["start_time"]."&quot;,&quot;".$schedule["end_time"] ."&quot;"; ?>]'>								
 								</td>								
-								<td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger class_sch_del_row"><i class="fa fa-times-circle"></i></span></td>
+								<td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-danger class_sch_del_row1" data-id="<?php echo $schedule["id"];?>"><i class="fa fa-times-circle"></i></span></td>
 							</tr>							
 					<?php }
 					}?>
@@ -211,6 +214,7 @@ $(document).ready(function() {
 			echo $this->Form->end();
 		?>
 		</div>	
+                <input type="hidden" value="<?php echo $this->request->base;?>/GymAjax/delete_schedule" id="mem_date_check_path">
 		<div class="overlay gym-overlay">
 		  <i class="fa fa-refresh fa-spin"></i>
 		</div>
@@ -253,7 +257,33 @@ $("#add_time").click(function(){
 $(document).ready(function(){
 	$("body").on("click",".class_sch_del_row",function(){		
 		$(this).parents("tr").remove();
-	});	
+	});
+         $("body").on("click",".class_sch_del_row1",function(){	
+              var ajaxurl = $("#mem_date_check_path").val();
+              var ids=$(this).attr('data-id');
+              var removeItemEl = $(this);
+              var curr_data = {schid:ids};
+                $(".msg").html("");
+                $.ajax({
+                    url :ajaxurl,
+                    type : 'POST',
+                    data : curr_data,
+                    success : function(response)
+                                    {
+                                       
+                                     if(response==1)
+                                     {
+                                       removeItemEl.parents("tr").remove(); 
+                                     }
+                                     else{
+                                         $(".msg").html("<span style='color:red'>Your Class schedule already assigned. </span>"); 
+                                         
+                                     }
+                                            
+                                    }
+                        });
+		//
+	});
 });
 
 

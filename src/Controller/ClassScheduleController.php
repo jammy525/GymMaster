@@ -1,7 +1,8 @@
 <?php
 namespace App\Controller;
 use App\Controller\AppController;
-
+use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 class ClassScheduleController extends AppController
 {
 	public function initialize(){
@@ -91,7 +92,7 @@ class ClassScheduleController extends AppController
             
             if($this->request->is("post")){
                 
-                $time_list = $this->request->data["time_list"];			
+                $time_list = @$this->request->data["time_list"];			
               
                 $class = $this->ClassSchedule->newEntity();
                 $this->request->data["start_date"] = date("Y-m-d",strtotime($this->request->data["start_date"]));
@@ -108,7 +109,8 @@ class ClassScheduleController extends AppController
                 $class = $this->ClassSchedule->patchEntity($class,$this->request->data);
                 if($this->ClassSchedule->save($class)){
                     $class_id = $class->id;
-                   foreach($time_list as $time){
+                   if(!empty($time_list)){
+                    foreach($time_list as $time){
                         $schedule = array();
                         $time = json_decode($time);
                         $schedule["class_id"] = $class_id;
@@ -119,6 +121,18 @@ class ClassScheduleController extends AppController
                         $schedule_row = $this->ClassSchedule->ClassScheduleList->patchEntity($schedule_row,$schedule);
                         $this->ClassSchedule->ClassScheduleList->save($schedule_row);						
                    }
+                }else{
+                       $schedule = array();
+                       // $time = json_decode($time);
+                        $schedule["class_id"] = $class_id;
+                        $schedule["days"] = $this->request->data['days'];
+                        $schedule["start_time"] = $this->request->data['start_time'];
+                        $schedule["end_time"] = $this->request->data['end_time'];
+                        $schedule_row = $this->ClassSchedule->ClassScheduleList->newEntity();
+                        $schedule_row = $this->ClassSchedule->ClassScheduleList->patchEntity($schedule_row,$schedule);
+                        $this->ClassSchedule->ClassScheduleList->save($schedule_row);						
+         
+                }
                     $this->Flash->success(__("Success! Record Saved Successfully"));
                 }else{
                     $this->Flash->error(__("Error! There was an error while updating,Please try again later."));
@@ -155,7 +169,7 @@ class ClassScheduleController extends AppController
             $staff = $staff->toArray();
             $this->set("staff",$staff);
             $this->set("assistant_staff",$staff);
-             if($session["role_name"]=='administrator')
+            if($session["role_name"]=='administrator')
                 {
                    $location = $this->ClassSchedule->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"]);	
                 }else{
@@ -187,7 +201,7 @@ class ClassScheduleController extends AppController
             /** End here * */
 
             if($this->request->is("post")){ 
-               $time_list = $this->request->data["time_list"];
+               $time_list = @$this->request->data["time_list"];
                 $class = $this->ClassSchedule->get($id);
                 $this->request->data['days'] = json_encode($this->request->data['days']);
                 $this->request->data["start_date"] = date("Y-m-d",strtotime($this->request->data["start_date"]));
@@ -196,11 +210,12 @@ class ClassScheduleController extends AppController
                 $this->request->data['end_time'] = $this->request->data['end_hrs'].":".$this->request->data['end_min'].":".$this->request->data['end_ampm'];
                 $this->request->data["updated_date"] = date("Y-m-d H:i:s");
                 $this->request->data["updated_by"] = $session["id"];	
-                
+               
                 $class = $this->ClassSchedule->patchEntity($class,$this->request->data());
 
                 if($this->ClassSchedule->save($class)){			
                     $this->ClassSchedule->ClassScheduleList->deleteAll(["class_id"=>$id]);
+                    if(!empty($time_list)){
                     foreach($time_list as $time){	
                         $schedule = array();
                         $time = json_decode($time);
@@ -211,7 +226,18 @@ class ClassScheduleController extends AppController
                         $schedule_row = $this->ClassSchedule->ClassScheduleList->newEntity();
                         $schedule_row = $this->ClassSchedule->ClassScheduleList->patchEntity($schedule_row,$schedule);
                         $this->ClassSchedule->ClassScheduleList->save($schedule_row);
-                   }
+                      }
+                    }else{
+                       $schedule = array();
+                       // $time = json_decode($time);
+                        $schedule["class_id"] = $id;
+                        $schedule["days"] = $this->request->data['days'];
+                        $schedule["start_time"] =  $this->request->data['start_time'];
+                        $schedule["end_time"] =  $this->request->data['end_time'];
+                        $schedule_row = $this->ClassSchedule->ClassScheduleList->newEntity();
+                        $schedule_row = $this->ClassSchedule->ClassScheduleList->patchEntity($schedule_row,$schedule);
+                        $this->ClassSchedule->ClassScheduleList->save($schedule_row); 
+                    }
                 }			
                 $this->Flash->success(__("Success! Record Updated Successfully"));
                 return $this->redirect(["action"=>"classList"]);
@@ -231,6 +257,30 @@ class ClassScheduleController extends AppController
                 }
 
             /** End here * */
+            $sch_list_tbl = TableRegistry::get("ClassScheduleList");
+            $list_schedule = $sch_list_tbl->find("all")->where([ "class_id" => $id])->hydrate(false)->toArray();
+            $string = '';
+            if (!empty($list_schedule)) {
+                foreach ($list_schedule as $lsch) {
+
+                    $string .= $lsch["id"] . ', ';
+                }
+                $asch_lists = substr($string, 0, -2);
+                
+             $conn = ConnectionManager::get('default');
+             $report_21 ="SELECT count(*) as newcount from gym_member_class where assign_schedule IN($asch_lists)";  
+             $report_21 = $conn->execute($report_21);
+             $report_21 = $report_21->fetchAll('assoc'); 
+             if($report_21[0]['newcount']>0)
+                        {
+                            $this->Flash->error(__("Sorry! This Schedule already assign to member."));
+                            return $this->redirect(["action" => "classList"]);
+                        }
+            }
+           // print_r($report_21); die;
+        
+            
+            /***/
             if($this->ClassSchedule->delete($row)){
                 $this->ClassSchedule->ClassScheduleList->deleteAll(["class_id"=>$id]);
                 $this->Flash->success(__("Success! Class Schedule Deleted Successfully."));
@@ -257,7 +307,7 @@ class ClassScheduleController extends AppController
             }
             
             if($this->request->is("post")){
-              $date=$this->request->data['search_date'];
+              $date=date("Y-m-d",strtotime($this->request->data["search_date"]));
               $class_id=$this->request->data['class_name'];
              
               if($class_id)
@@ -290,12 +340,78 @@ class ClassScheduleController extends AppController
         public function deleteSchedule($id)
         {
              $row = $this->ClassSchedule->ClassScheduleList->get($id);
-            if($this->ClassSchedule->ClassScheduleList->delete($row)){
+             $conn = ConnectionManager::get('default');
+             $report_21 ="SELECT count(*) as newcount from gym_member_class where assign_schedule=$id";  
+             $report_21 = $conn->execute($report_21);
+             $report_21 = $report_21->fetchAll('assoc');
+
+             if($report_21[0]['newcount']>0)
+             {
+                  $date=date('Y-m-d');
+                  $report_22 ="SELECT count(*) as newcount from class_schedule as cs INNER JOIN class_schedule_list csl on cs.id=csl.class_id where cs.end_date>= '$date' And csl.id=$id"; 
+                  $report_22 = $conn->execute($report_22);
+                  $report_22 = $report_22->fetchAll('assoc');
+                  if($report_22[0]['newcount']>0)
+                  {
+                   $this->Flash->error(__("Sorry! This class schedule already assign to member."));
+                    return $this->redirect($this->referer());
+                  }else{
+                      $report_23 ="delete from gym_member_class where assign_schedule=$id";  
+                      $report_23 = $conn->execute($report_23);
+                  }
+             }
+                $schedule_data=$row->toArray();
+                $chedule_id=$schedule_data['class_id'];
+                
+            /****/
+             if($this->ClassSchedule->ClassScheduleList->delete($row)){
+                 $report_24 ="SELECT count(*) as newcount from class_schedule_list where class_id=$chedule_id";  
+                 $report_24 = $conn->execute($report_24);
+                 $report_24 = $report_24->fetchAll('assoc');
+                 $count=$report_24[0]['newcount'];
+                 if($count==0)
+                 {
+                      $report ="delete from class_schedule where id=$chedule_id";  
+                      $report = $conn->execute($report);
+                 }
                 $this->Flash->success(__("Success! Class Schedule Deleted Successfully."));
                 return $this->redirect($this->referer());
-            }
+             }
         }
+        public function editSchedule($id)
+        {
+            $this->set("edit",true);
+            $this->set("title",__("Edit Class Schedule"));
+            $session = $this->request->session()->read("User");
+            $row = $this->ClassSchedule->ClassScheduleList->get($id)->toArray();
+            $class_id=$row['class_id']; 
+            
+            $schedule_list = $this->ClassSchedule->ClassScheduleList->find()->where(["id"=>$id])->hydrate(false)->toArray();
+            $data = $this->ClassSchedule->get($class_id)->toArray();
+            $data['start_hrs'] =  explode(":",$row['start_time'])[0];
+            @$data['start_min'] =  explode(":",$row['start_time'])[1];
+            @$data['start_ampm'] =  explode(":",$row['start_time'])[2];
 
+            $data['end_hrs'] =  explode(":",$row['end_time'])[0];
+            $data['end_min'] =  explode(":",$row['end_time'])[1];
+            $data['end_ampm'] =  explode(":",$row['end_time'])[2];
+             $data['days']=$row['days'];
+            $this->set("schedule_list",$schedule_list);
+            $this->set("data",$data);
+             if($this->request->is("post")){ 
+                $class_data =  $this->ClassSchedule->ClassScheduleList->get($id);
+                $this->request->data['days'] = json_encode($this->request->data['days']);
+                $this->request->data['start_time'] = $this->request->data['start_hrs'].":".$this->request->data['start_min'].":".$this->request->data['start_ampm'];
+                $this->request->data['end_time'] = $this->request->data['end_hrs'].":".$this->request->data['end_min'].":".$this->request->data['end_ampm'];
+                $class_data = $this->ClassSchedule->ClassScheduleList->patchEntity($class_data,$this->request->data());
+
+                if($this->ClassSchedule->ClassScheduleList->save($class_data)){	
+                  $this->Flash->success(__("Success! Record Updated Successfully"));
+                    return $this->redirect(["action"=>"viewSchedules"]);
+                }
+             }
+           
+        }
 
         public function isAuthorized($user)
 	{

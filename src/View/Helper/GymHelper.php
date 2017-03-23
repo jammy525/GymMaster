@@ -501,11 +501,12 @@ public function get_total_group_members($gid)
 		return $parameters;
 	}
         
-        public function get_class_type($mid)
+        public function get_class_type($mid = null)
         {
             $class_type_table = TableRegistry::get("ClassType");
             $row = $class_type_table->get($mid)->toArray();
-           return  $row['title']; 
+            return  $row['title']; 
+            
         }
         public function get_classes_by_id($id)
         {

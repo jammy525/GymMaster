@@ -16,7 +16,7 @@ $(document).ready(function(){
 });		
 </script>
 <?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member" || $session["role_name"] == "accountant")
+if($session["role_name"] == "administrator" || $session["role_name"] == "staff_member" || $session["role_name"] == "member")
 { ?>
 <script>
 
@@ -77,12 +77,31 @@ $(document).ready(function(){
 						<td>{$duration['number']} {$duration['duration']}</td>
 						<td>". $this->Gym->get_currency_symbol() ."{$membership->signup_fee}</td>
 						<td>";
-						echo " <a href='{$this->Gym->createurl("Membership","editMembership")}/{$membership->id}' title='Edit' class='btn btn-flat btn-primary' ><i class='fa fa-edit'></i></a>
-						<a title='Delete' did='{$membership->id}' class='del-membership btn btn-flat btn-danger' data-url='".$this->Gym->createurl("GymAjax","deleteMembership")."'><i class='fa fa-trash-o'></i></a>";
-						if($session["role_name"] == "administrator")
+						echo " <a href='javascript:void(0)' id='{$membership->id}' data-url='".$this->request->base ."/GymAjax/view-membership' class='view_jmodal btn btn-flat btn-info' title='".__('View')."' ><i class='fa fa-eye'></i> ".__('View')."</a>";
+						if($session["role_name"] == "member")
 						{ 
-						echo " <a href='{$this->Gym->createurl("Membership","viewActivity")}/{$membership->id}' class='btn btn-flat btn-info'>".__("Activities")."</a>";	
-						}
+                                                    if(!empty($member))
+                                                    {
+                                                        $member=$member[0];
+                                                         if($member['membership_id']==$membership->id)
+                                                         {
+                                                             echo " <a href='javascript:void(0)'  class='btn btn-flat btn-success' title='".__('Continue')."' ><i class='fa fa-thumbs-up'></i> ".__('Continue')."</a>"; 
+                                                         }else{
+                                                            echo " <a href='javascript:void(0)'  class='btn btn-flat btn-danger' title='".__('Upgrade')."' ><i class='fa fa-shopping-cart'></i> ".__('Upgrade')."</a>";  
+                                                         }
+                                                    }else{
+                                                    echo " <a href='javascript:void(0)'  class='btn btn-flat btn-danger' title='".__('Upgrade')."' ><i class='fa fa-shopping-cart'></i> ".__('Upgrade')."</a>";    
+                                                    }
+                                                    $date=date('Y-m-d');
+                                                
+                                                }
+                                                if($session["role_name"] == "administrator")
+						{ 
+						//echo " <a href='{$this->Gym->createurl("Membership","viewActivity")}/{$membership->id}' class='btn btn-flat btn-info'>".__("Activities")."</a>";	
+						echo " <a href='{$this->Gym->createurl("Membership","editMembership")}/{$membership->id}' title='Edit' class='btn btn-flat btn-primary' ><i class='fa fa-edit'></i></a>
+                                                <a title='Delete'  class='btn btn-flat btn-danger' href='{$this->Gym->createurl("Membership","deleteMemberships")}/{$membership->id}'><i class='fa fa-trash-o'></i></a>";
+                                                    
+                                                }
 						echo "</td>
 						</tr>
 						";
