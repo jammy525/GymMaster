@@ -17,7 +17,7 @@ Class MembershipController extends AppController
     }
 	
 	public function add()
-	{			
+	{	  $session = $this->request->session()->read("User");		
 		$this->set("membership",null);			
 		$this->set("edit",false);		
 		$this->set("title",__("Add Membership"));		
@@ -55,6 +55,7 @@ Class MembershipController extends AppController
 				$this->request->data["limit_days"]=null;
 				$this->request->data["limitation"]=null;
 			}
+                        $this->request->data["created_by_id"]=$session['id'];
 			$membership = $this->Membership->patchEntity($membership,$this->request->data());
 				
 			if($this->Membership->save($membership))

@@ -36,7 +36,7 @@ class MembershipPaymentController extends AppController {
             $data = $this->MembershipPayment->find("all")
                     ->contain(["Membership", "GymMember"])
                     ->where([
-                        "GymMember.id" => $session["id"],
+                        "MembershipPayment.member_id" => $session["id"],
                         'OR' => [
                             ['MembershipPayment.mem_plan_status' => 1],
                             ['MembershipPayment.mem_plan_status' => 2],
@@ -67,6 +67,26 @@ class MembershipPaymentController extends AppController {
                 $row['paid_by'] = $session['id'];
                 $row['payment_status'] = 1;
                 $row['mem_plan_status'] = 1;
+                
+                // Check logic to set mem_plan_status
+                
+                $other_rows = $this->MembershipPayment->find()->where(['member_id'=>$user_id, 'mp_id !='=>$mp_id]);
+                
+                if(count($other_rows->toArray())>0){
+                    foreach($other_rows->toArray() as $other_row){
+                        if( $other_row['mem_plan_status'] == 1 && ( strtotime( $other_row['end_date']) >= strtotime($row['start_date'] ) ) ){
+                            //$row['mem_plan_status'] = 1;
+                            $other_row_update_array['mem_plan_status'] = 0;
+
+                            $other_row_update = $this->MembershipPayment->get($other_row['mp_id']);
+                            $other_row_update = $this->MembershipPayment->MembershipPaymentHistory->patchEntity($other_row_update, $other_row_update_array);
+                            $this->MembershipPayment->save($other_row_update);
+                            break;
+                        }
+                    }
+                }
+                
+                
                 $this->MembershipPayment->save($row);
                 
                 //if record exist and payment not made, start date less than this record then disable that one and enable this one.
@@ -290,16 +310,26 @@ class MembershipPaymentController extends AppController {
             $end_date = date("Y-m-d", strtotime($this->request->data["membership_valid_to"]));
             $user_info = $this->MembershipPayment->GymMember->get($mid);
             
-            // Add new record
-            if($this_record['mem_plan_status'] == 1){
-                $pdata["mem_plan_status"] = 2;
-            }
-            
-            if($this_record['mem_plan_status'] == 0){
+            if($this_record['mem_plan_status'] == 0 && $this_record['payment_status'] == 0){
                 $this->MembershipPayment->delete($data);
                 $pdata["mem_plan_status"] = 0;
             }
             
+            // Add new record
+            if($this_record['mem_plan_status'] == 1 && $this_record['payment_status'] == 1){
+                $pdata["mem_plan_status"] = 2;
+            }
+            
+            if($this_record['mem_plan_status'] == 2 && $this_record['payment_status'] == 0){
+                $this->MembershipPayment->delete($data);
+                $pdata["mem_plan_status"] = 2;
+            }
+            
+            if($this_record['mem_plan_status'] == 2 && $this_record['payment_status'] == 1){
+                $pdata["mem_plan_status"] = 2;
+            }
+            
+            //add new subscription
             $row = $this->MembershipPayment->newEntity();
             $pdata["member_id"] = $mid;
             $pdata["created_by"] = $session['id'];

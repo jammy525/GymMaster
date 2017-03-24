@@ -64,12 +64,20 @@
                     if (!empty($data)) {
                         foreach ($data as $row) {
                             
-                            if($row['mem_plan_status'] && $row['mem_plan_status'] == 1){
+                            if($row['mem_plan_status'] == 1 && $row['payment_status'] == 1 ){
                                 $plan_status = "<span class='label label-success'>Current</span>";
-                            }else if ($row['mem_plan_status'] && $row['mem_plan_status'] == 2) {
-                                $plan_status = "<span class='label label-warning'>Upgrade</span>";
-                            }else{
+                                
+                            }else if ($row['mem_plan_status'] == 2 && $row['payment_status'] == 0) {
+                                $plan_status = "<span class='label label-warning'>Wish</span>";
+                                
+                            }else if ($row['mem_plan_status'] == 0 && $row['payment_status'] == 1 ){
+                                $plan_status = "<span class='label label-warning'>Disabled</span>";
+                            }else if ($row['mem_plan_status'] == 0 && $row['payment_status'] ==  0){
                                 $plan_status = "<span class='label label-default'>Pending</span>";
+                            }else if ($row['mem_plan_status'] == 3 && $row['payment_status'] ==  1){
+                                $plan_status = "<span class='label label-danger'>Expired</span>";
+                            }else if ($row['mem_plan_status'] == 2 && $row['payment_status'] ==  1){
+                                $plan_status = "<span class='label label-danger'>Changed</span>";
                             }
                             
                             if( __($this->Gym->get_membership_paymentstatus($row['mp_id'])) == 'Fully Paid'){
