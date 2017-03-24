@@ -2585,7 +2585,74 @@ Class GymAjaxController extends AppController {
                 <?php
             }
          }
-      
+       ############# View Schedule ###################
+         
+         public function viewAppointment1() {
+             
+           if ($this->request->is("ajax")) {
+             $id = $this->request->data["id"];
+             $conn = ConnectionManager::get('default');
+             $sql ="SELECT *,gym_appointment.id as appoint_id,gym_class.id as gym_class_id from gym_class LEFT JOIN gym_appointment on gym_class.id=gym_appointment.class_id where gym_appointment.id ='$id'";
+             $sql = $conn->execute($sql);
+	     $sql = $sql->fetchAll('assoc');
+             $row= $sql[0];
+             echo "<pre>"; print_r($row); echo "</pre>";
+            ?>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="gridSystemModalLabel"><strong><?php echo __("APPOINTMENT DETAILS"); ?></strong></h3>
+                </div>
+                <div class="modal-body">		
+                    <div class="panel panel-white form-horizontal">
+
+                        <div class="form-group">
+                            <label class="col-sm-3"><strong><?php echo __("Class Name"); ?> : </strong></label>
+                            <div class="col-sm-9"> <?php echo $row['name']; ?> </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="start_date" class="col-sm-3"><?php echo __("Membership Category"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['category']["name"]; ?> </div>
+                        </div>
+                       <div class="form-group">
+                            <label for="start_date" class="col-sm-3"><?php echo __("Membership Period"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['membership_length']; ?> Days</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date" class="col-sm-3"><?php echo __("Amount"); ?> : </label>
+                            <div class="col-sm-9"> $<?php echo $row['membership_amount']; ?> </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Assign Class"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $amem_lists; ?> </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Class Limit"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row['membership_class_limit']; ?> </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="licensee_title" class="col-sm-3"><?php echo __("Description"); ?> : </label>
+                            <div class="col-sm-9"> <?php echo $row["membership_description"]; ?> </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo __("Close"); ?></button>				
+                </div>	
+                <?php
+            }
+         }
+         
+           ############# Schedule Delete ajax start ##########
+         
+            public function getAppointmentClasses() {
+                
+                 if ($this->request->is("ajax")) {
+                       echo $id = $this->request->data["class_id"];
+                 }
+                
+            
+            }
         ############ End Here ###################
         /** End here * */
     }

@@ -174,7 +174,7 @@ class DashboardController extends AppController
                 $date=date('Y-m-d');
                 //$next_date=date('Y-m-d', strtotime('+1 day', strtotime($date)));
               
-                $up_appointment ="SELECT gpp.status, gpp.appointment_name,gpp.class_id,gpp.appointment_date,gpp.appointment_end_date, gpp.start_time, gpp.end_time, gcls.name, gm.first_name, gm.middle_name, gm.last_name from gym_appointment as gpp INNER JOIN gym_class  as gcls ON gpp.class_id=gcls.id INNER JOIN gym_member gm on gpp.created_by=gm.id where gpp.appointment_end_date >= '$date' order by gpp.appointment_date ASC limit 3 ";
+                $up_appointment ="SELECT gpp.status, gpp.appointment_name,gpp.class_id,gpp.appointment_date,gpp.appointment_end_date,gpp.start_time, gpp.end_time, gcls.name, gm.first_name, gm.middle_name, gm.last_name from gym_appointment as gpp INNER JOIN gym_class  as gcls ON gpp.class_id=gcls.id INNER JOIN gym_member gm on gpp.created_by=gm.id where gpp.appointment_end_date >= '$date' order by gpp.appointment_date ASC limit 3 ";
                 $up_appointment = $conn->execute($up_appointment);
                 $up_appointment = $up_appointment->fetchAll('assoc');
                 $this->set("up_appointment",$up_appointment);     
@@ -336,16 +336,12 @@ class DashboardController extends AppController
 		
 		################################################
 		$paylistval="";
-              $chart_array_pay = array();
-		$chart_array_pay[] = array('Month','Fee Payment');
                foreach($member_lists->hydrate(false)->toArray() as $mlist)
                {
                   // echo "<pre>";print_r($mlist);
                  $paylistval .= $mlist["id"].', ' ;
                }
                 $payment_mem_lists = substr($paylistval, 0, -2);
-                if(!empty($payment_mem_lists))
-                 {
 		$month =array('1'=>"January",'2'=>"February",'3'=>"March",'4'=>"April",
 		'5'=>"May",'6'=>"June",'7'=>"July",'8'=>"August",
 		'9'=>"September",'10'=>"Octomber",'11'=>"November",'12'=>"December",);
@@ -356,13 +352,13 @@ class DashboardController extends AppController
 				
 		$result = $conn->execute($q);
 		$result = $result->fetchAll('assoc');		
-		
+		$chart_array_pay = array();
+		$chart_array_pay[] = array('Month','Fee Payment');
 		foreach($result as $r)
 		{
 
 			$chart_array_pay[]=array( $month[$r["date_d"]],(int)$r["count_c"]);
 		}
-              }
 		$this->set("chart_array_pay",$chart_array_pay); 
 		$this->set("result_pay",$result); 
 		
@@ -418,15 +414,12 @@ class DashboardController extends AppController
               ################## MEMBER SALES REPORT #############################
                
                $mlistval="";
-               $chart_array_sales = array();
-		$chart_array_sales[] = array('Payment Method','Amount');
                foreach($member_lists->hydrate(false)->toArray() as $mlist)
                {
                   // echo "<pre>";print_r($mlist);
                  $mlistval .= $mlist["id"].', ' ;
                }
                 $amem_lists = substr($mlistval, 0, -2);
-                if(!empty($amem_lists)){
                 $report_22 = "SELECT  mph.mp_id,
                         SUM( IF(  mph.payment_method =  'Cash',  mph.amount , 0 ) ) AS  'Cash',
                         SUM( IF(  mph.payment_method <>  'Cash',  mph.amount , 0 ) ) AS 'Online'
@@ -434,7 +427,8 @@ class DashboardController extends AppController
                 $report_22 = $conn->execute($report_22);
                 $report_22 = $report_22->fetchAll('assoc');
                // print_r( $report_22);
-                
+                $chart_array_sales = array();
+		$chart_array_sales[] = array('Payment Method','Amount');
                 if(!empty($report_22))
 		{
                      $chart_array_sales[1]=array('Cash Payment',(int)$report_22[0]['Cash']);
@@ -443,26 +437,23 @@ class DashboardController extends AppController
                         
                 }
                 $total_sales=(int)$report_22[0]['Cash']+(int)$report_22[0]['Online'];
-                 }
                 //print_r($chart_array_sales);
                 $this->set("report_22",$report_22);
                 $this->set("total_sales",$total_sales);
                 $this->set("chart_array_sales",$chart_array_sales);
                 
                ################## MEMBER BOOKING REPORT #############################
-               $chart_array_booking = array();
-		$chart_array_booking[] = array('Booking','No of booking');
-                 if(!empty($amem_lists)){
+                
                  $report_23 = "SELECT  count(mph.mp_id) as total_booking
                         from membership_payment_history as mph INNER JOIN membership_payment as mp on mph.mp_id=mp.mp_id where mp.member_id IN ($amem_lists)";
                 $report_23 = $conn->execute($report_23);
                 $report_23 = $report_23->fetchAll('assoc');
                 
-                 
+                 $chart_array_booking = array();
+		$chart_array_booking[] = array('Booking','No of booking');
                 if(!empty($report_23))
 		{
                     $chart_array_booking[1] = array('Total Bookings',(int)$report_23[0]['total_booking']);
-                }
                 }
                 $this->set("chart_array_booking",$chart_array_booking);
                  $this->set("total_booking",(int)$report_23[0]['total_booking']);
@@ -709,9 +700,7 @@ class DashboardController extends AppController
                   $this->set("chart_array_members",$chart_array_members); 
                   
                  ################## MEMBER SALES REPORT #############################
-                $chart_array_sales = array();
-		$chart_array_sales[] = array('Payment Method','Amount');
-
+               
                $mlistval="";
                foreach($member_lists->hydrate(false)->toArray() as $mlist)
                {
@@ -719,8 +708,7 @@ class DashboardController extends AppController
                  $mlistval .= $mlist["id"].', ' ;
                }
                 $amem_lists = substr($mlistval, 0, -2);
-               if(!empty($amem_lists))
-               {
+               
                 $report_22 = "SELECT  mph.mp_id,
                         SUM( IF(  mph.payment_method =  'Cash',  mph.amount , 0 ) ) AS  'Cash',
                         SUM( IF(  mph.payment_method <>  'Cash',  mph.amount , 0 ) ) AS 'Online'
@@ -728,7 +716,8 @@ class DashboardController extends AppController
                 $report_22 = $conn->execute($report_22);
                 $report_22 = $report_22->fetchAll('assoc');
                // print_r( $report_22);
-               
+                $chart_array_sales = array();
+		$chart_array_sales[] = array('Payment Method','Amount');
                 if(!empty($report_22))
 		{
                      $chart_array_sales[1]=array('Cash Payment',(int)$report_22[0]['Cash']);
@@ -737,7 +726,6 @@ class DashboardController extends AppController
                         
                 }
                 $total_sales=(int)$report_22[0]['Cash']+(int)$report_22[0]['Online'];
-            }
                 //print_r($chart_array_sales);
                 $this->set("report_22",$report_22);
                 $this->set("total_sales",$total_sales);
