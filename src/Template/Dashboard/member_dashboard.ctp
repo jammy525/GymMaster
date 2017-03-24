@@ -314,16 +314,7 @@ echo $this->Html->script('fullcalendar.min');
                 
                 <!--- Upcoming Appointment Module -->
                 <div class="col-md-12 col-sm-12 col-xs-12">
-                             <div class="panel panel-white">
-                                 <div class="panel-body">
-                                     <div class="panel-heading">
-                                         <h3 class="panel-title"><?php echo __("All Appomiment "); ?></h3>						
-                                     </div>
-                                   <div class="panel panel-default workout-block" >
-                                        <div class="panel-heading"> 
-                                             
-                                        <div class="col-md-3 col-sm-3"> <strong>Class Name</strong></div>
-                                        <?php
+                                   <?php
                                         $date=$appoint_date;
                                         $date1=strtotime($date);
                                         $day1= date("l", $date1);
@@ -335,7 +326,23 @@ echo $this->Html->script('fullcalendar.min');
                                         $day4= date("l", $date4);
                                         $next_date=strtotime("+4 days", strtotime($date));
                                         $prev_date=strtotime("-4 days", strtotime($date));
-                                        for($i=0;$i<=3;$i++)
+                                   ?>
+                             <div class="panel panel-white">
+                                 <div class="panel-body">
+                                     <div class="panel-heading">
+                                         <div class="col-md-4 col-sm-4 col-xs-4">
+                                         <h3 class="panel-title"><?php echo __("All Appomiment "); ?></h3>
+                                         </div>
+                                         <div class="col-md-8 col-sm-8 col-xs-8">
+                                         <h3 class="panel-title"><?php echo date('F j, Y',$date1).' -- '.date('F j, Y',$date4);?></h3>
+                                         </div>
+                                     </div>
+                                   <div class="panel panel-default workout-block" >
+                                        <div class="panel-heading"> 
+                                            
+                                        <div class="col-md-3 col-sm-3"> <strong>Class Name</strong></div>
+                                        <?php
+                                         for($i=0;$i<=3;$i++)
                                         {
                                               $date1 = strtotime("+".$i." days", strtotime($date));
                                               $day = date("l", $date1);
@@ -362,11 +369,13 @@ echo $this->Html->script('fullcalendar.min');
                                              $date14=date('Y-m-d',$date4);
                                              $days=json_decode($appont['days']);
                                              $style1=$style2=$style3=$style4="";
+                                             $link1=$link2=$link3=$link4="";
                                              if ($date11 >= $start_date && $date11 <= $end_date) { 
                                                   if(in_array($day1,$days)){
                                                        $section1= $appont['start_time'].'-'.$appont['end_time'];
                                                        if($appont['status']==1){
                                                               $style1='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                               $link1='view_jmodal';
                                                           }else{
                                                               $style1='style="background:#f25656;padding:5px;color:#fff"';
                                                           }
@@ -381,6 +390,7 @@ echo $this->Html->script('fullcalendar.min');
                                                          $section2= $appont['start_time'].'-'.$appont['end_time'];
                                                          if($appont['status']==1){
                                                               $style2='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                               $link2='view_jmodal';
                                                           }else{
                                                               $style2='style="background:#f25656;padding:5px;color:#fff"';
                                                           }
@@ -395,6 +405,7 @@ echo $this->Html->script('fullcalendar.min');
                                                         $section3= $appont['start_time'].'-'.$appont['end_time'];
                                                         if($appont['status']==1){
                                                               $style3='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                               $link3='view_jmodal';
                                                           }else{
                                                               $style3='style="background:#f25656;padding:5px;color:#fff"';
                                                           }
@@ -409,6 +420,7 @@ echo $this->Html->script('fullcalendar.min');
                                                         $section4= $appont['start_time'].'-'.$appont['end_time'];
                                                           if($appont['status']==1){
                                                               $style4='style="background:#22BAA0;padding:5px;color:#fff"';
+                                                               $link4='view_jmodal';
                                                           }else{
                                                               $style4='style="background:#f25656;padding:5px;color:#fff"';
                                                           }
@@ -421,10 +433,10 @@ echo $this->Html->script('fullcalendar.min');
                                             
                                          ?>
                                            <div class="col-md-3 col-sm-3"> <strong><?php echo $appont['name']?></strong></div>
-                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style1?>><?php echo $section1;?></span></div>
-                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style2?>><?php echo $section2?></span></div>
-                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style3?>><?php echo $section3?></span></div>
-                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><span <?php echo $style4?>><?php echo $section4?></span></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><a href='javascript:void(0)' id='<?php echo $appont['appoint_id']?>' data-url='<?php echo $this->request->base;?>/GymAjax/view-appointment' class='<?php echo $link1;?>'><span <?php echo $style1?>><?php echo $section1;?></span></a></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><a href='javascript:void(0)' id='<?php echo $appont['appoint_id']?>' data-url='<?php echo $this->request->base;?>/GymAjax/view-appointment' class='<?php echo $link2;?>'><span <?php echo $style2?>><?php echo $section2?></span></a></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><a href='javascript:void(0)' id='<?php echo $appont['appoint_id']?>' data-url='<?php echo $this->request->base;?>/GymAjax/view-appointment' class='<?php echo $link3;?>'><span <?php echo $style3?>><?php echo $section3?></span></a></div>
+                                           <div class="col-md-2 col-sm-2" style="padding:10px 0px;"><a href='javascript:void(0)' id='<?php echo $appont['appoint_id']?>' data-url='<?php echo $this->request->base;?>/GymAjax/view-appointment' class='<?php echo $link4;?>'><span <?php echo $style4?>><?php echo $section4?></span></a></div>
                                          <?php  } ?>
                                        </div> 
                                      

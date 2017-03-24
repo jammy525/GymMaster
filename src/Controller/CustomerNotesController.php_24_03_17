@@ -143,12 +143,8 @@ class CustomerNotesController extends AppController
 
             $classes = $this->CustomerNotes->GymClass->find("list",["keyField"=>"id","valueField"=>"name"]);
             $this->set("classes",$classes);
-            if($session["role_name"]=='administrator'){
-$note_for = $this->CustomerNotes->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"member","role_id"=>4]);
-             }else{
-              $note_for = $this->CustomerNotes->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"member","role_id"=>4,"associated_licensee"=>$loggedUser["associated_licensee"]]);
-             }
             
+            $note_for = $this->CustomerNotes->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"member","role_id"=>4,"associated_licensee"=>$loggedUser["associated_licensee"]]);
             $note_for = $note_for->select(["id","name"=>$note_for->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
             
             $this->set("note_for",$note_for);

@@ -315,9 +315,7 @@ Class GymMemberController extends AppController
 		$this->set("data",$data);		
 		$staff = $this->GymMember->find("list",["keyField"=>"id","valueField"=>["name"]])->where(["role_name"=>"staff_member"]);
 		$staff = $staff->select(["id","name"=>$staff->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
-		 $licensee = $this->GymMember->find("list",["keyField"=>"id","valueField"=>"name"])->where(["role_name"=>"licensee"]);
-            $licensee = $licensee->select(["id","name"=>$licensee->func()->concat(["first_name"=>"literal"," ","last_name"=>"literal"])])->hydrate(false)->toArray();
-
+		
 		$groups = $this->GymMember->GymGroup->find("list",["keyField"=>"id","valueField"=>"name"]);
 		$interest = $this->GymMember->GymInterestArea->find("list",["keyField"=>"id","valueField"=>"interest"]);
 		$source = $this->GymMember->GymSource->find("list",["keyField"=>"id","valueField"=>"source_name"]);
@@ -333,7 +331,6 @@ Class GymMemberController extends AppController
 		$this->set("source",$source);
 		$this->set("membership",$membership);
 		$this->set("referrer_by",$staff);
-                 $this->set("licensee",$licensee);
 				
 		$this->render("addMember");		
 

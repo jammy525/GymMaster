@@ -393,12 +393,13 @@ echo $this->Html->script('lang-all');
                                      {
                                          
                                        foreach($up_appointment as $appointment){
-                                         $date= $appointment['appointment_date']; 
+                                         $date= $appointment['appointment_date'];
+                                         $date1= $appointment['appointment_end_date'];
                                           $day = date('l', strtotime($date)); 
                                      ?>
                                      <div class="panel panel-default workout-block" >				
 				  <div class="panel-heading">  <br>
-                                      <i class="fa fa-calendar"></i>  <span class="work_date"><?php echo date('F j, Y', strtotime($date));?></span> ------ <span class="work_date"><?php echo $day;?></span>					
+                                      <i class="fa fa-calendar"></i>  <span class="work_date"><?php echo date('F j, Y', strtotime($date));?></span> to  <span class="work_date"><?php echo date('F j, Y', strtotime($date1));?></span>					
                                     </div>
 				  <br>
 				  <div class="work_out_datalist_header">
