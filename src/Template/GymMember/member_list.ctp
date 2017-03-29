@@ -1,151 +1,253 @@
-<?php $session = $this->request->session()->read("User");?>
-<script>
-$(document).ready(function(){		
-	$(".mydataTable").DataTable({
-		"responsive": true,
-		"order": [[ 1, "asc" ]],
-		"aoColumns":[
-	                  {"bSortable": false},
-	                  {"bSortable": true},
-	                  {"bSortable": true},
-	                  {"bSortable": true},
-	                  {"bSortable": true},
-	                  {"bSortable": true},
-	                  {"bSortable": true},	                           
-	                  {"bSortable": false,"visible":false},
-	                  {"bSortable": false,"visible":false}],
-		"language" : {<?php echo $this->Gym->data_table_lang();?>}
-	});
-});		
-</script>
-<?php
-if($session["role_name"] == "administrator" || $session["role_name"] == "member" || $session["role_name"] == "staff_member" || $session["role_name"] == "licensee")
-{ ?>
-<script>
-$(document).ready(function(){
-	var table = $(".mydataTable").DataTable();
-	table.column(7).visible( true );
-});
-</script>
-<?php } 
+<?php $session = $this->request->session()->read("User");
+ 
 
-if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
-{?>
+?>
 <script>
-$(document).ready(function(){
-	var table = $(".mydataTable").DataTable();
-	table.column(8).visible( true );
-});
+/*$('#sample_1').dataTable( {
+    "responsive": true,
+  "autoWidth": false
+} );*/
 </script>
-<?php } ?>
-<section class="content">
-	<br>
-	<div class="col-md-12 box box-default">		
-		<div class="box-header">
-			<section class="content-header">
-			  <h1>
-				<i class="fa fa-bars"></i>
-				<?php echo __("Members List");?>
-				<small><?php echo __("Member");?></small>
-			  </h1>
-			   <?php
-				if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
-				{ ?>
-			  <ol class="breadcrumb">
-				<a href="<?php echo $this->Gym->createurl("GymMember","addMember");?>" class="btn btn-flat btn-custom"><i class="fa fa-plus"></i> <?php echo __("Add Member");?></a>
-			  </ol>
-			   <?php } ?>
-			</section>
-		</div>
-		<hr>
-		<div class="box-body">
-		<table class="mydataTable table table-striped">
-			<thead>
-				<tr>
-					<th><?php echo __("Photo");?></th>
-					<th><?php echo __("Member Name");?></th>
-					<th><?php echo __("Member ID");?></th>					
-					<th><?php echo __("Joining Date");?></th>					
-					<th><?php echo __("Expire Date");?></th>					
-					<th width="18%"><?php echo __("Assign Class");?></th>					
-					<th><?php echo __("Membership Status");?></th>					
-					<th><?php echo __("Action");?></th>
-					<th><?php echo __("Status");?></th>
-				</tr>
-			</thead>
-			<tbody>
-			<?php
-				foreach($data as $row)
-				{
-                                    //echo '<pre>';print_r($row);
-                                    if(isset($row['unsubscribed_member']['unsubscribed_status']) && $row['unsubscribed_member']['unsubscribed_status'] == 1) {
-                                        $memship_status = '<span class="label label-warning">Discontinued</span>';
-                                    }else if(isset($row['unsubscribed_member']['unsubscribed_status']) && $row['unsubscribed_member']['unsubscribed_status'] == 0){
-                                        $memship_status = '<span class="label label-success">Continue</span>';
-                                    }else{
-                                        $memship_status = '<span class="label label-success">Continue</span>';
-                                    }
-                                    
-                                    
-                                    
-                                    if($this->Gym->get_member_assign_class($row['id'])>0)
-                                    {
-                                     $assign_label="<i class='fa fa-pencil'></i>Update Assign Class";   
-                                    }else{
-                                       $assign_label="<i class='fa fa-plus'></i>Assign Class"; 
-                                    }
-					echo "<tr>
-					<td><img src='{$this->request->base}/webroot/upload/{$row['image']}' class='membership-img img-circle'></td>
+<?php /*
+<div class="col-md-12">
+                                <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                                <div class="portlet light bordered">
+                                    <div class="portlet-title">
+                                        <div class="caption font-dark">
+                                            <i class="icon-settings font-dark"></i>
+                                            <span class="caption-subject bold uppercase">Buttons</span>
+                                        </div>
+                                        <div class="tools"> </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <table class="table table-striped table-bordered table-hover" id="sample_1">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Position</th>
+                                                    <th>Office</th>
+                                                    <th>Age</th>
+                                                    <th>Start date</th>
+                                                    <th>Salary</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Position</th>
+                                                    <th>Office</th>
+                                                    <th>Age</th>
+                                                    <th>Start date</th>
+                                                    <th>Salary</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Tiger Nixon</td>
+                                                    <td>System Architect</td>
+                                                    <td>Edinburgh</td>
+                                                    <td>61</td>
+                                                    <td>2011/04/25</td>
+                                                    <td>$320,800</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Garrett Winters</td>
+                                                    <td>Accountant</td>
+                                                    <td>Tokyo</td>
+                                                    <td>63</td>
+                                                    <td>2011/07/25</td>
+                                                    <td>$170,750</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ashton Cox</td>
+                                                    <td>Junior Technical Author</td>
+                                                    <td>San Francisco</td>
+                                                    <td>66</td>
+                                                    <td>2009/01/12</td>
+                                                    <td>$86,000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cedric Kelly</td>
+                                                    <td>Senior Javascript Developer</td>
+                                                    <td>Edinburgh</td>
+                                                    <td>22</td>
+                                                    <td>2012/03/29</td>
+                                                    <td>$433,060</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Airi Satou</td>
+                                                    <td>Accountant</td>
+                                                    <td>Tokyo</td>
+                                                    <td>33</td>
+                                                    <td>2008/11/28</td>
+                                                    <td>$162,700</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Brielle Williamson</td>
+                                                    <td>Integration Specialist</td>
+                                                    <td>New York</td>
+                                                    <td>61</td>
+                                                    <td>2012/12/02</td>
+                                                    <td>$372,000</td>
+                                                </tr>
+                                               
+                                               
+                                               
+                                                <tr>
+                                                    <td>Michael Bruce</td>
+                                                    <td>Javascript Developer</td>
+                                                    <td>Singapore</td>
+                                                    <td>29</td>
+                                                    <td>2011/06/27</td>
+                                                    <td>$183,000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Donna Snider</td>
+                                                    <td>Customer Support</td>
+                                                    <td>New York</td>
+                                                    <td>27</td>
+                                                    <td>2011/01/25</td>
+                                                    <td>$112,000</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                            </div><?php */ ?>
+
+
+<div class="col-md-12">
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption font-dark">
+                <i class="icon-settings font-dark"></i>
+                <span class="caption-subject bold uppercase"> <?php echo __("Members List"); ?>
+                </span>
+                 
+            </div>
+            <div class="actions">
+                <div class="tools"> </div>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div class="table-toolbar">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="btn-group">
+                            <?php
+                            if ($session["role_name"] == "administrator" || $session["role_name"] == "licensee") {
+                                ?>
+
+                                <a href="<?php echo $this->Gym->createurl("GymMember", "addMember"); ?>" class="btn sbold green"><?php echo __("Add Member"); ?> <i class="fa fa-plus"></i></a>
+
+                        <?php } ?>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        
+                    </div>
+                </div>
+            </div>
+            <table class="mydataTable table table-striped table-bordered table-hover table-checkable order-column" id="sample_1">
+                <thead>
+                    
+
+                    <tr>
+                    <th style="width:100% !important"><?php echo __("Photo"); ?></th>
+                    <th><?php echo __("Member Name"); ?></th>
+                    <th><?php echo __("Member ID"); ?></th>					
+                    <th width="18%"><?php echo __("Assign Class"); ?></th>					
+                    <th><?php echo __("Membership Status"); ?></th>					
+                    <th><?php echo __("Action"); ?></th>
+                    <th><?php echo __("Status"); ?></th>
+                    </tr>
+                   
+                </thead>
+                <tbody>
+                    <?php
+                foreach ($data as $row) {
+                    //echo '<pre>';print_r($row);
+                    if (isset($row['unsubscribed_member']['unsubscribed_status']) && $row['unsubscribed_member']['unsubscribed_status'] == 1) {
+                        $memship_status = '<span class="label label-warning">Discontinued</span>';
+                    } else if (isset($row['unsubscribed_member']['unsubscribed_status']) && $row['unsubscribed_member']['unsubscribed_status'] == 0) {
+                        $memship_status = '<span class="label label-success">Continue</span>';
+                    } else {
+                        $memship_status = '<span class="label label-success">Continue</span>';
+                    }
+
+
+
+                    if ($this->Gym->get_member_assign_class($row['id']) > 0) {
+                        $assign_label = "<i class='fa fa-pencil'></i>Update Assign Class";
+                    } else {
+                        $assign_label = "<i class='fa fa-plus'></i>Assign Class";
+                    }
+                    echo "<tr class='odd gradeX'>
+					<td style='width: 100%'><img src='{$this->request->base}/webroot/upload/{$row['image']}' width='100' class='membership-img img-circle'></td>
 					<td>{$row['first_name']} {$row['last_name']}</td>
 					<td>{$row['member_id']}</td>
-					<td>".(($row['membership_valid_from'] != '')?date($this->Gym->getSettings("date_format"),strtotime($row['membership_valid_from'])):'Null')."</td>
-					<td>".(($row['membership_valid_to'] != '')?date($this->Gym->getSettings("date_format"),strtotime($row['membership_valid_to'])):'Null')."</td>
-					<td><a href='{$this->request->base}/GymMember/assign-member/{$row['id']}' title='Assign Classes'>".$assign_label."</a></td>";
-					//<td>{$row['membership_status']}</td>
-                                        echo "<td>".$memship_status."</td>
-					<td>
-					
-						<a href='{$this->request->base}/GymMember/viewMember/{$row['id']}' title='View' class='btn btn-flat btn-info'><i class='fa fa-eye'></i></a>";
-					if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
-					{	
-					echo " <a href='{$this->request->base}/GymMember/editMember/{$row['id']}' title='Edit' class='btn btn-flat btn-primary'><i class='fa fa-edit'></i></a>
-						<a href='{$this->request->base}/GymMember/deleteMember/{$row['id']}' title='Delete' class='btn btn-flat btn-danger' onClick=\"return confirm('Are you sure,You want to delete this record?');\"><i class='fa fa-trash-o'></i></a>
-                                                <a href='{$this->request->base}/GymMember/unsubscribe/{$row['id']}' class='btn btn-flat btn-primary' title='Unsubscribe'><i class='fa fa-ban'></i></a>";
-					}
-					echo " <a href='{$this->request->base}/GymMember/viewAttendance/{$row['id']}' title='Attendance' class='btn btn-flat btn-default'><i class='fa fa-eye'></i> Attendance</a>";
-					
-					echo "</td>
-						  <td>";
-						if($row["activated"] == 0)
-						{
-							echo "<a class='btn btn-success btn-flat' onclick=\"return confirm('Are you sure,you want to activate this account?');\" href='".$this->request->base ."/GymMember/activateMember/{$row['id']}'>".__('Activate')."</a>";
-						}else{
-							echo "<span class='btn btn-flat btn-default'>".__('Activated')."</span>";
-						}
-					echo "</td>
+					<td><a href='{$this->request->base}/GymMember/assign-member/{$row['id']}' title='Assign Classes'>" . $assign_label . "</a></td>";
+                    //<td>{$row['membership_status']}</td>
+                    echo "<td>" . $memship_status . "</td><td><div class='btn-group'>
+                                <button class='btn btn-xs green dropdown-toggle' type='button' data-toggle='dropdown' aria-expanded='false'> Actions
+                                    <i class='fa fa-angle-down'></i>
+                                </button>
+                                <ul class='dropdown-menu pull-left' role='menu'>
+                                    <li>
+                                        <a href='{$this->request->base}/GymMember/viewMember/{$row['id']}'>
+                                            <i class='icon-docs'></i> New Post </a>
+                                    </li>";
+                                     if ($session["role_name"] == "administrator" || $session["role_name"] == "licensee") {
+                                    echo "<li>
+                                        <a href='{$this->request->base}/GymMember/editMember/{$row['id']}'>
+                                            <i class='icon-tag'></i> New Comment </a>
+                                    </li>
+                                    <li>
+                                        <a href='{$this->request->base}/GymMember/deleteMember/{$row['id']}'>
+                                            <i class='icon-user'></i> New User </a>
+                                    </li>
+                                    <li class='divider'> </li>
+                                    <li>
+                                        <a href='{$this->request->base}/GymMember/unsubscribe/{$row['id']}'>
+                                            <i class='icon-flag'></i> Comments
+                                            <span class='badge badge-success'>4</span>
+                                        </a>
+                                    </li>";
+                                     } 
+                                     echo "<li>
+                                        <a href='{$this->request->base}/GymMember/viewAttendance/{$row['id']}'>
+                                            <i class='icon-flag'></i> Comments
+                                            <span class='badge badge-success'>4</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div></td>
+				 <td>";
+                    if ($row["activated"] == 0) {
+                        echo "<a class='btn btn-success btn-flat' onclick=\"return confirm('Are you sure,you want to activate this account?');\" href='" . $this->request->base . "/GymMember/activateMember/{$row['id']}'>" . __('Activate') . "</a>";
+                    } else {
+                        echo "<span class='btn btn-flat btn-default'>" . __('Activated') . "</span>";
+                    }
+                    echo "</td>
                                         
                                         
 					</tr>";
-				}
-			?>
-			</tbody>
-			<tfoot>
-				<tr>
-					<th><?php echo __("Photo");?></th>
-					<th><?php echo __("Member Name");?></th>
-					<th><?php echo __("Member ID");?></th>					
-					<th><?php echo __("Joining Date");?></th>					
-					<th><?php echo __("Expire Date");?></th>					
-					<th><?php echo __("Assign Class");?></th>					
-					<th><?php echo __("Membership Status");?></th>					
-					<th><?php echo __("Action");?></th>
-					<th><?php echo __("Status");?></th>
-				</tr>
-			</tfoot>
-		</table>
-		</div>	
-		<div class="overlay gym-overlay">
-		  <i class="fa fa-refresh fa-spin"></i>
-		</div>
-	</div>
-</section>
+                }
+                ?>
+                   
+                    
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+    
+    	
+    
+</div>
+
