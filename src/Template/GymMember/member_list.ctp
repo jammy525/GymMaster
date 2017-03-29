@@ -97,7 +97,8 @@ $(document).ready(function(){
 					if($session["role_name"] == "administrator" || $session["role_name"] == "licensee")
 					{	
 					echo " <a href='{$this->request->base}/GymMember/editMember/{$row['id']}' title='Edit' class='btn btn-flat btn-primary'><i class='fa fa-edit'></i></a>
-						<a href='{$this->request->base}/GymMember/deleteMember/{$row['id']}' title='Delete' class='btn btn-flat btn-danger' onClick=\"return confirm('Are you sure,You want to delete this record?');\"><i class='fa fa-trash-o'></i></a>";
+						<a href='{$this->request->base}/GymMember/deleteMember/{$row['id']}' title='Delete' class='btn btn-flat btn-danger' onClick=\"return confirm('Are you sure,You want to delete this record?');\"><i class='fa fa-trash-o'></i></a>
+                                                <a href='{$this->request->base}/GymMember/unsubscribe/{$row['id']}' class='btn btn-flat btn-primary' title='Unsubscribe'><i class='fa fa-ban'></i></a>";
 					}
 					echo " <a href='{$this->request->base}/GymMember/viewAttendance/{$row['id']}' title='Attendance' class='btn btn-flat btn-default'><i class='fa fa-eye'></i> Attendance</a>";
 					
@@ -110,6 +111,8 @@ $(document).ready(function(){
 							echo "<span class='btn btn-flat btn-default'>".__('Activated')."</span>";
 						}
 					echo "</td>
+                                        
+                                        
 					</tr>";
 				}
 			?>

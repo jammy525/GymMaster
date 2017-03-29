@@ -4,15 +4,18 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
-use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ConnectionManager; 
 
 Class GymAjaxController extends AppController {
-
+    
+    
     public function initialize() {
         parent::initialize();
+        $this->loadComponent("GYMFunction");
          $this->loadComponent("GYMFunction");
         
         $this->autoRender = false;
+        
     }
 
     public function addCategory() {
@@ -665,6 +668,9 @@ Class GymAjaxController extends AppController {
         // $format = str_replace("dd","d",$format);
         // $format = str_replace("mm","m",$format);
         $date = $this->request->data["date"];
+        if(!$date){
+            echo $date;die;
+        }
         $date = str_replace("/", "-", $date);
         $membership_id = $this->request->data["membership"];
         $date1 = date($format, strtotime($date));
@@ -673,6 +679,7 @@ Class GymAjaxController extends AppController {
         $period = $row["membership_length"];
         $end_date = date($format, strtotime($date1 . " + {$period} days"));
         echo $end_date;
+        die;
     }
 
     public function levelsList() {
@@ -1263,9 +1270,16 @@ Class GymAjaxController extends AppController {
         $session = $this->request->session();
         $float_l = ($session->read("User.is_rtl") == "1") ? "right" : "left";
         $float_r = ($session->read("User.is_rtl") == "1") ? "left" : "right";
+        $host = $_SERVER['HTTP_HOST'];
+        if($host == 'localhost')
+            $host .= '/gym_master';
         ?>
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+            
+            <a class="btn btn-danger active pull-right" target="_blank" title="PDF" href="http://<?php echo $host;?>/membership-payment/pdf-view/2/<?php echo $mp_id;?>">
+                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+            </a>
             <h4 class="modal-title" id="gridSystemModalLabel"><?php echo __("Invoice"); ?></h4>
         </div>
         <div class="modal-body">
@@ -1392,6 +1406,7 @@ Class GymAjaxController extends AppController {
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo __("Close"); ?></button>				
             </div>
+        </div>
             <?php
         }
 
