@@ -77,6 +77,17 @@ $(document).ready(function(){
 			<?php
 				foreach($data as $row)
 				{
+                                    //echo '<pre>';print_r($row);
+                                    if(isset($row['unsubscribed_member']['unsubscribed_status']) && $row['unsubscribed_member']['unsubscribed_status'] == 1) {
+                                        $memship_status = '<span class="label label-warning">Discontinued</span>';
+                                    }else if(isset($row['unsubscribed_member']['unsubscribed_status']) && $row['unsubscribed_member']['unsubscribed_status'] == 0){
+                                        $memship_status = '<span class="label label-success">Continue</span>';
+                                    }else{
+                                        $memship_status = '<span class="label label-success">Continue</span>';
+                                    }
+                                    
+                                    
+                                    
                                     if($this->Gym->get_member_assign_class($row['id'])>0)
                                     {
                                      $assign_label="<i class='fa fa-pencil'></i>Update Assign Class";   
@@ -89,8 +100,9 @@ $(document).ready(function(){
 					<td>{$row['member_id']}</td>
 					<td>".(($row['membership_valid_from'] != '')?date($this->Gym->getSettings("date_format"),strtotime($row['membership_valid_from'])):'Null')."</td>
 					<td>".(($row['membership_valid_to'] != '')?date($this->Gym->getSettings("date_format"),strtotime($row['membership_valid_to'])):'Null')."</td>
-					<td><a href='{$this->request->base}/GymMember/assign-member/{$row['id']}' title='Assign Classes'>".$assign_label."</a></td>
-					<td>{$row['membership_status']}</td>
+					<td><a href='{$this->request->base}/GymMember/assign-member/{$row['id']}' title='Assign Classes'>".$assign_label."</a></td>";
+					//<td>{$row['membership_status']}</td>
+                                        echo "<td>".$memship_status."</td>
 					<td>
 					
 						<a href='{$this->request->base}/GymMember/viewMember/{$row['id']}' title='View' class='btn btn-flat btn-info'><i class='fa fa-eye'></i></a>";
