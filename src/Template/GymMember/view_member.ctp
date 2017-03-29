@@ -106,8 +106,8 @@ $(".sub-history").dataTable({
 						<td class="txt_color"><?php echo ($data['selected_membership']) ? $data['membership']['membership_label'] : 'None';?></td>
 					</tr>
                                         <tr>
-						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Joining Date");?></th>
-						<td class="txt_color"><?php echo ($data['selected_membership']) ? date($this->Gym->getSettings("date_format"),strtotime($data['created_date'])): 'None';?></td>
+						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Valid From");?></th>
+						<td class="txt_color"><?php echo ($data['selected_membership']) ? date($this->Gym->getSettings("date_format"),strtotime($data['membership_valid_from'])): 'None';?></td>
 					</tr>
 					<tr>
 						<th><i class="fa fa-calendar"></i>&nbsp;&nbsp;<?php echo __("Expiry Date");?></th>
@@ -115,7 +115,7 @@ $(".sub-history").dataTable({
 					</tr>
 					<tr>
 						<th><i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;<?php echo __("Classes");?></th>
-						<td class="txt_color"><?php echo $this->Gym->get_class_by_member($data["id"]);?></td>
+						<td class="txt_color"><?php echo $this->Gym->get_class_by_members($data["id"]);?></td>
 					</tr>
 					<tr>
 						<th><i class="fa fa-heart"></i>&nbsp;&nbsp;&nbsp;<?php echo __("Interest Area");?></th>

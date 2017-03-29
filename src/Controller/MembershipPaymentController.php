@@ -641,6 +641,19 @@ class MembershipPaymentController extends AppController {
             //require_once SMS_PLUGIN_DIR. '/lib/paypal/paypal_ipn.php';
         }
     }
+    
+    ####  Upgrade membership by BrainTree Payment Gateway ####
+    
+    public function membershipUpgrade($membership_id=null)
+    {
+           
+        if(!empty($membership_id))
+        {
+              $row = $this->MembershipPayment->Membership->get($membership_id);
+               $this->set("data", $row->toArray());
+        }
+        
+    }
 
     public function isAuthorized($user) {
         $role_name = $user["role_name"];

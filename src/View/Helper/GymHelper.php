@@ -662,5 +662,57 @@ public function get_total_group_members($gid)
 		if($count == 1){return true;}else{return false;}
 	}
         
+        ### Get Location By Licensee ID #####
+        
+        public function get_member_report_location($licenseeID)
+	{
+           $conn = ConnectionManager::get('default');
+            $stmt = $conn->execute("SELECT *,count(*) as newcount  FROM gym_member INNER JOIN gym_location ON  gym_member.location_id=gym_location.id WHERE gym_member.role_name='licensee' and gym_location.status='1' and gym_member.id='$licenseeID'");
+            $rows = $stmt->fetchAll('assoc');
+            if($rows[0]['newcount']>0)
+            {
+                return $rows[0]['location'];
+            }else{
+              return ' -- '; 
+            }
+	}
+        
+        ### Membership Plan Name #####
+        
+        public function get_member_report_plan($membershipID)
+	{
+            $conn = ConnectionManager::get('default');
+            $stmt = $conn->execute("SELECT membership_label,count(*) as newcount  FROM membership where id='$membershipID'");
+            $rows = $stmt->fetchAll('assoc');
+            if($rows[0]['newcount']>0)
+            {
+                return $rows[0]['membership_label'];
+            }else{
+              return ' -- '; 
+            }
+	}
+        
+        ### Membership Plan status by MemberID####
+        public function get_member_report_plan_status($membshipID,$membID)
+        {
+            //echo "SELECT count(*) as active  FROM membership_payment where member_id='$membID' and (membership_id='$membshipID' AND mem_plan_status='1' and payment_status='1') ";
+            $conn = ConnectionManager::get('default');
+            $stmt = $conn->execute("SELECT count(*) as active  FROM membership_payment where member_id='$membID' and (membership_id='$membshipID' AND mem_plan_status='1' and payment_status='1') ");
+            $rows = $stmt->fetchAll('assoc');
+            if(@$rows[0]['active']>0)
+            {
+                return 'Active';
+            }else{
+                 $stmt1 = $conn->execute("SELECT count(*) as inactive  FROM membership_payment where member_id='$membID' and (membership_id='$membshipID' AND mem_plan_status='3' and payment_status='1') ");
+                 $rows1 = $stmt->fetchAll('assoc');
+                 if(@$rows[0]['inactive']>0)
+                    {
+                        return 'Expired';
+                    }
+                  else{
+                       return " -- "; 
+                    }
+            }
+        }
 
 }

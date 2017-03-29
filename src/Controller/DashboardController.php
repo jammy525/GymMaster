@@ -598,7 +598,7 @@ class DashboardController extends AppController
                 #########################################################################
                 
                 
-		$membership = $membership_tbl->find("all")->limit(5)->select(["membership_label","gmgt_membershipimage"])->where(["id"=>$membership_info[0]['membership_id']])->hydrate(false)->toArray();
+		$membership = $membership_tbl->find("all")->limit(5)->select(["membership_label","gmgt_membershipimage"])->where(["id"=>@$membership_info[0]['membership_id']])->hydrate(false)->toArray();
                 
 		$groups_data = $grp_tbl->find("all")->limit(5)->select(["name","image"])->hydrate(false)->toArray();
 		
@@ -739,8 +739,8 @@ class DashboardController extends AppController
                 $total_sales=(int)$report_22[0]['Cash']+(int)$report_22[0]['Online'];
             }
                 //print_r($chart_array_sales);
-                $this->set("report_22",$report_22);
-                $this->set("total_sales",$total_sales);
+                $this->set("report_22",@$report_22);
+                $this->set("total_sales",@$total_sales);
                 $this->set("chart_array_sales",$chart_array_sales);
                 
                 

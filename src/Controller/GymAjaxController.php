@@ -11,6 +11,7 @@ Class GymAjaxController extends AppController {
     public function initialize() {
         parent::initialize();
          $this->loadComponent("GYMFunction");
+        
         $this->autoRender = false;
     }
 
@@ -2653,6 +2654,68 @@ Class GymAjaxController extends AppController {
                 
             
             }
+         #### Upgrade Membership payment Gateway ####
+        public function upgradePayment()
+        {
+      
+
+        if ($this->request->is("ajax")) {
+           // echo "<pre>"; print_r($this->request->data); echo "</pre>"; die;    
+            //  echo $id = $this->request->data["class_id"];
+            //$session_price =$_SESSION['session_price']; //Cart Total Price
+                $session = $this->request->session()->read("User");
+              //  $session_price = '200';
+                $session_user_id =  $session['id'];
+                $membership_id= $this->request->data['planID'];
+                $membership_table = TableRegistry::get("Membership");
+                $row = $membership_table->get($membership_id)->toArray();
+                $amount=$row['membership_amount'];
+                $card_number = str_replace("+", "", $this->request->data['card_number']);
+                $card_name = $this->request->data['card_name'];
+                $expiry_month = $this->request->data['expiry_month'];
+                $expiry_year = $this->request->data['expiry_year'];
+                $cvv = $this->request->data['cvv'];
+                $expirationDate = $expiry_month . '/' . $expiry_year;
+                $myarray=array(
+                            'amount' => $amount,
+                            'creditCard' => array(
+                                'number' => $card_number,
+                                'cardholderName' => $card_name,
+                                'expirationDate' => $expirationDate,
+                                'cvv' => $cvv
+                            )
+                );
+                require_once(ROOT . DS . 'vendor' . DS . 'braintree-php' . DS . 'braintree_environment.php');
+               /* Braintree_Configuration::environment('sandbox'); // Change to production
+                Braintree_Configuration::merchantId('rcgc4rnxft4zfz4s');
+                Braintree_Configuration::publicKey('gttczdcsnctq52zm');
+                Braintree_Configuration::privateKey('46cbaaa0085b152e08885bc9ee2893db');
+                $result = Braintree_Transaction::sale(array(
+                            'amount' => $amount,
+                            'creditCard' => array(
+                                'number' => $card_number,
+                                'cardholderName' => $card_name,
+                                'expirationDate' => $expirationDate,
+                                'cvv' => $cvv
+                            )
+                ));
+
+
+                if ($result->success) {
+                    if ($result->transaction->id) {
+                        $braintreeCode = $result->transaction->id;
+
+                        echo '{"OrderStatus": [{"status":"1"}]}';
+                    }
+                } else if ($result->transaction) {
+                    echo '{"OrderStatus": [{"status":"2"}]}';
+                } else {
+                    echo '{"OrderStatus": [{"status":"0"}]}';
+                }*/
+            
+        }
+        }
+          
         ############ End Here ###################
         /** End here * */
     }

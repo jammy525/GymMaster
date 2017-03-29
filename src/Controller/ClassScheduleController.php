@@ -312,16 +312,32 @@ class ClassScheduleController extends AppController
              
               if($class_id)
               {
-                   $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date, 'ClassSchedule.class_name'=> $class_id);
+                 if($session["role_name"]=="staff_member"){
+                     
+                      $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date, 'ClassSchedule.class_name'=> $class_id,'ClassSchedule.assign_staff_mem'=> $session["id"]);
+                    }else{
+                       $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date, 'ClassSchedule.class_name'=> $class_id);  
+                    }
+                  
               }else{
-                  $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date);
+                   if($session["role_name"]=="staff_member"){
+                       
+                      $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date,'ClassSchedule.assign_staff_mem'=> $session["id"]);  
+                   }else{
+                       $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date); 
+                   }
+                 
               }
               
               $row=$this->ClassSchedule->find()->contain(["GymMember","GymLocation","GymClass","ClassScheduleList"])->where($conditions)->hydrate(false)->toArray(); 
                $this->set("class_name",$class_id);
             }else{
              $date=date('Y-m-d');
-             $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date);
+             if($session["role_name"]=="staff_member"){
+                  $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date,'ClassSchedule.assign_staff_mem'=> $session["id"]);
+             }else{
+                  $conditions = array('ClassSchedule.start_date <=' => $date, 'ClassSchedule.end_date >=' => $date);
+             }
              } 
              
             $row=$this->ClassSchedule->find()->contain(["GymMember","GymLocation","GymClass","ClassScheduleList"])->where($conditions)->hydrate(false)->toArray();
