@@ -23,7 +23,11 @@ class LicenseeController extends AppController
             //$roles = $this->Licensee->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
             //$this->set("roles",$roles);
             
-            $location = $this->Licensee->GymMember->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"])->hydrate(false)->toArray();
+            $location = $this->Licensee->GymMember->GymLocation
+                    ->find("list",["keyField"=>"id","valueField"=>"location"])
+                    ->where(['status'=>1])
+                    ->hydrate(false)->toArray();
+            
             $this->set("location",$location);
 
             //$specialization = $this->Licensee->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
@@ -112,7 +116,10 @@ class LicenseeController extends AppController
             $data = $this->Licensee->GymMember->get($id)->toArray();
             //$roles = $this->Licensee->GymMember->GymRoles->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
             //$specialization = $this->Licensee->GymMember->Specialization->find("list",["keyField"=>"id","valueField"=>"name"])->hydrate(false)->toArray();
-            $location = $this->Licensee->GymMember->GymLocation->find("list",["keyField"=>"id","valueField"=>"location"])->hydrate(false)->toArray();
+            $location = $this->Licensee->GymMember->GymLocation
+                    ->find("list",["keyField"=>"id","valueField"=>"location"])
+                    ->where(['status'=>1])
+                    ->hydrate(false)->toArray();
             $this->set("location",$location);
             //$this->set("specialization",$specialization);
             //$this->set("roles",$roles);		

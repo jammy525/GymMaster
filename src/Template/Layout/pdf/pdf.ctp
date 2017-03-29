@@ -68,9 +68,12 @@ $pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $html, $border=0, $ln=1, $fill=0, 
        if($ftype==1){
              $pdf->IncludeJS("print();");
              $pdf->Output(ROOT . DS  . 'webroot' . DS . 'pdf' . DS . $filename . '.pdf', 'I');
+        }else if($ftype==2){
+             //$pdf->IncludeJS("print();");
+             $pdf->Output('invice_'.time().'.pdf', 'I');
         }else{
             $pdf->Output($filename . '.pdf', 'D');
-         }      
+        }      
            // 
              
             // 

@@ -11,6 +11,7 @@ class MembershipPaymentController extends AppController {
     public function initialize() {
         parent::initialize();
         require_once(ROOT . DS . 'vendor' . DS . 'paypal' . DS . 'paypal_class.php');
+        require_once(ROOT . DS . 'vendor' . DS . 'tcpdf' . DS . 'tcpdf.php');
         $this->loadComponent("GYMFunction");
     }
 
@@ -66,7 +67,7 @@ class MembershipPaymentController extends AppController {
                 $row['paid_amount'] = $row['paid_amount'] + $this->request->data["amount"];
                 $row['paid_by'] = $session['id'];
                 $row['payment_status'] = 1;
-                $row['mem_plan_status'] = 1;
+                //$row['mem_plan_status'] = 1;
                 
                 // Check logic to set mem_plan_status
                 
@@ -74,7 +75,7 @@ class MembershipPaymentController extends AppController {
                 
                 if(count($other_rows->toArray())>0){
                     foreach($other_rows->toArray() as $other_row){
-                        if( $other_row['mem_plan_status'] == 1 && ( strtotime( $other_row['end_date']) >= strtotime($row['start_date'] ) ) ){
+                        if( $other_row['mem_plan_status'] == 1 && ( strtotime( $other_row['end_date']) >= strtotime($row['start_date'] ) ) &&  (strtotime($row['start_date'] ) == strtotime(date('Y-m-d')))){
                             //$row['mem_plan_status'] = 1;
                             $other_row_update_array['mem_plan_status'] = 0;
 
@@ -82,8 +83,12 @@ class MembershipPaymentController extends AppController {
                             $other_row_update = $this->MembershipPayment->MembershipPaymentHistory->patchEntity($other_row_update, $other_row_update_array);
                             $this->MembershipPayment->save($other_row_update);
                             break;
+                        }else if( $other_row['mem_plan_status'] == 1 && ( strtotime( $other_row['end_date']) < strtotime($row['start_date'] ) ) ){
+                            $row['mem_plan_status'] = 2;
                         }
                     }
+                }else{
+                    $row['mem_plan_status'] = 1;
                 }
                 
                 
@@ -424,6 +429,50 @@ class MembershipPaymentController extends AppController {
             return $this->redirect(["action" => "paymentList"]);
         }
     }
+    
+    public function pdfView($ftype = '0',$mp_id) { 
+        
+        $payment_tbl = TableRegistry::get("MembershipPayment");
+        $setting_tbl = TableRegistry::get("GeneralSetting");
+        $pay_history_tbl = TableRegistry::get("MembershipPaymentHistory");
+
+        $sys_data = $setting_tbl->find()->select(["name", "address", "gym_logo", "date_format", "office_number", "country"])->hydrate(false)->toArray();
+        $sys_data[0]["gym_logo"] = (!empty($sys_data[0]["gym_logo"])) ? $this->request->base . "/webroot/upload/" . $sys_data[0]["gym_logo"] : $this->request->base . "/webroot/img/Thumbnail-img.png";
+        $data = $payment_tbl->find("all")->contain(["GymMember", "Membership"])->where(["mp_id" => $mp_id])->hydrate(false)->toArray();
+        $history_data = $pay_history_tbl->find("all")->where(["mp_id" => $mp_id])->hydrate(false)->toArray();
+        //$this->GYMFunction->pre($data);
+        $session = $this->request->session();
+        $float_l = ($session->read("User.is_rtl") == "1") ? "right" : "left";
+        $float_r = ($session->read("User.is_rtl") == "1") ? "left" : "right";
+        $float_l = "left";
+        $float_r = "right";
+        
+        $this->set('ftype', $ftype);
+        $this->set('title', 'Member Invoice');
+        $this->viewBuilder()->layout('pdf/pdf');
+        $this->set("float_r", $float_r);
+        $this->set("float_l", $float_l);
+        $this->set("sys_data", $sys_data);
+        $this->set("data", $data);
+        $this->set("history_data", $history_data);
+        $this->set('mp_id', $mp_id);        
+        $this->viewBuilder()->template('pdf/invoice');
+        $this->set('filename', date('Y-m-d') . '_invoice.pdf');
+        $this->response->type('pdf');
+        
+    }
+    
+    /*
+    public function membershipUnsubscribe($mp_id) {
+        
+        $row = $this->MembershipPayment->get($mp_id);
+        $row_update_array['unsubscribed'] = 1;
+        $row = $this->MembershipPayment->patchEntity($row, $row_update_array);
+        if ($this->MembershipPayment->save($row)) {
+            $this->Flash->success(__("Success! Plan unsubscribed."));
+            return $this->redirect(["action" => "paymentList"]);
+        }
+    }*/
 
     public function incomeList() {
         $data = $this->MembershipPayment->GymIncomeExpense->find("all")->contain(["GymMember"])->where(["invoice_type" => "income"])->hydrate(false)->toArray();

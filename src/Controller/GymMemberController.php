@@ -55,15 +55,21 @@ Class GymMemberController extends AppController
 		if($session["role_name"] == "administrator")
 		{
 			/* $data = $this->GymMember->find("all")->where(["OR"=>[["role_name"=>"member"],["role_name"=>"administrator"]]])->hydrate(false)->toArray(); */
-			$data = $this->GymMember->find("all")->where(["role_name"=>"member"])->hydrate(false)->toArray();
+			$data = $this->GymMember->find("all")
+                                ->contain(['UnsubscribedMember'])
+                                ->where(["role_name"=>"member"])->hydrate(false)->toArray();
 		}
 		else if($session["role_name"] == "member"){
 			$uid = intval($session["id"]);
 			if($this->GYMFunction->getSettings("member_can_view_other"))
 			{
-				$data = $this->GymMember->find("all")->where(["role_name"=>"member"])->hydrate(false)->toArray();
+				$data = $this->GymMember->find("all")
+                                        ->contain(['UnsubscribedMember'])
+                                        ->where(["role_name"=>"member"])->hydrate(false)->toArray();
 			}else{
-				$data = $this->GymMember->find("all")->where(["id"=>$uid])->hydrate(false)->toArray();
+				$data = $this->GymMember->find("all")
+                                        ->contain(['UnsubscribedMember'])
+                                        ->where(["id"=>$uid])->hydrate(false)->toArray();
 			}
 			
 		}
@@ -71,18 +77,28 @@ Class GymMemberController extends AppController
 			$uid = intval($session["id"]);
 			if($this->GYMFunction->getSettings("staff_can_view_own_member"))
 			{
-				$data = $this->GymMember->find("all")->where(["assign_staff_mem"=>$uid])->hydrate(false)->toArray();
+				$data = $this->GymMember->find("all")
+                                        ->contain(['UnsubscribedMember'])
+                                        ->where(["assign_staff_mem"=>$uid])->hydrate(false)->toArray();
 			}else{
-				$data = $this->GymMember->find("all")->where(["role_name"=>"member"])->hydrate(false)->toArray();
+				$data = $this->GymMember->find("all")
+                                        ->contain(['UnsubscribedMember'])
+                                        ->where(["role_name"=>"member"])->hydrate(false)->toArray();
 			}
 		}else if($session["role_name"] == "licensee")
 		{       $uid = intval($session["id"]);
 			/* $data = $this->GymMember->find("all")->where(["OR"=>[["role_name"=>"member"],["role_name"=>"administrator"]]])->hydrate(false)->toArray(); */
-			$data = $this->GymMember->find("all")->where(["created_by"=>$uid,"role_name"=>"member"])->hydrate(false)->toArray();
+			$data = $this->GymMember->find("all")
+                                ->contain(['UnsubscribedMember'])
+                                ->where(["associated_licensee"=>$uid,"role_name"=>"member"])
+                                ->hydrate(false)->toArray();
 		}
 		else{
-			$data = $this->GymMember->find("all")->where(["role_name"=>"member"])->hydrate(false)->toArray();
+			$data = $this->GymMember->find("all")
+                                ->contain(['UnsubscribedMember'])
+                                ->where(["role_name"=>"member"])->hydrate(false)->toArray();
 		}
+                //$this->GYMFunction->pre($data);
 				
 		$this->set("data",$data);	
 	}
@@ -587,7 +603,23 @@ Class GymMemberController extends AppController
                        return $this->redirect($this->referer());
                  }
         }
-			
+	
+        
+        public function unsubscribe($user_id){
+            $session = $this->request->session()->read("User");
+            $row = $this->GymMember->UnsubscribedMember->newEntity();
+            $row_update_array['mem_id'] = $user_id;
+            $row_update_array['unsubscribed_by'] = $session['id'];
+            $row_update_array['reason'] = 'test reason';
+            $row_update_array['unsubscribed_status'] = 1;
+            
+            $row = $this->GymMember->UnsubscribedMember->patchEntity($row, $row_update_array);
+            if ($this->GymMember->UnsubscribedMember->save($row)) {
+                $this->Flash->success(__("Success! Plan unsubscribed."));
+                return $this->redirect(["action" => "memberList"]);
+            }
+	}
+        
 	
 	/*
 	public function isAuthorized($user)
@@ -617,6 +649,8 @@ Class GymMemberController extends AppController
 		return parent::isAuthorized($user);
 	}
          * */
+        
+        
         
         public function isAuthorized($user){
             return parent::isAuthorizedCustom($user);
